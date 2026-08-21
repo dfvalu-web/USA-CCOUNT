@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useI18n } from '@/lib/i18n/context';
+import { useAuth } from '@/lib/auth/auth-context';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { CommandMenu } from '@/components/ui/CommandMenu';
+import { Lock } from 'lucide-react';
 import { ExecutiveCockpit } from '@/components/dashboard/ExecutiveCockpit';
 import { TrialBalanceTable } from '@/components/accounting/TrialBalanceTable';
 import { GeneralLedgerView } from '@/components/accounting/GeneralLedgerView';
@@ -202,11 +205,20 @@ interface AppShellProps {
 }
 
 export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { locale, t, basis } = useI18n();
   const { activeCompany } = useCompany();
   const [activeTab, setActiveTab] = useState<string>(() => normalizeTabId(initialTab));
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+
+  // Auth Guard: Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthLoading, isAuthenticated, router]);
 
   // Dynamic ledger state initialized and synchronized per active company
   const [accountsState, setAccountsState] = useState<AccountWithLines[]>(() =>
@@ -346,6 +358,20 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
       ...journalEntriesList,
     ]);
   };
+
+  if (isAuthLoading || !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-100 p-4 space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+          <Lock className="w-6 h-6 text-emerald-400 animate-pulse" />
+        </div>
+        <div className="text-center space-y-1">
+          <h3 className="text-sm font-bold text-white tracking-wide">Acesso Seguro • Autenticação Necessária</h3>
+          <p className="text-xs text-slate-400">Redirecionando para o login corporativo...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950">

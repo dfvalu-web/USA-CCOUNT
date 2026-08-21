@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useI18n } from '@/lib/i18n/context';
+import { useAuth } from '@/lib/auth/auth-context';
 import {
   LayoutDashboard,
   BookOpen,
@@ -26,6 +28,7 @@ import {
   FlaskConical,
   FileText,
   Target,
+  LogOut,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,6 +38,13 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const { t } = useI18n();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   const menuSections = [
     {
@@ -110,7 +120,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    className={`w-full flex items-center space-x-3 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                       isActive
                         ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 font-semibold'
                         : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent'
@@ -126,13 +136,35 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         ))}
       </div>
 
-      <div className="p-4 border-t border-slate-800/80 bg-slate-900/30">
-        <div className="flex items-center space-x-2 text-[11px] text-slate-400">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>{t('reports.auditStamp')}</span>
-        </div>
-        <div className="text-[10px] text-slate-500 mt-0.5 font-mono">
-          Mister Contábil v2.5 • Multi-Tenant
+      <div className="p-3 border-t border-slate-800/80 bg-slate-900/40 space-y-2.5">
+        {user && (
+          <div className="flex items-center justify-between p-1.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+            <div className="flex items-center space-x-2 truncate pr-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0">
+                {user.name.charAt(0)}
+              </div>
+              <div className="truncate text-left leading-tight">
+                <span className="text-xs font-bold text-white block truncate">{user.name}</span>
+                <span className="text-[10px] text-emerald-400 font-mono block truncate">{user.title || user.role}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/50 transition-colors shrink-0 cursor-pointer"
+              title="Encerrar Sessão e Sair"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1">
+          <span className="flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>SOC 2 Type II</span>
+          </span>
+          <span>Mister Contábil v2.5</span>
         </div>
       </div>
     </aside>

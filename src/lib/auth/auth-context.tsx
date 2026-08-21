@@ -80,11 +80,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = 'mistercontabil_auth_user';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Default to Milla Maid Admin for immediate frictionless usage
-  const [user, setUser] = useState<UserSession | null>(DEMO_USERS[0].user);
+  // Zero-Trust: Starts as null (unauthenticated) by default
+  const [user, setUser] = useState<UserSession | null>(null);
+  const [pending2FaUser, setPending2FaUser] = useState<UserSession | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Sync from localStorage on mount
+  // Sync from localStorage on mount if valid existing session
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -92,15 +93,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (stored) {
           const parsed = JSON.parse(stored);
           setUser(parsed);
-        } else {
-          // If no stored user, keep demo admin
-          setUser(DEMO_USERS[0].user);
-          localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_USERS[0].user));
         }
       }
     } catch (e) {
       console.warn('Error reading auth session from storage:', e);
-      setUser(DEMO_USERS[0].user);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -119,38 +116,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (credentials: AuthCredentials): Promise<{ success: boolean; requires2Fa?: boolean; error?: string }> => {
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 600)); // Simulate ultra-fast network roundtrip
+    await new Promise((r) => setTimeout(r, 400)); // Network simulation
 
-    // Check if email matches any demo user
-    const matchedDemo = DEMO_USERS.find((d) => d.user.email.toLowerCase() === credentials.email.toLowerCase());
+    const validPasswords = ['Mister@2026', 'Admin@2026', '123456', 'Milla@2026', 'David@2026'];
+    const enteredPass = credentials.password ? credentials.password.trim() : '';
 
-    if (matchedDemo) {
-      saveUserSession(matchedDemo.user);
+    if (!enteredPass || !validPasswords.includes(enteredPass)) {
       setIsLoading(false);
-      return { success: true };
+      return {
+        success: false,
+        error: 'Senha corporativa incorreta. Digite a senha corporativa (Padrão: Mister@2026).',
+      };
     }
 
-    // Generic dynamic user creation for any valid email login
-    if (credentials.email && credentials.email.includes('@')) {
-      const genericUser: UserSession = {
+    // Match Demo User
+    const matchedDemo = DEMO_USERS.find(
+      (d) => d.user.email.toLowerCase() === credentials.email.toLowerCase()
+    );
+
+    let targetUser: UserSession;
+
+    if (matchedDemo) {
+      targetUser = matchedDemo.user;
+    } else if (credentials.email && credentials.email.includes('@')) {
+      targetUser = {
         id: `usr-${Date.now()}`,
-        name: credentials.email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        name: credentials.email
+          .split('@')[0]
+          .replace(/[._]/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase()),
         email: credentials.email,
         role: 'ADMIN_OWNER',
         companyId: 'cmp-milla-maid-ga',
         companyName: 'Milla Maid Services LLC',
         title: 'Executive Managing Director',
-        is2faEnabled: false,
+        is2faEnabled: true,
         token: `jwt_token_${Date.now()}`,
         createdAt: new Date().toISOString(),
       };
-      saveUserSession(genericUser);
+    } else {
       setIsLoading(false);
-      return { success: true };
+      return { success: false, error: 'E-mail corporativo inválido.' };
     }
 
+    // If 2FA is required, challenge user with 2FA step
+    if (targetUser.is2faEnabled) {
+      setPending2FaUser(targetUser);
+      setIsLoading(false);
+      return { success: true, requires2Fa: true };
+    }
+
+    // Direct session issuance for accounts without 2FA
+    saveUserSession(targetUser);
     setIsLoading(false);
-    return { success: false, error: 'Credenciais inválidas. Por favor verifique seu e-mail e senha.' };
+    return { success: true, requires2Fa: false };
   };
 
   const quickLoginDemo = (demoId: string) => {
@@ -181,7 +200,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const verify2Fa = async (code: string): Promise<boolean> => {
-    if (code === '123456' || code.length === 6) {
+    setIsLoading(true);
+    await new Promise((r) => setTimeout(r, 300));
+    setIsLoading(false);
+
+    if ((code === '123456' || code.length === 6) && pending2FaUser) {
+      saveUserSession(pending2FaUser);
+      setPending2FaUser(null);
       return true;
     }
     return false;
@@ -189,6 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     saveUserSession(null);
+    setPending2FaUser(null);
   };
 
   const switchRole = (newRole: UserRole) => {

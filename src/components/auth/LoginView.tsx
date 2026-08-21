@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -40,12 +40,13 @@ interface LoginViewProps {
 
 export function LoginView({ isEmbedded = false }: LoginViewProps) {
   const router = useRouter();
-  const { quickLoginDemo, login, verify2Fa, isLoading } = useAuth();
+  const { login, verify2Fa, isLoading } = useAuth();
   const { t, locale, setLocale, formatCurrency } = useI18n();
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedDemoRole, setSelectedDemoRole] = useState<string>('demo-milla-admin');
   const [email, setEmail] = useState('milla@millamaidservices.com');
-  const [password, setPassword] = useState('••••••••••••');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -62,7 +63,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
 
   // Password Entropy Calculator
   const getPasswordStrength = (pass: string) => {
-    if (!pass || pass === '••••••••••••') return { score: 4, label: 'Ultra-Segura (Enterprise)', color: 'bg-emerald-500' };
+    if (!pass) return { score: 0, label: 'Aguardando senha...', color: 'bg-slate-700' };
     let score = 0;
     if (pass.length >= 8) score += 1;
     if (/[A-Z]/.test(pass)) score += 1;
@@ -100,22 +101,20 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
 
   const handleDemoSelect = (demoId: string) => {
     setSelectedDemoRole(demoId);
+    setAuthError(null);
     const demo = DEMO_USERS.find((d) => d.id === demoId);
     if (demo) {
       setEmail(demo.user.email);
     }
-    quickLoginDemo(demoId);
-    router.push('/dashboard');
+    // Don't auto-login; focus password field for user to enter password!
+    if (passwordInputRef.current) {
+      passwordInputRef.current.focus();
+    }
   };
 
-  const handleBioLogin = () => {
-    if (lockoutCountdown > 0) return;
-    setIsAuthenticatingBio(true);
-    setTimeout(() => {
-      quickLoginDemo(selectedDemoRole);
-      setIsAuthenticatingBio(false);
-      router.push('/dashboard');
-    }, 1200);
+  const fillDefaultPassword = () => {
+    setPassword('Mister@2026');
+    setAuthError(null);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -125,6 +124,11 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
     setAuthError(null);
     const cleanEmail = sanitizeInput(email);
     const cleanPass = password;
+
+    if (!cleanPass) {
+      setAuthError('Por favor digite sua senha corporativa (Ex: Mister@2026).');
+      return;
+    }
 
     // Check for malicious payload simulation
     if (cleanEmail.includes('OR 1=1') || cleanEmail.includes('UNION SELECT')) {
@@ -162,7 +166,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
     if (success) {
       router.push('/dashboard');
     } else {
-      setAuthError('Código 2FA incorreto ou expirado. Tente novamente.');
+      setAuthError('Código 2FA incorreto ou expirado. Digite 123456 para validação.');
     }
   };
 
@@ -236,7 +240,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed pt-2">
-              Acesso seguro e criptografado para Sócios, Contadores Master (CPA/EA) e Clientes Corporativos B2B.
+              Acesso seguro e restrito com exigência de senha e verificação de 2 fatores (2FA) para Administradores, Contadores Master (CPA/EA) e Clientes Corporativos.
             </p>
           </div>
 
@@ -263,9 +267,9 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
               <div className="flex items-center justify-between text-slate-300">
                 <span className="flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-sky-400" />
-                  Criptografia em Trânsito:
+                  Autenticação:
                 </span>
-                <span className="font-mono text-white font-semibold">TLS 1.3 / AES-256</span>
+                <span className="font-mono text-emerald-400 font-semibold">Senha + 2FA Obrigatório</span>
               </div>
               <div className="flex items-center justify-between text-slate-300">
                 <span className="flex items-center gap-1.5">
@@ -300,8 +304,8 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
               </h2>
               <p className="text-xs text-slate-400">
                 {requires2Fa
-                  ? 'Insira o token de segurança de 6 dígitos do seu Authenticator app.'
-                  : 'Selecione um perfil demonstrativo ou insira suas credenciais corporativas.'}
+                  ? 'Insira o token de segurança de 6 dígitos gerado pelo seu Authenticator app.'
+                  : 'Selecione o perfil desejado e digite a senha corporativa para entrar.'}
               </p>
             </div>
 
@@ -316,8 +320,13 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                 )}
 
                 <div className="space-y-2 text-center">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold mb-2">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Senha Confirmada ✓ Digite o Código 2FA</span>
+                  </div>
+
                   <label className="text-xs font-bold text-slate-300 block">
-                    Código de Segurança TOTP
+                    Token de Segurança TOTP (6 Dígitos)
                   </label>
                   <input
                     type="text"
@@ -329,15 +338,19 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                     placeholder="000000"
                     className="w-full h-14 text-center text-2xl tracking-[0.5em] font-mono rounded-2xl bg-slate-950 border border-slate-700 text-emerald-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
                   />
-                  <span className="text-[10px] text-slate-400 block pt-1">
-                    Demo Token: Qualquer 6 dígitos (ex: 123456)
-                  </span>
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 px-1">
+                    <span>Token de demonstração: <button type="button" onClick={() => setTotpCode('123456')} className="text-emerald-400 font-mono font-bold hover:underline cursor-pointer">123456</button></span>
+                    <span className="text-slate-500">Expira em 30s</span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <button
                     type="button"
-                    onClick={() => setRequires2Fa(false)}
+                    onClick={() => {
+                      setRequires2Fa(false);
+                      setTotpCode('');
+                    }}
                     className="h-11 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold transition-colors cursor-pointer"
                   >
                     Voltar
@@ -347,7 +360,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                     disabled={isVerifying2Fa || totpCode.length < 6}
                     className="h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/25 transition-all cursor-pointer"
                   >
-                    <span>{isVerifying2Fa ? 'Validando...' : 'Confirmar e Entrar'}</span>
+                    <span>{isVerifying2Fa ? 'Validando...' : 'Liberar Acesso ➔'}</span>
                   </Button>
                 </div>
               </form>
@@ -358,9 +371,9 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                   <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                      {t('auth.demoQuickAccess')}
+                      Selecione o Perfil Corporativo
                     </span>
-                    <span className="text-[10px] text-emerald-400 font-mono font-bold">1-Clique</span>
+                    <span className="text-[10px] text-emerald-400 font-mono font-bold">Passo 1/2</span>
                   </span>
 
                   <div className="grid grid-cols-3 gap-2">
@@ -376,7 +389,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                           onClick={() => handleDemoSelect(demo.id)}
                           className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 group ${
                             isSelected
-                              ? 'bg-emerald-950/60 border-emerald-500 shadow-lg shadow-emerald-950/50 text-white'
+                              ? 'bg-emerald-950/60 border-emerald-500 shadow-lg shadow-emerald-950/50 text-white ring-1 ring-emerald-500/30'
                               : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200'
                           }`}
                         >
@@ -404,7 +417,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                 <div className="relative flex py-1 items-center">
                   <div className="flex-grow border-t border-slate-800"></div>
                   <span className="flex-shrink mx-3 text-[10px] text-slate-500 uppercase font-mono tracking-wider">
-                    ou credenciais corporativas
+                    Passo 2: Digite a Senha
                   </span>
                   <div className="flex-grow border-t border-slate-800"></div>
                 </div>
@@ -422,7 +435,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                   {lockoutCountdown > 0 && (
                     <div className="p-3.5 rounded-xl bg-amber-950/80 border border-amber-700 text-amber-300 text-xs flex items-center space-x-2">
                       <Clock className="w-4 h-4 text-amber-400 shrink-0 animate-spin" />
-                      <span>Bloqueio de segurança ativo. Tente novamente em <b>{lockoutCountdown}s</b>.</span>
+                      <span>Bloqueio de segurança ativo. Aguarde <b>{lockoutCountdown}s</b>.</span>
                     </div>
                   )}
 
@@ -445,18 +458,29 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">
-                      {t('auth.passwordLabel')}
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-semibold text-slate-300">
+                        {t('auth.passwordLabel')} <span className="text-rose-400">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={fillDefaultPassword}
+                        className="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono hover:underline cursor-pointer"
+                      >
+                        Preencher Senha Demo (Mister@2026)
+                      </button>
+                    </div>
+
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
                       <input
+                        ref={passwordInputRef}
                         type={showPassword ? 'text' : 'password'}
                         required
                         disabled={lockoutCountdown > 0}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••••••"
+                        placeholder="Digite a senha corporativa..."
                         className="w-full h-11 pl-10 pr-10 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono disabled:opacity-50"
                       />
                       <button
@@ -471,7 +495,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                     {/* Password Entropy Bar */}
                     <div className="space-y-1 pt-1">
                       <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-400">Entropia de Segurança:</span>
+                        <span className="text-slate-400">Entropia da Senha:</span>
                         <span className="font-semibold text-slate-200">{passwordStrength.label}</span>
                       </div>
                       <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
@@ -500,25 +524,15 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div className="pt-2">
                     <Button
                       type="submit"
-                      disabled={isLoading || lockoutCountdown > 0}
-                      className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer hover:scale-[1.02] disabled:opacity-50"
+                      disabled={isLoading || lockoutCountdown > 0 || !password}
+                      className="w-full h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer hover:scale-[1.01] disabled:opacity-50"
                     >
-                      <span>{isLoading ? t('auth.authenticating') : t('auth.signInButton')}</span>
+                      <span>{isLoading ? 'Autenticando...' : 'Verificar Senha e Prosseguir'}</span>
                       <ArrowRight className="w-4 h-4" />
                     </Button>
-
-                    <button
-                      type="button"
-                      onClick={handleBioLogin}
-                      disabled={isAuthenticatingBio || lockoutCountdown > 0}
-                      className="w-full h-11 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
-                    >
-                      <Fingerprint className="w-4 h-4 text-emerald-400" />
-                      <span>{isAuthenticatingBio ? 'Validando Biometria...' : 'Face ID / Biometria'}</span>
-                    </button>
                   </div>
                 </form>
 
