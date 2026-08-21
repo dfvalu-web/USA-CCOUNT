@@ -63,6 +63,7 @@
     "reports": "Informes Financieros y BI",
     "budgetVariance": "Presupuesto vs. Real",
     "systemAudit": "Auditoría del Sistema y Anomalías",
+    "sandbox": "Ambiente Sandbox y Pruebas",
     "settings": "Configuración de la Empresa"
   },
   "accounting": {

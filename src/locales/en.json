@@ -63,6 +63,7 @@
     "reports": "BI & Financial Reports",
     "budgetVariance": "Budget vs. Actual Variance",
     "systemAudit": "System Audit & Anomalies",
+    "sandbox": "Sandbox Environment & Testing",
     "settings": "Organization Settings"
   },
   "accounting": {

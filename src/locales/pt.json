@@ -63,6 +63,7 @@
     "reports": "Inteligência & Relatórios Financeiros",
     "budgetVariance": "Orçamento vs. Realizado",
     "systemAudit": "Auditoria do Sistema & Anomalias",
+    "sandbox": "Ambiente Sandbox & Testes",
     "settings": "Configurações da Empresa"
   },
   "accounting": {
