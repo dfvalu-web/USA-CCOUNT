@@ -108,7 +108,7 @@ export function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto space-y-6">
           {/* Audit-Ready Badge */}
-          <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-slate-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-semibold tracking-wide backdrop-blur-xl shadow-2xl">
+          <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-slate-950/85 border border-emerald-500/50 text-emerald-300 text-xs font-semibold tracking-wide backdrop-blur-xl shadow-2xl">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -133,7 +133,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
               href="/login"
-              className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-base shadow-2xl shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 group hover:scale-[1.02] cursor-pointer"
+              className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base shadow-2xl shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 group hover:scale-[1.02] cursor-pointer"
             >
               <span>{t('landing.ctaAccess')}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -150,36 +150,39 @@ export function HeroSection() {
 
           {/* Trust Pillars */}
           <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-100 font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-            <div className="flex items-center space-x-1.5 bg-slate-950/70 px-3 py-1 rounded-full border border-slate-800/80 backdrop-blur-md">
+            <div className="flex items-center space-x-1.5 bg-slate-950/80 px-3.5 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md shadow-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>US GAAP ASC 205/210/606</span>
             </div>
-            <div className="flex items-center space-x-1.5 bg-slate-950/70 px-3 py-1 rounded-full border border-slate-800/80 backdrop-blur-md">
+            <div className="flex items-center space-x-1.5 bg-slate-950/80 px-3.5 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md shadow-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>IRS Form 1065 / K-1 Ready</span>
             </div>
-            <div className="flex items-center space-x-1.5 bg-slate-950/70 px-3 py-1 rounded-full border border-slate-800/80 backdrop-blur-md">
+            <div className="flex items-center space-x-1.5 bg-slate-950/80 px-3.5 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md shadow-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>SOC 2 Type II Merkle Audit Trail</span>
             </div>
-            <div className="flex items-center space-x-1.5 bg-slate-950/70 px-3 py-1 rounded-full border border-slate-800/80 backdrop-blur-md">
+            <div className="flex items-center space-x-1.5 bg-slate-950/80 px-3.5 py-1.5 rounded-full border border-slate-800/90 backdrop-blur-md shadow-lg">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>{t('accounting.balancedProof')}</span>
             </div>
           </div>
         </div>
 
-        {/* 4K Hero Card Visualizer Teaser */}
+        {/* 3D 4K Hero Card Visualizer Teaser */}
         <div className="mt-14 max-w-5xl mx-auto relative">
-          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-emerald-500/40 via-teal-500/30 to-sky-500/40 blur-2xl opacity-85 pointer-events-none" />
+          <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-emerald-500/40 via-teal-500/30 to-sky-500/40 blur-2xl opacity-90 pointer-events-none" />
 
-          <div className="relative rounded-3xl bg-slate-950/85 border border-emerald-500/30 shadow-2xl backdrop-blur-2xl overflow-hidden p-6 sm:p-8">
+          <div className="relative rounded-3xl bg-gradient-to-b from-slate-900/95 via-slate-950/95 to-slate-950 border border-emerald-500/40 shadow-[0_30px_70px_rgba(0,0,0,0.95),0_0_40px_rgba(16,185,129,0.25)] backdrop-blur-2xl overflow-hidden p-6 sm:p-8 transition-transform duration-500 hover:-translate-y-1">
+            {/* 3D Specular Light Top Border */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent pointer-events-none" />
+
             {/* Top Control Bar of Visualizer */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
               <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-                <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                <div className="w-3 h-3 rounded-full bg-rose-500/90 shadow-sm" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/90 shadow-sm" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/90 shadow-sm" />
                 <span className="text-xs font-mono text-slate-300 pl-2">
                   mistercontabil.com • Live GAAP Engine
                 </span>
@@ -187,8 +190,8 @@ export function HeroSection() {
 
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-slate-300 font-semibold">{t('common.status')}:</span>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40 flex items-center gap-1.5 shadow-md">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                   {t('accounting.balancedProof')}
                 </span>
               </div>
@@ -196,41 +199,41 @@ export function HeroSection() {
 
             {/* Metrics Highlight Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-1 shadow-inner">
                 <div className="flex items-center justify-between text-xs text-slate-300 font-semibold">
                   <span>{t('accounting.totalAssets')}</span>
                   <Scale className="w-4 h-4 text-emerald-400" />
                 </div>
-                <div className="text-2xl font-bold font-mono text-white">
+                <div className="text-2xl font-black font-mono text-white drop-shadow-[0_2px_8px_rgba(16,185,129,0.4)]">
                   {formatCurrency(320771.75)}
                 </div>
-                <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+                <div className="text-[10px] text-emerald-400 flex items-center gap-1 font-medium">
                   <span>✓ 100% US GAAP Compliant</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-1 shadow-inner">
                 <div className="flex items-center justify-between text-xs text-slate-300 font-semibold">
                   <span>{t('accounting.totalLiabilitiesAndEquity')}</span>
                   <TrendingUp className="w-4 h-4 text-sky-400" />
                 </div>
-                <div className="text-2xl font-bold font-mono text-white">
+                <div className="text-2xl font-black font-mono text-white drop-shadow-[0_2px_8px_rgba(56,189,248,0.4)]">
                   {formatCurrency(320771.75)}
                 </div>
-                <div className="text-[10px] text-sky-400 flex items-center gap-1">
+                <div className="text-[10px] text-sky-400 flex items-center gap-1 font-medium">
                   <span>✓ {t('accounting.balanceSheetEquation')}</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-1 shadow-inner">
                 <div className="flex items-center justify-between text-xs text-slate-300 font-semibold">
                   <span>{t('nav.journalEntries')}</span>
                   <BookOpen className="w-4 h-4 text-teal-400" />
                 </div>
-                <div className="text-2xl font-bold font-mono text-emerald-400">
+                <div className="text-2xl font-black font-mono text-emerald-400 drop-shadow-[0_2px_8px_rgba(20,184,166,0.4)]">
                   {formatCurrency(6577924.35)}
                 </div>
-                <div className="text-[10px] text-teal-300 flex items-center gap-1">
+                <div className="text-[10px] text-teal-300 flex items-center gap-1 font-medium">
                   <span>✓ {t('accounting.ruleDebitCredit')}</span>
                 </div>
               </div>
@@ -240,20 +243,20 @@ export function HeroSection() {
             <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center space-x-2 text-slate-300">
                 <span className="font-semibold">{t('common.actions')}:</span>
-                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800">
+                <Link href="/login" className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800 transition-colors shadow-sm">
                   {t('nav.balanceSheet')} ➔
                 </Link>
-                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800">
+                <Link href="/login" className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800 transition-colors shadow-sm">
                   {t('nav.generalLedger')} ➔
                 </Link>
-                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800">
+                <Link href="/login" className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer border border-slate-800 transition-colors shadow-sm">
                   {t('nav.incomeStatement')} ➔
                 </Link>
               </div>
 
               <Link
                 href="/login"
-                className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 cursor-pointer"
+                className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 cursor-pointer transition-transform hover:translate-x-0.5"
               >
                 <span>{t('landing.ctaAccess')}</span>
                 <ChevronRight className="w-4 h-4" />
