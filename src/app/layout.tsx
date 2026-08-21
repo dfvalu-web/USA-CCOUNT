@@ -4,6 +4,7 @@ import './globals.css';
 import { I18nProvider } from '@/lib/i18n/context';
 import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
 import { CompanyProvider } from '@/lib/company/company-context';
+import { AuthProvider } from '@/lib/auth/auth-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,8 +19,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'UAS Accounting — Next-Gen US GAAP Financial SaaS',
-  description: 'Enterprise Accounting, Multi-State Payroll & Tax Compliance for US Service-Based Businesses',
+  title: 'Mister Contábil — Inteligência Contábil & Fiscal US GAAP (4K Fintech SaaS)',
+  description: 'Plataforma Oficial de Contabilidade US GAAP, Escrituração de Partidas Dobradas, Fechamento Fiscal IRS (Form 1065, K-1, 1099/W-2) e BI Financeiro.',
 };
 
 export default function RootLayout({
@@ -30,11 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
-        <I18nProvider>
-          <CompanyProvider>
-            <FiscalPeriodProvider>{children}</FiscalPeriodProvider>
-          </CompanyProvider>
-        </I18nProvider>
+        <AuthProvider>
+          <I18nProvider>
+            <CompanyProvider>
+              <FiscalPeriodProvider>{children}</FiscalPeriodProvider>
+            </CompanyProvider>
+          </I18nProvider>
+        </AuthProvider>
       </body>
     </html>
   );
