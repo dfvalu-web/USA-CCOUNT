@@ -90,6 +90,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     {
       title: 'CFA Intelligence & BI',
       items: [
+        { id: 'executive-reports', label: 'Relatórios Oficiais (PDF)', icon: FileText },
         { id: 'reports', label: t('nav.reports'), icon: Sparkles },
         { id: 'budget-variance', label: t('nav.budgetVariance'), icon: Target },
       ],

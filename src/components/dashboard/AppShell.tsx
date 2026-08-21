@@ -41,6 +41,7 @@ import { AuditTrailSecurityView } from '@/components/security/AuditTrailSecurity
 import { BiAnalyticsView } from '@/components/bi/BiAnalyticsView';
 import { SensitivityAnalysisMatrix } from '@/components/bi/SensitivityAnalysisMatrix';
 import { CfaAiCopilotChat } from '@/components/bi/CfaAiCopilotChat';
+import { ExecutiveReportsExportView } from '@/components/reports/ExecutiveReportsExportView';
 import { SoftwareMigrationView } from '@/components/migration/SoftwareMigrationView';
 import { SystemAuditView } from '@/components/audit/SystemAuditView';
 import { CompanySandboxView } from '@/components/sandbox/CompanySandboxView';
@@ -171,6 +172,11 @@ export function normalizeTabId(rawTab: string): string {
     case 'auditoria':
     case 'soc2':
       return 'audit-trail';
+    case 'executive-reports':
+    case 'relatorios-executivos':
+    case 'pdf-reports':
+    case 'sba-loan':
+      return 'executive-reports';
     case 'reports':
     case 'modulo-bi':
     case 'monte-carlo':
@@ -442,8 +448,14 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
               <CleaningSchedulingView onPostJobAccounting={handleEntrySuccess} />
             </div>
           )}
+          {activeTab === 'executive-reports' && (
+            <div className="space-y-6">
+              <ExecutiveReportsExportView />
+            </div>
+          )}
           {activeTab === 'reports' && (
             <div className="space-y-6">
+              <ExecutiveReportsExportView />
               <BiAnalyticsView />
             </div>
           )}
