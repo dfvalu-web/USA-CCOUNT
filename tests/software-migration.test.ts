@@ -3,8 +3,9 @@ import {
   SoftwareMigrationEngine,
   SourceAccountRawLine,
 } from '@/lib/migration/software-migration-engine';
+import { CompanyProfileEngine } from '@/lib/company/company-profile-engine';
 
-describe('SoftwareMigrationEngine (US GAAP Smart Importer)', () => {
+describe('SoftwareMigrationEngine (US GAAP Smart Importer & Company Auto-Registration)', () => {
   it('should auto-map standard QuickBooks accounts with high confidence', () => {
     const rawBank: SourceAccountRawLine = {
       sourceAccountCode: '1000',
@@ -59,18 +60,38 @@ describe('SoftwareMigrationEngine (US GAAP Smart Importer)', () => {
   it('should flag unbalanced trial balances and calculate variance amount', () => {
     const unBalancedLines: SourceAccountRawLine[] = [
       { sourceAccountCode: '1000', sourceAccountName: 'Cash in Bank', sourceAccountType: 'ASSET', debit: 100000, credit: 0, netBalance: 100000 },
-      { sourceAccountCode: '3000', sourceAccountName: 'Owners Capital Stock', sourceAccountType: 'EQUITY', debit: 0, credit: 95000, netBalance: -95000 },
+      { sourceAccountCode: '3000', sourceAccountName: 'Owners Capital Stock', sourceAccountType: 'EQUITY', debit: 0, credit: 90000, netBalance: -90000 },
     ];
 
     const pkg = SoftwareMigrationEngine.processUploadedStatement(
-      'Unbalanced Co',
-      'UNIVERSAL_CSV_EXCEL',
+      'Discrepant Co',
+      'XERO',
       'TRIAL_BALANCE',
       unBalancedLines
     );
 
     expect(pkg.isBalanced).toBe(false);
-    expect(pkg.varianceAmount).toBe(5000);
+    expect(pkg.varianceAmount).toBe(10000);
     expect(pkg.status).toBe('PENDING_MAPPING');
+  });
+
+  it('should auto-register and provision a new company during migration onboarding', () => {
+    const newComp = CompanyProfileEngine.autoRegisterCompanyFromMigration(
+      'Vanguard CleanTech Solutions LLC',
+      'TX',
+      'LLC_PARTNERSHIP_1065',
+      '93-8472910',
+      '78701',
+      'Austin'
+    );
+
+    expect(newComp.id).toMatch(/^comp-\d+/);
+    expect(newComp.legalName).toBe('Vanguard CleanTech Solutions LLC');
+    expect(newComp.formationState).toBe('TX');
+    expect(newComp.ein).toBe('93-8472910');
+    expect(newComp.principalAddress.city).toBe('Austin');
+    expect(newComp.stateNexusProfiles.length).toBeGreaterThan(0);
+    expect(newComp.officersAndMembers.length).toBe(1);
+    expect(newComp.officersAndMembers[0].ownershipPercentage).toBe(100);
   });
 });

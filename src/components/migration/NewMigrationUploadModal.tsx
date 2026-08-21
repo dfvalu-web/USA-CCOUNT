@@ -9,7 +9,12 @@ import {
   ImportedStatementPackage,
   SourceAccountRawLine,
 } from '@/lib/migration/software-migration-engine';
-import { CompanyProfileEngine } from '@/lib/company/company-profile-engine';
+import {
+  CompanyProfileEngine,
+  CompanyTaxProfile,
+  UsTaxEntityType,
+} from '@/lib/company/company-profile-engine';
+import { UsZipLookupEngine } from '@/lib/directory/us-zip-lookup-engine';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import {
@@ -22,12 +27,14 @@ import {
   Layers,
   ArrowRight,
   Database,
+  PlusCircle,
+  MapPin,
 } from 'lucide-react';
 
 interface NewMigrationUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onPackageImported: (pkg: ImportedStatementPackage) => void;
+  onPackageImported: (pkg: ImportedStatementPackage, newCompany?: CompanyTaxProfile) => void;
 }
 
 export function NewMigrationUploadModal({
@@ -37,18 +44,58 @@ export function NewMigrationUploadModal({
 }: NewMigrationUploadModalProps) {
   const { locale } = useI18n();
 
-  const companies = CompanyProfileEngine.INITIAL_COMPANIES;
-  const [selectedCompanyId, setSelectedCompanyId] = useState(companies[0]?.id || 'comp-1');
-  const selectedCompany = companies.find((c) => c.id === selectedCompanyId) || companies[0];
+  const existingCompanies = CompanyProfileEngine.INITIAL_COMPANIES;
+  const [importMode, setImportMode] = useState<'AUTO_REGISTER_NEW' | 'EXISTING_COMPANY'>('AUTO_REGISTER_NEW');
 
+  // Existing company state
+  const [selectedCompanyId, setSelectedCompanyId] = useState(existingCompanies[0]?.id || 'comp-1');
+
+  // New company auto-registration fields
+  const [newCompanyName, setNewCompanyName] = useState('Vanguard CleanTech Solutions LLC');
+  const [newFormationState, setNewFormationState] = useState('TX');
+  const [newEntityType, setNewEntityType] = useState<UsTaxEntityType>('LLC_PARTNERSHIP_1065');
+  const [newZipCode, setNewZipCode] = useState('78701');
+  const [newCity, setNewCity] = useState('Austin');
+  const [newEin, setNewEin] = useState('93-8472910');
+
+  // Software and statement type
   const [sourceSoftware, setSourceSoftware] = useState<SourceAccountingSoftware>('QUICKBOOKS_ONLINE');
   const [statementType, setStatementType] = useState<StatementTypeToImport>('TRIAL_BALANCE');
   const [useSampleData, setUseSampleData] = useState(true);
 
   if (!isOpen) return null;
 
+  const handleZipChange = (zip: string) => {
+    setNewZipCode(zip);
+    if (zip.length >= 5) {
+      const lookup = UsZipLookupEngine.lookupZip(zip);
+      if (lookup) {
+        setNewCity(lookup.city);
+        setNewFormationState(lookup.state);
+      }
+    }
+  };
+
   const handleProcessImport = (e: React.FormEvent) => {
     e.preventDefault();
+
+    let targetCompanyName = newCompanyName;
+    let createdCompany: CompanyTaxProfile | undefined = undefined;
+
+    if (importMode === 'AUTO_REGISTER_NEW') {
+      createdCompany = CompanyProfileEngine.autoRegisterCompanyFromMigration(
+        newCompanyName,
+        newFormationState,
+        newEntityType,
+        newEin,
+        newZipCode,
+        newCity
+      );
+      targetCompanyName = createdCompany.legalName;
+    } else {
+      const found = existingCompanies.find((c) => c.id === selectedCompanyId);
+      targetCompanyName = found?.legalName || 'Empresa Selecionada';
+    }
 
     // Sample real-world raw lines generated based on chosen software and statement type
     let rawLines: SourceAccountRawLine[] = [];
@@ -98,29 +145,29 @@ export function NewMigrationUploadModal({
     }
 
     const newPackage = SoftwareMigrationEngine.processUploadedStatement(
-      selectedCompany?.legalName || 'Empresa Importada',
+      targetCompanyName,
       sourceSoftware,
       statementType,
       rawLines
     );
 
-    onPackageImported(newPackage);
+    onPackageImported(newPackage, createdCompany);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
-      <div className="w-full max-w-xl rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl overflow-hidden">
+      <div className="w-full max-w-xl rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <Upload className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Importar Demonstrativos de Software Contábil</h3>
+              <h3 className="text-sm font-bold text-white">Importar & Auto-Cadastrar Empresa</h3>
               <p className="text-[10px] text-slate-400">
-                QuickBooks Online, Xero, NetSuite, Sage Intacct, FreshBooks ou Planilha Excel / CSV
+                QuickBooks Online, Xero, NetSuite, Sage, FreshBooks ou Planilha Excel / CSV
               </p>
             </div>
           </div>
@@ -129,23 +176,158 @@ export function NewMigrationUploadModal({
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleProcessImport} className="p-6 space-y-4 text-xs">
+        {/* Form Body (Scrollable) */}
+        <form onSubmit={handleProcessImport} className="p-6 space-y-4 text-xs overflow-y-auto">
+          {/* Target Mode Toggle */}
           <div>
-            <label className="text-slate-400 block mb-1 font-semibold">Empresa de Destino no UAS Accounting:</label>
-            <select
-              value={selectedCompanyId}
-              onChange={(e) => setSelectedCompanyId(e.target.value)}
-              className="w-full h-8 rounded bg-slate-900 border border-slate-800 px-2 text-white font-medium"
-            >
-              {companies.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.legalName} ({c.formationState} • {c.entityType})
-                </option>
-              ))}
-            </select>
+            <label className="text-slate-400 block mb-1.5 font-bold uppercase text-[10px]">
+              1. Destino da Importação:
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setImportMode('AUTO_REGISTER_NEW')}
+                className={`p-3 rounded-xl border flex items-center space-x-2.5 transition-all ${
+                  importMode === 'AUTO_REGISTER_NEW'
+                    ? 'bg-emerald-950/50 border-emerald-500 text-emerald-300 font-bold'
+                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="text-left">
+                  <div className="text-xs">Nova Empresa (Auto-Cadastro)</div>
+                  <div className="text-[9px] text-slate-400">Cria perfil fiscal e plano de contas na hora</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setImportMode('EXISTING_COMPANY')}
+                className={`p-3 rounded-xl border flex items-center space-x-2.5 transition-all ${
+                  importMode === 'EXISTING_COMPANY'
+                    ? 'bg-indigo-950/50 border-indigo-500 text-indigo-300 font-bold'
+                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                }`}
+              >
+                <Building2 className="w-4 h-4 text-indigo-400 shrink-0" />
+                <div className="text-left">
+                  <div className="text-xs">Empresa Já Cadastrada</div>
+                  <div className="text-[9px] text-slate-400">Vincula a uma empresa existente</div>
+                </div>
+              </button>
+            </div>
           </div>
 
+          {/* Conditional: Auto-Registration Fields for New Company */}
+          {importMode === 'AUTO_REGISTER_NEW' ? (
+            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <span className="font-bold text-white text-xs flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  Dados da Nova Empresa (Preenchimento Automático por IA)
+                </span>
+                <Badge variant="success" className="text-[9px]">
+                  Auto-Provisionamento Ativo
+                </Badge>
+              </div>
+
+              <div>
+                <label className="text-slate-400 block mb-1 font-semibold">Nome Legal / Razão Social da Empresa:</label>
+                <input
+                  type="text"
+                  required
+                  value={newCompanyName}
+                  onChange={(e) => setNewCompanyName(e.target.value)}
+                  className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2.5 text-white font-bold"
+                  placeholder="Ex: Vanguard CleanTech Solutions LLC"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">Jurisdição / Estado de Registro:</label>
+                  <select
+                    value={newFormationState}
+                    onChange={(e) => setNewFormationState(e.target.value)}
+                    className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2 text-white font-medium"
+                  >
+                    <option value="TX">Texas (TX) — Zero State Income Tax</option>
+                    <option value="DE">Delaware (DE) — Corporate Friendly</option>
+                    <option value="CA">California (CA) — FTB Compliance</option>
+                    <option value="FL">Florida (FL) — Sunshine State</option>
+                    <option value="NY">New York (NY) — Financial Capital</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">Regime Tributário IRS:</label>
+                  <select
+                    value={newEntityType}
+                    onChange={(e) => setNewEntityType(e.target.value as any)}
+                    className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2 text-white font-medium"
+                  >
+                    <option value="LLC_PARTNERSHIP_1065">LLC Parceria (Form 1065)</option>
+                    <option value="S_CORP_1120S">S-Corporation (Form 1120-S)</option>
+                    <option value="C_CORP_1120">C-Corporation (Form 1120)</option>
+                    <option value="SOLE_PROPRIETORSHIP">Sole Proprietorship (Schedule C)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">ZIP Code (EUA):</label>
+                  <input
+                    type="text"
+                    required
+                    value={newZipCode}
+                    onChange={(e) => handleZipChange(e.target.value)}
+                    className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2 text-sky-400 font-mono font-bold"
+                    placeholder="78701"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">Cidade:</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCity}
+                    onChange={(e) => setNewCity(e.target.value)}
+                    className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-slate-400 block mb-1 font-semibold">EIN (Federal Tax ID):</label>
+                  <input
+                    type="text"
+                    value={newEin}
+                    onChange={(e) => setNewEin(e.target.value)}
+                    className="w-full h-8 rounded bg-slate-950 border border-slate-700 px-2 text-emerald-400 font-mono"
+                    placeholder="93-XXXXXXX"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label className="text-slate-400 block mb-1 font-semibold">Selecione a Empresa Cadastrada:</label>
+              <select
+                value={selectedCompanyId}
+                onChange={(e) => setSelectedCompanyId(e.target.value)}
+                className="w-full h-8 rounded bg-slate-900 border border-slate-800 px-2 text-white font-medium"
+              >
+                {existingCompanies.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.legalName} ({c.formationState} • {c.entityType})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Software & Statement Selection */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-slate-400 block mb-1 font-semibold">Software de Origem:</label>
@@ -179,34 +361,27 @@ export function NewMigrationUploadModal({
             </div>
           </div>
 
-          {/* Upload Dropzone */}
-          <div className="p-6 rounded-2xl border-2 border-dashed border-slate-800 hover:border-emerald-500/60 bg-slate-900/40 text-center space-y-2 cursor-pointer transition-colors">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-              <FileSpreadsheet className="w-5 h-5" />
+          {/* Drag and Drop Zone */}
+          <div className="border-2 border-dashed border-slate-800 hover:border-emerald-500/60 rounded-xl p-5 text-center bg-slate-900/40 transition-colors cursor-pointer">
+            <FileSpreadsheet className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+            <div className="text-white font-medium text-xs">
+              Arraste seu arquivo (.CSV, .XLSX, .QBO, .TXT) ou clique para selecionar
             </div>
-            <div>
-              <span className="font-bold text-white block">Arraste seu arquivo (.CSV, .XLSX, .JSON, .QBO) aqui</span>
-              <span className="text-[10px] text-slate-400">ou clique para selecionar do seu computador</span>
+            <div className="text-[10px] text-slate-500 mt-1">
+              O motor de IA detectará as colunas de Conta, Débito, Crédito e Saldo automaticamente
             </div>
-            <Badge variant="success" className="text-[9px]">
-              IA Auto-Mapping Ativa (98%+ de Precisão)
-            </Badge>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>
-              O motor de IA analisará automaticamente os nomes de contas, categorias e valores para preencher a matriz De-Para em conformidade com o <strong>US GAAP</strong>.
-            </span>
-          </div>
-
-          <div className="pt-3 border-t border-slate-800 flex justify-end space-x-2">
+          {/* Footer Submit */}
+          <div className="pt-3 border-t border-slate-800 flex justify-end space-x-2 shrink-0">
             <Button type="button" size="sm" variant="ghost" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit" size="sm" variant="primary" className="bg-emerald-600 hover:bg-emerald-500 font-bold">
-              <ArrowRight className="w-4 h-4 mr-1.5" />
-              Processar & Mapear com IA
+              <Sparkles className="w-4 h-4 mr-1.5" />
+              {importMode === 'AUTO_REGISTER_NEW'
+                ? 'Auto-Cadastrar Empresa & Processar Importação'
+                : 'Processar Arquivo & Mapear Contas'}
             </Button>
           </div>
         </form>

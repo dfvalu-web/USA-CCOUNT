@@ -8,6 +8,7 @@ import {
   ImportedStatementPackage,
   SourceAccountingSoftware,
 } from '@/lib/migration/software-migration-engine';
+import { CompanyTaxProfile, CompanyProfileEngine } from '@/lib/company/company-profile-engine';
 import { AccountMappingModal } from './AccountMappingModal';
 import { NewMigrationUploadModal } from './NewMigrationUploadModal';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
@@ -43,12 +44,20 @@ export function SoftwareMigrationView() {
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handlePackageImported = (newPkg: ImportedStatementPackage) => {
+  const handlePackageImported = (newPkg: ImportedStatementPackage, newCompany?: CompanyTaxProfile) => {
     setPackages([newPkg, ...packages]);
     setSelectedPkgForMapping(newPkg);
-    setNotificationMsg(
-      `Demonstrativo de ${newPkg.companyName} (${newPkg.sourceSoftware.replace(/_/g, ' ')}) carregado com sucesso! Revise o mapeamento De-Para.`
-    );
+
+    if (newCompany) {
+      CompanyProfileEngine.INITIAL_COMPANIES.push(newCompany);
+      setNotificationMsg(
+        `🎉 Auto-Cadastro Concluído! A empresa "${newCompany.legalName}" (${newCompany.formationState} • EIN ${newCompany.ein}) foi cadastrada e provisionada automaticamente no sistema. Demonstrativo (${newPkg.sourceSoftware.replace(/_/g, ' ')}) pronto para conferência De-Para!`
+      );
+    } else {
+      setNotificationMsg(
+        `Demonstrativo de ${newPkg.companyName} (${newPkg.sourceSoftware.replace(/_/g, ' ')}) carregado com sucesso! Revise o mapeamento De-Para.`
+      );
+    }
   };
 
   const handleSaveMappings = (updatedPkg: ImportedStatementPackage) => {

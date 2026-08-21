@@ -460,4 +460,82 @@ export class CompanyProfileEngine {
       section1446WithholdingAmount,
     };
   }
+
+  /**
+   * Auto-provisions and registers a new company directly from a migration package/file
+   */
+  public static autoRegisterCompanyFromMigration(
+    legalName: string,
+    formationState: string = 'DE',
+    entityType: UsTaxEntityType = 'LLC_PARTNERSHIP_1065',
+    ein: string = '',
+    zipCode: string = '19801',
+    city: string = 'Wilmington'
+  ): CompanyTaxProfile {
+    const generatedId = `comp-${Math.floor(100 + Math.random() * 900)}`;
+    const effectiveEin = ein.trim() || `${Math.floor(10 + Math.random() * 89)}-${Math.floor(1000000 + Math.random() * 9000000)}`;
+
+    const newCompany: CompanyTaxProfile = {
+      id: generatedId,
+      legalName,
+      dbaName: legalName,
+      ein: effectiveEin,
+      entityType,
+      taxAccountingMethod: 'ACCRUAL',
+      taxYearEndMonth: 12,
+      naicsCode: '541512',
+      businessActivityDescription: 'Enterprise Technology & Professional Services',
+      formationDate: new Date().toISOString().split('T')[0],
+      formationState,
+      principalAddress: {
+        street: '100 Business Parkway',
+        suite: 'Suite 200',
+        city,
+        state: formationState,
+        zipCode,
+        country: 'USA',
+      },
+      contactEmail: `admin@${legalName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'company'}.com`,
+      contactPhone: '+1 (512) 555-0100',
+      stateNexusProfiles: [
+        {
+          stateCode: formationState,
+          stateName: formationState === 'DE' ? 'Delaware' : formationState === 'TX' ? 'Texas' : formationState === 'CA' ? 'California' : 'Primary State',
+          stateTaxId: `${formationState}-TAX-${Math.floor(100000 + Math.random() * 900000)}`,
+          sosFileNumber: `SOS-${Math.floor(1000000 + Math.random() * 9000000)}`,
+          hasPhysicalNexus: true,
+          hasEconomicNexus: true,
+          salesTaxPermitNumber: `${formationState}-ST-${Math.floor(10000 + Math.random() * 90000)}`,
+          salesTaxRate: formationState === 'TX' ? 0.0825 : formationState === 'CA' ? 0.0725 : 0.0,
+          annualReportDueDate: 'May 15',
+          franchiseTaxStatus: 'ACTIVE_GOOD_STANDING',
+        },
+      ],
+      officersAndMembers: [
+        {
+          id: `off-${Math.floor(100 + Math.random() * 900)}`,
+          fullName: 'Managing Principal Officer',
+          title: entityType.includes('LLC') ? 'Managing Member' : 'President / CEO',
+          memberType: entityType.includes('LLC') ? 'MANAGING_MEMBER' : 'CORPORATE_OFFICER_DIRECTOR',
+          taxClassification: 'US_CITIZEN_OR_RESIDENT',
+          ssnOrItinMasked: '•••-••-8899',
+          ownershipPercentage: 100.0,
+          profitSharingPercentage: 100.0,
+          lossSharingPercentage: 100.0,
+          beginningCapitalAccount: 50000,
+          capitalContributedYear: 0,
+          currentYearDistributions: 0,
+          endingCapitalAccount: 50000,
+          guaranteedPaymentsYear: 0,
+          isTaxMattersPartner: true,
+          isMaterialParticipant: true,
+          receivesW2Salary: entityType === 'S_CORP_1120S',
+          k1DistributionRatio: 1.0,
+        },
+      ],
+      isCurrentActiveCompany: true,
+    };
+
+    return newCompany;
+  }
 }
