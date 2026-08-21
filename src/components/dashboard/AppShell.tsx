@@ -496,36 +496,9 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
             </div>
           )}
           {activeTab === 'settings' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('nav.settings')}</CardTitle>
-                <CardDescription>
-                  Organization Tax Profile, Multi-currency, and Accounting Preferences
-                </CardDescription>
-              </CardHeader>
-              <div className="space-y-4 max-w-xl text-xs">
-                <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
-                  <span className="text-slate-300">Entity Legal Name</span>
-                  <span className="text-white font-medium">{activeCompany?.legalName || 'Apex Cloud Services LLC'}</span>
-                </div>
-                <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
-                  <span className="text-slate-300">Jurisdiction & Entity Structure</span>
-                  <span className="text-white font-medium">{activeCompany?.formationState || 'Delaware'} LLC (Form 1065)</span>
-                </div>
-                <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
-                  <span className="text-slate-300">Tax Accounting Basis</span>
-                  <span className="text-emerald-400 font-medium">{basis} Basis</span>
-                </div>
-                <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
-                  <span className="text-slate-300">Functional & Reporting Currency</span>
-                  <span className="text-white font-mono font-medium">USD ($)</span>
-                </div>
-                <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
-                  <span className="text-slate-300">Phase 1 Compliance Engine</span>
-                  <span className="text-emerald-400 font-medium">ASC 606 & US GAAP (Service Businesses)</span>
-                </div>
-              </div>
-            </Card>
+            <div className="space-y-6">
+              <CompanyProfileView initialTab="config" />
+            </div>
           )}
 
           {/* Safety Fallback: if activeTab is not matched, render ExecutiveCockpit */}

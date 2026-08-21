@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency } from '@/lib/i18n/formatters';
 import {
@@ -37,17 +37,21 @@ import {
   Layers,
   ArrowRightLeft,
   Calculator,
+  Settings,
+  Save,
+  Check,
+  Lock,
 } from 'lucide-react';
 
 interface CompanyProfileViewProps {
   onCompanySwitch?: (activeCompany: CompanyTaxProfile) => void;
-  initialTab?: 'companies' | 'federal-tax' | 'state-nexus' | 'officers';
+  initialTab?: 'config' | 'companies' | 'federal-tax' | 'state-nexus' | 'officers';
 }
 
-export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }: CompanyProfileViewProps) {
+export function CompanyProfileView({ onCompanySwitch, initialTab = 'config' }: CompanyProfileViewProps) {
   const { locale, t } = useI18n();
   const { activeCompany, companies, setActiveCompanyId, addCompany, updateCompany } = useCompany();
-  const [activeTab, setActiveTab] = useState<'companies' | 'federal-tax' | 'state-nexus' | 'officers'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'config' | 'companies' | 'federal-tax' | 'state-nexus' | 'officers'>(initialTab);
   const [selectedPartnerForK1, setSelectedPartnerForK1] = useState<OfficerMemberProfile | null>(null);
   const [simulatedProfit, setSimulatedProfit] = useState<number>(250000);
 
@@ -56,20 +60,52 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
   const [isNewPartnerModalOpen, setIsNewPartnerModalOpen] = useState(false);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
-  const handlePartnerCreated = (newPartner: OfficerMemberProfile) => {
-    if (activeCompany) {
-      const updated: CompanyTaxProfile = {
-        ...activeCompany,
-        officersAndMembers: [...activeCompany.officersAndMembers, newPartner],
-      };
-      updateCompany(updated);
-      setNotificationMsg(
-        `Sócio "${newPartner.fullName}" (${newPartner.title}) cadastrado com sucesso com ${newPartner.ownershipPercentage}% de participação no capital conforme a legislação societária americana!`
-      );
-    }
-  };
+  // Live Edit Form State for Active Company
+  const [editForm, setEditForm] = useState<Partial<CompanyTaxProfile>>({
+    legalName: activeCompany?.legalName || '',
+    dbaName: activeCompany?.dbaName || '',
+    ein: activeCompany?.ein || '',
+    entityType: activeCompany?.entityType || 'LLC_PARTNERSHIP_1065',
+    taxAccountingMethod: activeCompany?.taxAccountingMethod || 'ACCRUAL',
+    taxYearEndMonth: activeCompany?.taxYearEndMonth || 12,
+    naicsCode: activeCompany?.naicsCode || '561720',
+    businessActivityDescription: activeCompany?.businessActivityDescription || '',
+    formationState: activeCompany?.formationState || 'GA',
+    formationDate: activeCompany?.formationDate || '2022-01-10',
+    contactEmail: activeCompany?.contactEmail || '',
+    contactPhone: activeCompany?.contactPhone || '',
+    principalAddress: {
+      street: activeCompany?.principalAddress?.street || '',
+      suite: activeCompany?.principalAddress?.suite || '',
+      city: activeCompany?.principalAddress?.city || '',
+      state: activeCompany?.principalAddress?.state || 'GA',
+      zipCode: activeCompany?.principalAddress?.zipCode || '',
+      country: activeCompany?.principalAddress?.country || 'USA',
+    },
+  });
 
-  // Form State
+  // Keep form in sync when active company changes
+  useEffect(() => {
+    if (activeCompany) {
+      setEditForm({
+        legalName: activeCompany.legalName,
+        dbaName: activeCompany.dbaName || '',
+        ein: activeCompany.ein,
+        entityType: activeCompany.entityType,
+        taxAccountingMethod: activeCompany.taxAccountingMethod,
+        taxYearEndMonth: activeCompany.taxYearEndMonth || 12,
+        naicsCode: activeCompany.naicsCode,
+        businessActivityDescription: activeCompany.businessActivityDescription,
+        formationState: activeCompany.formationState,
+        formationDate: activeCompany.formationDate,
+        contactEmail: activeCompany.contactEmail,
+        contactPhone: activeCompany.contactPhone,
+        principalAddress: { ...activeCompany.principalAddress },
+      });
+    }
+  }, [activeCompany]);
+
+  // Create Company Form State
   const [form, setForm] = useState<Partial<CompanyTaxProfile>>({
     legalName: '',
     dbaName: '',
@@ -93,6 +129,19 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
     },
   });
 
+  const handlePartnerCreated = (newPartner: OfficerMemberProfile) => {
+    if (activeCompany) {
+      const updated: CompanyTaxProfile = {
+        ...activeCompany,
+        officersAndMembers: [...activeCompany.officersAndMembers, newPartner],
+      };
+      updateCompany(updated);
+      setNotificationMsg(
+        `Sócio "${newPartner.fullName}" (${newPartner.title}) cadastrado com sucesso com ${newPartner.ownershipPercentage}% de participação no capital conforme a legislação societária americana!`
+      );
+    }
+  };
+
   const handleSetActiveCompany = (companyId: string) => {
     setActiveCompanyId(companyId);
     const selected = companies.find((c) => c.id === companyId);
@@ -100,6 +149,39 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
       onCompanySwitch(selected);
     }
     setNotificationMsg(`Empresa ativa alternada para: "${selected?.legalName}". Todos os relatórios contábeis, faturas e apurações de Tax agora refletem esta entidade!`);
+  };
+
+  const handleUpdateActiveCompany = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeCompany) return;
+
+    const cleanEin = CompanyProfileEngine.formatEin(editForm.ein || activeCompany.ein);
+    const updated: CompanyTaxProfile = {
+      ...activeCompany,
+      legalName: editForm.legalName || activeCompany.legalName,
+      dbaName: editForm.dbaName,
+      ein: cleanEin,
+      entityType: editForm.entityType || activeCompany.entityType,
+      taxAccountingMethod: editForm.taxAccountingMethod || activeCompany.taxAccountingMethod,
+      taxYearEndMonth: editForm.taxYearEndMonth || 12,
+      naicsCode: editForm.naicsCode || activeCompany.naicsCode,
+      businessActivityDescription: editForm.businessActivityDescription || activeCompany.businessActivityDescription,
+      formationState: editForm.formationState || activeCompany.formationState,
+      formationDate: editForm.formationDate || activeCompany.formationDate,
+      contactEmail: editForm.contactEmail || activeCompany.contactEmail,
+      contactPhone: editForm.contactPhone || activeCompany.contactPhone,
+      principalAddress: {
+        street: editForm.principalAddress?.street || activeCompany.principalAddress.street,
+        suite: editForm.principalAddress?.suite || activeCompany.principalAddress.suite,
+        city: editForm.principalAddress?.city || activeCompany.principalAddress.city,
+        state: editForm.principalAddress?.state || activeCompany.principalAddress.state,
+        zipCode: editForm.principalAddress?.zipCode || activeCompany.principalAddress.zipCode,
+        country: 'USA',
+      },
+    };
+
+    updateCompany(updated);
+    setNotificationMsg(`Configurações de "${updated.legalName}" salvas com sucesso! Todos os módulos fiscais e contábeis foram atualizados.`);
   };
 
   const handleSaveNewCompany = (e: React.FormEvent) => {
@@ -122,7 +204,7 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
         street: form.principalAddress?.street || 'Principal Street',
         suite: form.principalAddress?.suite,
         city: form.principalAddress?.city || 'Austin',
-        state: form.principalAddress?.state || 'TX',
+        state: form.formationState || 'TX',
         zipCode: form.principalAddress?.zipCode || '78701',
         country: 'USA',
       },
@@ -241,9 +323,9 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
-                <CardTitle>Cadastro de Empresas & Perfil Tributário (Tax Entity Profile)</CardTitle>
+                <CardTitle>Configuração de Empresa & Perfil Societário (Tax Entity)</CardTitle>
                 <CardDescription>
-                  Registro de Entidades Jurídicas dos EUA • Form 1120/1120-S/1065 • Inscrições Estaduais & Nexus
+                  Parâmetros da Entidade dos EUA • US GAAP Accrual/Cash • IRS Form 1065/1120-S • Inscrições Estaduais
                 </CardDescription>
               </div>
             </div>
@@ -258,10 +340,22 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
         </CardHeader>
 
         {/* Tab Navigation */}
-        <div className="px-6 py-2 border-y border-slate-800 bg-slate-900/80 flex space-x-4">
+        <div className="px-6 py-2 border-y border-slate-800 bg-slate-900/80 flex flex-wrap gap-4">
+          <button
+            onClick={() => setActiveTab('config')}
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
+              activeTab === 'config'
+                ? 'border-emerald-400 text-emerald-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Settings className="w-4 h-4" />
+            Configurações da Empresa Ativa
+          </button>
+
           <button
             onClick={() => setActiveTab('companies')}
-            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
               activeTab === 'companies'
                 ? 'border-emerald-400 text-emerald-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -273,7 +367,7 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
 
           <button
             onClick={() => setActiveTab('federal-tax')}
-            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
               activeTab === 'federal-tax'
                 ? 'border-sky-400 text-sky-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -285,40 +379,303 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
 
           <button
             onClick={() => setActiveTab('state-nexus')}
-            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
               activeTab === 'state-nexus'
                 ? 'border-amber-400 text-amber-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <MapPin className="w-4 h-4" />
-            Inscrições Estaduais & Sales Tax Nexus ({activeCompany.stateNexusProfiles.length})
+            Inscrições Estaduais & Nexus ({activeCompany.stateNexusProfiles.length})
           </button>
 
           <button
             onClick={() => setActiveTab('officers')}
-            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 cursor-pointer ${
               activeTab === 'officers'
                 ? 'border-purple-400 text-purple-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <Users className="w-4 h-4" />
-            Sócios, Administradores & K-1s ({activeCompany.officersAndMembers.length})
+            Sócios & K-1s ({activeCompany.officersAndMembers.length})
           </button>
         </div>
 
         {/* Success Alert Banner */}
         {notificationMsg && (
-          <div className="m-4 p-3 rounded-lg bg-emerald-950/70 border border-emerald-700 text-emerald-300 text-xs flex items-center justify-between">
+          <div className="m-4 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-700 text-emerald-300 text-xs flex items-center justify-between shadow-lg">
             <div className="flex items-center space-x-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>{notificationMsg}</span>
+              <span className="font-medium">{notificationMsg}</span>
             </div>
-            <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setNotificationMsg(null)}>
+            <Button size="sm" variant="ghost" className="h-6 text-xs px-2 cursor-pointer" onClick={() => setNotificationMsg(null)}>
               Fechar
             </Button>
           </div>
+        )}
+
+        {/* Tab 0: Configurações Gerais da Empresa Ativa */}
+        {activeTab === 'config' && (
+          <form onSubmit={handleUpdateActiveCompany} className="p-6 space-y-6">
+            {/* Header info */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-emerald-400" />
+                  Editar Parâmetros Corporativos: {activeCompany.legalName}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Atualize os dados cadastrais, endereço nos EUA, regime contábil e enquadramento societário IRS da empresa ativa.
+                </p>
+              </div>
+              <Badge variant="success">Entidade Ativa</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column: Identificação & IRS */}
+              <div className="space-y-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-800">
+                  <Landmark className="w-3.5 h-3.5 text-sky-400" />
+                  Identificação Jurídica & IRS Tax ID
+                </h4>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Razão Social Completa (Legal Entity Name) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.legalName || ''}
+                    onChange={(e) => setEditForm({ ...editForm, legalName: e.target.value })}
+                    className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500 font-medium"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Nome Fantasia (DBA / Trade Name)</label>
+                  <input
+                    type="text"
+                    value={editForm.dbaName || ''}
+                    onChange={(e) => setEditForm({ ...editForm, dbaName: e.target.value })}
+                    placeholder="Ex: Milla Maid Commercial"
+                    className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Federal EIN *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.ein || ''}
+                      onChange={(e) => setEditForm({ ...editForm, ein: e.target.value })}
+                      placeholder="XX-XXXXXXX"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Estado de Registro *</label>
+                    <select
+                      value={editForm.formationState || 'GA'}
+                      onChange={(e) => setEditForm({ ...editForm, formationState: e.target.value })}
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500 font-semibold"
+                    >
+                      {CompanyProfileEngine.STATES.map((s) => (
+                        <option key={s.code} value={s.code}>
+                          {s.name} ({s.code})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Tipo Societário IRS</label>
+                    <select
+                      value={editForm.entityType || 'LLC_PARTNERSHIP_1065'}
+                      onChange={(e) => setEditForm({ ...editForm, entityType: e.target.value as any })}
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    >
+                      <option value="LLC_PARTNERSHIP_1065">Form 1065 (Multi-Member LLC)</option>
+                      <option value="S_CORP_1120S">Form 1120-S (S-Corporation)</option>
+                      <option value="C_CORP_1120">Form 1120 (C-Corporation)</option>
+                      <option value="SINGLE_MEMBER_LLC_DISREGARDED">Schedule C (Single-Member LLC)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Método Contábil US GAAP</label>
+                    <select
+                      value={editForm.taxAccountingMethod || 'ACCRUAL'}
+                      onChange={(e) => setEditForm({ ...editForm, taxAccountingMethod: e.target.value as any })}
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    >
+                      <option value="ACCRUAL">Competência (Accrual Basis)</option>
+                      <option value="CASH">Caixa (Cash Basis)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Código NAICS</label>
+                    <input
+                      type="text"
+                      value={editForm.naicsCode || ''}
+                      onChange={(e) => setEditForm({ ...editForm, naicsCode: e.target.value })}
+                      placeholder="561720"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Data de Constituição</label>
+                    <input
+                      type="date"
+                      value={editForm.formationDate || ''}
+                      onChange={(e) => setEditForm({ ...editForm, formationDate: e.target.value })}
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Endereço & Contatos */}
+              <div className="space-y-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-800">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  Domicílio Fiscal nos EUA & Contatos
+                </h4>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Logradouro / Rua (Street Address) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.principalAddress?.street || ''}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        principalAddress: { ...editForm.principalAddress!, street: e.target.value },
+                      })
+                    }
+                    placeholder="1200 Industrial Pkwy"
+                    className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Suite / Sala</label>
+                    <input
+                      type="text"
+                      value={editForm.principalAddress?.suite || ''}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          principalAddress: { ...editForm.principalAddress!, suite: e.target.value },
+                        })
+                      }
+                      placeholder="Suite 400"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Cidade *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.principalAddress?.city || ''}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          principalAddress: { ...editForm.principalAddress!, city: e.target.value },
+                        })
+                      }
+                      placeholder="Atlanta"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">ZIP Code *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.principalAddress?.zipCode || ''}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          principalAddress: { ...editForm.principalAddress!, zipCode: e.target.value },
+                        })
+                      }
+                      placeholder="30301"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white font-mono focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">E-mail Corporativo</label>
+                    <input
+                      type="email"
+                      value={editForm.contactEmail || ''}
+                      onChange={(e) => setEditForm({ ...editForm, contactEmail: e.target.value })}
+                      placeholder="finance@millamaidservices.com"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Telefone</label>
+                    <input
+                      type="text"
+                      value={editForm.contactPhone || ''}
+                      onChange={(e) => setEditForm({ ...editForm, contactPhone: e.target.value })}
+                      placeholder="(404) 555-0199"
+                      className="w-full h-10 rounded-xl bg-slate-950 border border-slate-800 px-3 text-xs text-white focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Descrição da Atividade Principal</label>
+                  <textarea
+                    rows={2}
+                    value={editForm.businessActivityDescription || ''}
+                    onChange={(e) => setEditForm({ ...editForm, businessActivityDescription: e.target.value })}
+                    placeholder="Serviços residenciais e comerciais de limpeza especializada..."
+                    className="w-full rounded-xl bg-slate-950 border border-slate-800 p-2.5 text-xs text-white focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions Bar */}
+            <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center space-x-2 text-xs text-slate-400">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>As alterações são auditadas e propagadas para todos os relatórios contábeis e fiscais.</span>
+              </div>
+
+              <div className="flex items-center space-x-3 w-full sm:w-auto">
+                <Button
+                  type="submit"
+                  size="md"
+                  variant="primary"
+                  className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs px-6 h-11 rounded-xl shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-2 cursor-pointer hover:scale-[1.01]"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Salvar Configurações da Empresa</span>
+                </Button>
+              </div>
+            </div>
+          </form>
         )}
 
         {/* Tab 1: Empresas Cadastradas */}
@@ -385,7 +742,7 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
                       <Button
                         size="sm"
                         variant="secondary"
-                        className="h-7 text-xs px-2"
+                        className="h-7 text-xs px-2 cursor-pointer"
                         onClick={() => handleSetActiveCompany(company.id)}
                       >
                         <ArrowRightLeft className="w-3 h-3 mr-1" />
@@ -448,30 +805,29 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
               <div className="text-slate-400 font-mono">
                 {activeCompany.principalAddress.city}, {activeCompany.principalAddress.state} {activeCompany.principalAddress.zipCode} • {activeCompany.principalAddress.country}
               </div>
-              <div className="text-sky-300 pt-1">
-                E-mail: {activeCompany.contactEmail} • Telefone: {activeCompany.contactPhone}
-              </div>
             </div>
           </div>
         )}
 
-        {/* Tab 3: Inscrições Estaduais & Sales Tax Nexus */}
+        {/* Tab 3: Inscrições Estaduais & Nexus */}
         {activeTab === 'state-nexus' && (
           <div className="p-6 space-y-4">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-              Estados com Nexus Físico / Econômico e Inscrições Estaduais ({activeCompany.legalName}):
-            </span>
+            <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">
+                Estados com Nexo Fiscal Ativo ({activeCompany.legalName}):
+              </span>
+              <Badge variant="info">Multi-State Nexus Engine</Badge>
+            </div>
 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-24">Estado</TableHead>
-                  <TableHead>Inscrição Estadual (Taxpayer ID / WebFile)</TableHead>
-                  <TableHead>Secretaria de Estado (SOS File #)</TableHead>
-                  <TableHead>Permissão de Sales Tax</TableHead>
-                  <TableHead className="w-24 text-right">Alíquota</TableHead>
-                  <TableHead className="w-32">Vencimento Anual</TableHead>
-                  <TableHead className="w-32 text-center">Status</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Inscrição Estadual (Tax ID)</TableHead>
+                  <TableHead>Registro Secretaria de Estado (SOS)</TableHead>
+                  <TableHead>Permissão Sales Tax</TableHead>
+                  <TableHead className="w-28 text-right">Alíquota Base</TableHead>
+                  <TableHead className="w-36 text-center">Status Regularidade</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -480,20 +836,17 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
                     <TableCell className="font-bold text-white">
                       {nexus.stateName} ({nexus.stateCode})
                     </TableCell>
-                    <TableCell className="font-mono text-emerald-400 font-semibold">
+                    <TableCell className="font-mono text-slate-300">
                       {nexus.stateTaxId}
                     </TableCell>
-                    <TableCell className="font-mono text-slate-300">
+                    <TableCell className="font-mono text-slate-400 text-xs">
                       {nexus.sosFileNumber}
                     </TableCell>
-                    <TableCell className="font-mono text-sky-400">
+                    <TableCell className="font-mono text-amber-400 text-xs">
                       {nexus.salesTaxPermitNumber}
                     </TableCell>
-                    <TableCell className="text-right font-mono font-bold text-white">
+                    <TableCell className="text-right font-mono font-bold text-emerald-400">
                       {(nexus.salesTaxRate * 100).toFixed(2)}%
-                    </TableCell>
-                    <TableCell className="text-xs text-amber-300 font-medium">
-                      {nexus.annualReportDueDate}
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant="success" className="text-[10px]">
@@ -524,7 +877,7 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
                 <Button
                   size="sm"
                   variant="primary"
-                  className="bg-emerald-600 hover:bg-emerald-500 font-bold"
+                  className="bg-emerald-600 hover:bg-emerald-500 font-bold cursor-pointer"
                   onClick={() => setIsNewPartnerModalOpen(true)}
                 >
                   <Plus className="w-3.5 h-3.5 mr-1" />
@@ -648,8 +1001,8 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
                     <TableCell className="text-center">
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="h-7 text-[11px] px-2"
+                        variant="secondary"
+                        className="h-7 text-xs px-2 cursor-pointer"
                         onClick={() => setSelectedPartnerForK1(officer)}
                       >
                         <FileCheck className="w-3 h-3 mr-1 text-emerald-400" />
@@ -664,37 +1017,42 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
         )}
       </Card>
 
-      {/* Modal: Cadastrar Novo Sócio (US Law) */}
-      <NewPartnerModal
-        isOpen={isNewPartnerModalOpen}
-        onClose={() => setIsNewPartnerModalOpen(false)}
-        onPartnerCreated={handlePartnerCreated}
-        companyName={activeCompany.legalName}
-        isPartnershipOrLLC={activeCompany.entityType.includes('LLC') || activeCompany.entityType.includes('PARTNERSHIP')}
-      />
+      {/* New Partner Modal */}
+      {isNewPartnerModalOpen && (
+        <NewPartnerModal
+          isOpen={isNewPartnerModalOpen}
+          onClose={() => setIsNewPartnerModalOpen(false)}
+          onPartnerCreated={handlePartnerCreated}
+          companyName={activeCompany.legalName}
+          isPartnershipOrLLC={activeCompany.entityType.includes('LLC') || activeCompany.entityType.includes('PARTNERSHIP')}
+        />
+      )}
 
-      {/* Modal: Visualizar e Exportar IRS Schedule K-1 Oficial */}
-      <PartnerK1Modal
-        isOpen={!!selectedPartnerForK1}
-        onClose={() => setSelectedPartnerForK1(null)}
-        partner={selectedPartnerForK1}
-        company={activeCompany}
-      />
+      {/* Partner K-1 Modal */}
+      {selectedPartnerForK1 && (
+        <PartnerK1Modal
+          isOpen={!!selectedPartnerForK1}
+          onClose={() => setSelectedPartnerForK1(null)}
+          partner={selectedPartnerForK1}
+          company={activeCompany}
+        />
+      )}
 
-      {/* Modal: Cadastrar Nova Empresa */}
+      {/* Modal de Cadastro de Nova Empresa */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
                 <Building2 className="w-5 h-5 text-emerald-400" />
-                Cadastrar Nova Empresa nos EUA
-              </h3>
-              <button onClick={() => setIsCreateModalOpen(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
+                <h3 className="text-base font-bold text-white">Cadastrar Nova Entidade Empresarial (EUA)</h3>
+              </div>
+              <Button size="sm" variant="ghost" onClick={() => setIsCreateModalOpen(false)}>
+                <X className="w-4 h-4" />
+              </Button>
             </div>
-            <form onSubmit={handleSaveNewCompany} className="p-6 space-y-4 text-xs overflow-y-auto flex-1">
+
+            <form onSubmit={handleSaveNewCompany} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-slate-400 block mb-1">Razão Social Completa (Legal Name)</label>
