@@ -64,7 +64,7 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
       />
 
       <Card className="border-slate-800 bg-slate-950">
-        <CardHeader>
+        <CardHeader className="no-print">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center space-x-2">
@@ -93,7 +93,7 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
         </CardHeader>
 
       {/* Filters & Search Toolbar */}
-      <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs no-print">
         <div className="flex items-center space-x-2">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-slate-400 font-semibold">Filtrar por Tipo:</span>

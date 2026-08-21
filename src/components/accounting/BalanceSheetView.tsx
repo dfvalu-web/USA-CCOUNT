@@ -72,7 +72,7 @@ export function BalanceSheetView({ data }: BalanceSheetViewProps) {
       />
 
       <Card className="border-slate-800 bg-slate-950">
-        <CardHeader>
+        <CardHeader className="no-print">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center space-x-2">

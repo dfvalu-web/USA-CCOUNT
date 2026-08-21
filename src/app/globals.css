@@ -65,16 +65,32 @@ body {
     size: letter portrait;
   }
 
-  body, html {
-    background-color: #ffffff !important;
-    color: #0f172a !important;
-    font-size: 9.5pt !important;
-    line-height: 1.35 !important;
+  /* Universal Print Reset: Pure White Paper & Pure Black Text */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #000000 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide navigation, sidebars, buttons, ribbons and action controls */
+  body,
+  html,
+  main,
+  section,
+  div {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 9pt !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Hide screen navigation, sidebars, buttons, alerts, headers, inputs */
   nav,
   aside,
   header,
@@ -84,7 +100,9 @@ body {
   .sidebar,
   .header-ribbon,
   input,
-  select {
+  select,
+  .badge,
+  [class*="Badge"] {
     display: none !important;
   }
 
@@ -92,7 +110,7 @@ body {
     display: block !important;
   }
 
-  /* Financial Cards & Containers on paper */
+  /* Cards & Containers on paper */
   .card,
   [class*="Card"] {
     background-color: #ffffff !important;
@@ -106,24 +124,27 @@ body {
   table {
     width: 100% !important;
     border-collapse: collapse !important;
-    font-size: 9pt !important;
-    color: #0f172a !important;
+    font-size: 8.5pt !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
   }
 
   th {
-    background-color: #f1f5f9 !important;
-    color: #0f172a !important;
+    background-color: #f8fafc !important;
+    color: #000000 !important;
     font-weight: 700 !important;
-    border-bottom: 1.5pt solid #0f172a !important;
-    padding: 6px 8px !important;
+    border-bottom: 1.5pt solid #000000 !important;
+    border-top: 0.5pt solid #cbd5e1 !important;
+    padding: 5px 6px !important;
     text-transform: uppercase !important;
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
   }
 
   td {
     border-bottom: 0.5pt solid #e2e8f0 !important;
-    padding: 5px 8px !important;
-    color: #0f172a !important;
+    padding: 4px 6px !important;
+    color: #000000 !important;
+    background-color: transparent !important;
   }
 
   tr {
@@ -136,38 +157,54 @@ body {
     break-inside: avoid !important;
   }
 
-  /* Accounting double underline for Grand Totals */
-  .print-double-underline {
-    border-top: 1pt solid #0f172a !important;
-    border-bottom: 3.5pt double #0f172a !important;
+  /* Section Header Banners in Print: Light background, subtle border, bold black text */
+  div[class*="rounded-xl"],
+  div[class*="rounded-2xl"],
+  div[class*="rounded-lg"] {
+    background-color: #f8fafc !important;
+    border: 0.75pt solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  div[class*="rounded-xl"] span,
+  div[class*="rounded-lg"] span {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Total Rows and Grand Totals with crisp accounting double underline */
+  .print-double-underline,
+  div[class*="from-slate-900"],
+  div[class*="from-emerald-950"],
+  div[class*="bg-gradient"],
+  tr[class*="print-double-underline"],
+  tr[class*="bg-slate-900"] {
+    background-color: #ffffff !important;
+    border-top: 1.5pt solid #000000 !important;
+    border-bottom: 3.5pt double #000000 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+  }
+
+  div[class*="from-slate-900"] span,
+  div[class*="from-emerald-950"] span,
+  div[class*="bg-gradient"] span,
+  tr[class*="bg-slate-900"] td {
+    color: #000000 !important;
     font-weight: 800 !important;
   }
 
-  /* Text color resets for high readability on white paper */
-  .text-white,
-  .text-slate-200,
-  .text-slate-300,
-  .text-slate-400,
-  .text-slate-500,
-  .text-emerald-400,
-  .text-emerald-300,
-  .text-sky-400,
-  .text-amber-400,
-  .text-rose-400 {
-    color: #0f172a !important;
-  }
-
-  .bg-slate-900,
-  .bg-slate-950,
-  .bg-slate-900\/50,
-  .bg-slate-900\/80 {
-    background-color: transparent !important;
-  }
-
-  .border-slate-800,
-  .border-slate-700,
-  .border-slate-900 {
-    border-color: #cbd5e1 !important;
+  /* Force pure black on all typography */
+  span, div, p, strong, h1, h2, h3, h4, h5, h6,
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400, .text-slate-500,
+  .text-emerald-400, .text-emerald-300, .text-sky-400, .text-sky-300,
+  .text-rose-400, .text-rose-300, .text-amber-400 {
+    color: #000000 !important;
   }
 }
 

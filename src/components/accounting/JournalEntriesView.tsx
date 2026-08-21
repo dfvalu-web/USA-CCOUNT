@@ -106,7 +106,7 @@ export function JournalEntriesView({
       />
 
       <Card className="border-slate-800 bg-slate-950">
-        <CardHeader>
+        <CardHeader className="no-print">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
@@ -138,7 +138,7 @@ export function JournalEntriesView({
         </CardHeader>
 
       {/* Filter and Search Bar */}
-      <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs no-print">
         <div className="flex items-center space-x-2">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-slate-400 font-semibold">Regime Contábil:</span>
