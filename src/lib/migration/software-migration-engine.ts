@@ -222,7 +222,7 @@ export class SoftwareMigrationEngine {
   ];
 
   /**
-   * Intelligently maps source account lines to UAS Accounting standard US GAAP accounts
+   * Intelligently maps source account lines to Mister Contábil standard US GAAP accounts
    */
   public static autoMapAccount(raw: SourceAccountRawLine): SmartAccountMapping {
     const cleanName = raw.sourceAccountName.toLowerCase();

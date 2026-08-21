@@ -359,7 +359,7 @@ export class SmartCleaningEngine {
           revenueAccountCode,
         },
       ],
-      paymentLinkUrl: `https://pay.uas-accounting.io/clean/${booking.id}`,
+      paymentLinkUrl: `https://pay.mistercontabil.com/clean/${booking.id}`,
     };
 
     // 3. Update Referrer Wallet if applicable

@@ -73,7 +73,7 @@ export function SoftwareMigrationView() {
       `🎉 Sucesso! Os demonstrativos de ${pkgToPost.companyName} (${pkgToPost.statementType.replace(
         /_/g,
         ' '
-      )}) foram consolidados e integrados ao Livro-Razão US GAAP do UAS Accounting com zero discrepância!`
+      )}) foram consolidados e integrados ao Livro-Razão US GAAP do Mister Contábil com zero discrepância!`
     );
   };
 

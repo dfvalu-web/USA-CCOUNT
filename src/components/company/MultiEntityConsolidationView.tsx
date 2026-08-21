@@ -53,7 +53,7 @@ export function MultiEntityConsolidationView() {
   };
 
   const handleExportConsolidatedCsv = () => {
-    let csv = `UAS ACCOUNTING - CONSOLIDATED FINANCIAL REPORT (MULTI-ENTITY GROUP)\n`;
+    let csv = `MISTER CONTÁBIL - CONSOLIDATED FINANCIAL REPORT (MULTI-ENTITY GROUP)\n`;
     csv += `Group Name,${consolidated.groupName}\n`;
     csv += `As of Date,${new Date().toISOString()}\n`;
     csv += `Gross Total Assets (USD),${consolidated.grossTotalAssets}\n`;

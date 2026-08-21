@@ -70,7 +70,7 @@ export function SystemAuditView() {
 
   const handleExportAuditDossier = () => {
     const data = {
-      systemAuditDossier: 'UAS Accounting — System Health & Comprehensive Audit',
+      systemAuditDossier: 'Mister Contábil — System Health & Comprehensive Audit',
       auditDate: new Date().toISOString(),
       report,
     };

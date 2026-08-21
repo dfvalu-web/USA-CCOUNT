@@ -325,7 +325,7 @@ export class CleaningServiceEngine {
           revenueAccountCode,
         },
       ],
-      paymentLinkUrl: `https://pay.uas-accounting.io/clean/${job.id}`,
+      paymentLinkUrl: `https://pay.mistercontabil.com/clean/${job.id}`,
     };
 
     const completedJob: CleaningJobSchedule = {

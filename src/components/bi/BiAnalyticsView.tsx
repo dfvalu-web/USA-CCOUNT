@@ -116,7 +116,7 @@ export function BiAnalyticsView() {
   };
 
   const handleExportFinancialModelCsv = () => {
-    let csv = `UAS ACCOUNTING - CFA INTELLIGENCE FINANCIAL MODELING DOSSIER\n`;
+    let csv = `MISTER CONTÁBIL - CFA INTELLIGENCE FINANCIAL MODELING DOSSIER\n`;
     csv += `Generated At,${new Date().toISOString()}\n`;
     csv += `Initial Cash (USD),${initialCash}\n`;
     csv += `Monthly Burn Rate (USD),${monthlyBurn}\n`;

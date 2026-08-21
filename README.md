@@ -1,4 +1,4 @@
-# USA-CCOUNT — Next-Gen US GAAP Financial SaaS & Enterprise Accounting Platform
+# Mister Contábil — Next-Gen US GAAP Financial SaaS & Enterprise Accounting Platform
 
 An advanced, production-ready US GAAP double-entry fintech SaaS platform built for US service businesses, multi-entity holdings, and CPA firms.
 

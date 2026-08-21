@@ -53,7 +53,7 @@ export class StripeAchCheckoutService {
       processingFeeEstimate: parseFloat(feeDec.toFixed(2)),
       paymentMethod,
       status: 'PENDING',
-      receiptUrl: `https://receipts.uas-accounting.io/rcpt_${invoice.invoiceNumber}`,
+      receiptUrl: `https://receipts.mistercontabil.com/rcpt_${invoice.invoiceNumber}`,
     };
   }
 

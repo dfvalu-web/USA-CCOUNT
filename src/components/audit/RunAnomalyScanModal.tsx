@@ -71,7 +71,7 @@ export function RunAnomalyScanModal({
           {!isScanning ? (
             <div className="space-y-4">
               <p className="text-slate-300">
-                A varredura profunda executará mais de 40 testes estatísticos e contábeis automatizados em toda a base operacional do UAS Accounting:
+                A varredura profunda executará mais de 40 testes estatísticos e contábeis automatizados em toda a base operacional do Mister Contábil:
               </p>
 
               <div className="space-y-2">

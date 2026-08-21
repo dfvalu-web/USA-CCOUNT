@@ -81,7 +81,7 @@ export class InvoicingService {
       amountPaid: 0,
       balanceDue: totalAmountDec.toNumber(),
       status: 'ISSUED',
-      paymentLinkUrl: `https://pay.uas-accounting.io/inv/${input.invoiceNumber}`,
+      paymentLinkUrl: `https://pay.mistercontabil.com/inv/${input.invoiceNumber}`,
     };
   }
 

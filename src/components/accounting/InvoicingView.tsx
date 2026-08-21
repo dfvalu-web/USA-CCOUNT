@@ -56,7 +56,7 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
       amountPaid: 0,
       balanceDue: 6495,
       status: 'ISSUED',
-      paymentLinkUrl: 'https://pay.uas-accounting.io/inv/INV-2026-0089',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0089',
     },
     {
       id: 'inv-102',
@@ -82,7 +82,7 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
       amountPaid: 18500,
       balanceDue: 0,
       status: 'PAID',
-      paymentLinkUrl: 'https://pay.uas-accounting.io/inv/INV-2026-0088',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0088',
     },
     {
       id: 'inv-103',
@@ -108,7 +108,7 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
       amountPaid: 0,
       balanceDue: 13065,
       status: 'OVERDUE',
-      paymentLinkUrl: 'https://pay.uas-accounting.io/inv/INV-2026-0082',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0082',
       lateFeeApplied: 216, // 1.5% late fee
     },
   ]);

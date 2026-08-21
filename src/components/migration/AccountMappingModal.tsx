@@ -182,7 +182,7 @@ export function AccountMappingModal({
               <TableRow>
                 <TableHead className="w-48">Conta de Origem ({pkg.sourceSoftware.replace(/_/g, ' ')})</TableHead>
                 <TableHead className="w-8 text-center">→</TableHead>
-                <TableHead>Conta de Destino no UAS Accounting (US GAAP)</TableHead>
+                <TableHead>Conta de Destino no Mister Contábil (US GAAP)</TableHead>
                 <TableHead className="w-28 text-center">Tipo</TableHead>
                 <TableHead className="w-28 text-center">Confiança IA</TableHead>
               </TableRow>

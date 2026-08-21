@@ -98,7 +98,7 @@ export function NewInvoiceModal({
       amountPaid: 0,
       balanceDue: totalAmount,
       status: 'ISSUED',
-      paymentLinkUrl: `https://pay.uas-accounting.io/inv/${invoiceNum}`,
+      paymentLinkUrl: `https://pay.mistercontabil.com/inv/${invoiceNum}`,
     };
 
     onInvoiceCreated(newInvoice);

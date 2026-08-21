@@ -64,6 +64,6 @@ describe('CleaningServiceEngine (Cleaning Services Scheduling, Tax & Accounting 
 
     // Verify invoice generated with payment link
     expect(result.invoice.totalAmount).toBe(487.13); // $450 + $37.13 TX tax
-    expect(result.invoice.paymentLinkUrl).toContain('https://pay.uas-accounting.io');
+    expect(result.invoice.paymentLinkUrl).toContain('https://pay.mistercontabil.com');
   });
 });

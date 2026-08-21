@@ -142,7 +142,7 @@ export function CommandMenu({ isOpen, onClose, onOpenNewEntry }: CommandMenuProp
         </div>
 
         <div className="px-4 py-2 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-[10px] text-slate-500">
-          <span>UAS Accounting Command Menu</span>
+          <span>Mister Contábil Command Menu</span>
           <span>
             Current Basis: <strong className="text-emerald-400">{basis}</strong>
           </span>

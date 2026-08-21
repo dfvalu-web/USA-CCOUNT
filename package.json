@@ -1,8 +1,8 @@
 {
-  "name": "uas-accounting",
+  "name": "mister-contabil",
   "version": "1.0.0",
   "private": true,
-  "description": "UAS Accounting - Next-Gen US GAAP Financial & Accounting Fintech Platform for Service Businesses",
+  "description": "Mister Contábil - Next-Gen US GAAP Financial & Accounting Fintech Platform for Service Businesses",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
