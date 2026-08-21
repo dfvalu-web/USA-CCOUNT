@@ -53,7 +53,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 
-import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
+import { useFiscalPeriod, getFiscalDateRange } from '@/lib/period/fiscal-period-context';
 import { CompanyProvider, useCompany } from '@/lib/company/company-context';
 import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
 
@@ -146,34 +146,45 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
     }
   };
 
-  // Recalculate financial reports dynamically based on current basis and ledger lines
+  const { fiscalYear, selectedMonths } = useFiscalPeriod();
+
+  // Recalculate financial reports dynamically based on active company, basis, and selected fiscal period (Year & Months)
   const reports = useMemo(() => {
+    const { startDate, endDate } = getFiscalDateRange(fiscalYear, selectedMonths);
+
     const trialBalance = DoubleEntryLedgerEngine.generateTrialBalance(
       accountsState.map((acc) => ({
         code: acc.code,
         name: acc.name,
         type: acc.type,
-        lines: acc.lines.filter((l) => basis === 'ACCRUAL' || l.basis !== 'ACCRUAL'),
+        lines: acc.lines.filter((l) => {
+          if (basis === 'CASH' && l.basis === 'ACCRUAL') return false;
+          const dStr = typeof l.date === 'string' ? l.date : l.date.toISOString().split('T')[0];
+          return dStr <= endDate;
+        }),
       })),
-      basis
+      basis,
+      endDate
     );
 
     const incomeStatement = FinancialStatementsEngine.generateIncomeStatement(
       accountsState,
-      '2026-01-01',
-      '2026-12-31',
-      basis
+      startDate,
+      endDate,
+      basis,
+      selectedMonths,
+      fiscalYear
     );
 
     const balanceSheet = FinancialStatementsEngine.generateBalanceSheet(
       accountsState,
-      '2026-12-31',
+      endDate,
       basis,
       incomeStatement.netIncome
     );
 
     return { trialBalance, incomeStatement, balanceSheet };
-  }, [accountsState, basis]);
+  }, [accountsState, basis, fiscalYear, selectedMonths]);
 
   // Handler for adding new journal entry
   const handleEntrySuccess = (entry: any) => {

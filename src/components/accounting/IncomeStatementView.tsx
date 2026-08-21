@@ -32,12 +32,14 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
   const [showComparative, setShowComparative] = useState<boolean>(true);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
-  // Multi-period baseline simulation for MoM / YoY comparison
-  const priorYearFactor = 0.84; // Prior year was ~84% of current scale
-  const priorRevenue = data.totalRevenue * priorYearFactor;
-  const priorCogs = data.totalCostOfServices * priorYearFactor;
+  const isZeroed = data.totalRevenue === 0 && data.totalCostOfServices === 0 && data.totalOperatingExpenses === 0;
+
+  // Multi-period baseline calculation for MoM / YoY comparison only when data exists
+  const priorYearFactor = isZeroed ? 0 : 0.84;
+  const priorRevenue = isZeroed ? 0 : data.totalRevenue * priorYearFactor;
+  const priorCogs = isZeroed ? 0 : data.totalCostOfServices * priorYearFactor;
   const priorGrossProfit = priorRevenue - priorCogs;
-  const priorOpex = data.totalOperatingExpenses * 0.88;
+  const priorOpex = isZeroed ? 0 : data.totalOperatingExpenses * 0.88;
   const priorNetIncome = priorGrossProfit - priorOpex;
 
   const revVariance = data.totalRevenue - priorRevenue;
@@ -173,6 +175,15 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                 +{netGrowthPercent.toFixed(1)}% YoY
               </Badge>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isZeroed && (
+        <div className="mx-6 p-4 rounded-xl bg-slate-900/60 border border-dashed border-slate-700 text-center text-xs space-y-1">
+          <div className="font-bold text-slate-300">Exercício Fiscal Sem Movimentação Contábil</div>
+          <div className="text-slate-500 text-[11px]">
+            Todos os lançamentos do período encontram-se fidedignamente zerados ($0.00) conforme as diretrizes US GAAP e auditoria forense.
           </div>
         </div>
       )}

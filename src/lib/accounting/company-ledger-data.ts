@@ -23,14 +23,39 @@ export class CompanyLedgerEngine {
           type: 'ASSET',
           subType: 'CASH_AND_CASH_EQUIVALENTS',
           lines: [
-            { debit: 213250.19, credit: 0, date: '2025-01-01', basis: 'BOTH' },
+            // 2021
+            { debit: 5008.98, credit: 0, date: '2021-11-15', basis: 'BOTH' },
+            // 2022
+            { debit: 115000.00, credit: 0, date: '2022-01-01', basis: 'BOTH' },
+            { debit: 342851.75, credit: 0, date: '2022-06-30', basis: 'BOTH' },
+            { debit: 0, credit: 3000.00, date: '2022-12-15', basis: 'BOTH' },
+            { debit: 0, credit: 40617.90, date: '2022-12-20', basis: 'BOTH' },
+            { debit: 0, credit: 40088.01, date: '2022-12-31', basis: 'BOTH' },
+            // 2023
+            { debit: 477370.70, credit: 0, date: '2023-06-30', basis: 'BOTH' },
+            { debit: 0, credit: 376986.76, date: '2023-12-15', basis: 'BOTH' },
+            { debit: 0, credit: 30144.95, date: '2023-12-20', basis: 'BOTH' },
+            { debit: 0, credit: 62092.05, date: '2023-12-31', basis: 'BOTH' },
+            // 2024
+            { debit: 412313.30, credit: 0, date: '2024-06-30', basis: 'BOTH' },
+            { debit: 0, credit: 169938.00, date: '2024-12-15', basis: 'BOTH' },
+            { debit: 0, credit: 141023.00, date: '2024-12-20', basis: 'BOTH' },
+            { debit: 0, credit: 60484.00, date: '2024-12-28', basis: 'BOTH' },
+            { debit: 0, credit: 61431.37, date: '2024-12-31', basis: 'BOTH' },
+            { debit: 0, credit: 45966.94, date: '2024-12-31', basis: 'BOTH' },
+            // 2025
             { debit: 364061.65, credit: 0, date: '2025-06-30', basis: 'BOTH' },
-            { debit: 0, credit: 48500.00, date: '2025-01-10', basis: 'BOTH' },
             { debit: 0, credit: 108921.00, date: '2025-12-15', basis: 'BOTH' },
             { debit: 0, credit: 108667.00, date: '2025-12-20', basis: 'BOTH' },
             { debit: 0, credit: 77606.00, date: '2025-12-28', basis: 'BOTH' },
             { debit: 0, credit: 25082.00, date: '2025-12-31', basis: 'BOTH' },
             { debit: 0, credit: 32440.00, date: '2025-12-31', basis: 'BOTH' },
+            // 2026 YTD
+            { debit: 209750.73, credit: 0, date: '2026-04-30', basis: 'BOTH' },
+            { debit: 0, credit: 45000.00, date: '2026-06-15', basis: 'BOTH' },
+            { debit: 0, credit: 53420.00, date: '2026-07-20', basis: 'BOTH' },
+            { debit: 0, credit: 21000.00, date: '2026-08-15', basis: 'BOTH' },
+            { debit: 0, credit: 18000.00, date: '2026-08-20', basis: 'BOTH' },
           ],
         },
         {
@@ -48,7 +73,7 @@ export class CompanyLedgerEngine {
           type: 'ASSET',
           subType: 'PROPERTY_PLANT_EQUIPMENT',
           lines: [
-            { debit: 48500, credit: 0, date: '2025-01-10', basis: 'BOTH' },
+            { debit: 48500, credit: 0, date: '2022-01-10', basis: 'BOTH' },
           ],
         },
         {
@@ -84,7 +109,7 @@ export class CompanyLedgerEngine {
           type: 'EQUITY',
           subType: 'COMMON_STOCK',
           lines: [
-            { debit: 0, credit: 213250.19, date: '2025-01-01', basis: 'BOTH' },
+            { debit: 0, credit: 115000.00, date: '2022-01-01', basis: 'BOTH' },
           ],
         },
         {
@@ -93,7 +118,11 @@ export class CompanyLedgerEngine {
           type: 'EQUITY',
           subType: 'RETAINED_EARNINGS',
           lines: [
-            { debit: 32440, credit: 0, date: '2025-12-31', basis: 'BOTH' },
+            { debit: 40088.01, credit: 0, date: '2022-12-31', basis: 'BOTH' },
+            { debit: 62092.05, credit: 0, date: '2023-12-31', basis: 'BOTH' },
+            { debit: 45966.94, credit: 0, date: '2024-12-31', basis: 'BOTH' },
+            { debit: 32440.00, credit: 0, date: '2025-12-31', basis: 'BOTH' },
+            { debit: 18000.00, credit: 0, date: '2026-08-20', basis: 'BOTH' },
           ],
         },
         {
@@ -102,8 +131,13 @@ export class CompanyLedgerEngine {
           type: 'REVENUE',
           subType: 'SERVICE_REVENUE',
           lines: [
+            { debit: 0, credit: 5008.98, date: '2021-11-15', basis: 'BOTH' },
+            { debit: 0, credit: 342851.75, date: '2022-06-30', basis: 'BOTH' },
+            { debit: 0, credit: 477370.70, date: '2023-06-30', basis: 'BOTH' },
+            { debit: 0, credit: 412313.30, date: '2024-06-30', basis: 'BOTH' },
             { debit: 0, credit: 364061.65, date: '2025-06-30', basis: 'BOTH' },
             { debit: 0, credit: 62400.00, date: '2025-11-30', basis: 'ACCRUAL' },
+            { debit: 0, credit: 209750.73, date: '2026-04-30', basis: 'BOTH' },
           ],
         },
         {
@@ -112,7 +146,10 @@ export class CompanyLedgerEngine {
           type: 'EXPENSE',
           subType: 'COST_OF_SERVICES_DIRECT_LABOR',
           lines: [
+            { debit: 376986.76, credit: 0, date: '2023-12-15', basis: 'BOTH' },
+            { debit: 169938.00, credit: 0, date: '2024-12-15', basis: 'BOTH' },
             { debit: 108921.00, credit: 0, date: '2025-12-15', basis: 'BOTH' },
+            { debit: 45000.00, credit: 0, date: '2026-06-15', basis: 'BOTH' },
           ],
         },
         {
@@ -121,7 +158,10 @@ export class CompanyLedgerEngine {
           type: 'EXPENSE',
           subType: 'COST_OF_SERVICES_DIRECT_LABOR',
           lines: [
+            { debit: 3000.00, credit: 0, date: '2022-12-15', basis: 'BOTH' },
+            { debit: 141023.00, credit: 0, date: '2024-12-20', basis: 'BOTH' },
             { debit: 108667.00, credit: 0, date: '2025-12-20', basis: 'BOTH' },
+            { debit: 53420.00, credit: 0, date: '2026-07-20', basis: 'BOTH' },
           ],
         },
         {
@@ -130,7 +170,9 @@ export class CompanyLedgerEngine {
           type: 'EXPENSE',
           subType: 'GENERAL_ADMINISTRATIVE_SG_A',
           lines: [
+            { debit: 60484.00, credit: 0, date: '2024-12-28', basis: 'BOTH' },
             { debit: 77606.00, credit: 0, date: '2025-12-28', basis: 'BOTH' },
+            { debit: 21000.00, credit: 0, date: '2026-08-15', basis: 'BOTH' },
           ],
         },
         {
@@ -139,7 +181,11 @@ export class CompanyLedgerEngine {
           type: 'EXPENSE',
           subType: 'GENERAL_ADMINISTRATIVE_SG_A',
           lines: [
+            { debit: 15200.00, credit: 0, date: '2022-12-20', basis: 'BOTH' },
+            { debit: 30144.95, credit: 0, date: '2023-12-20', basis: 'BOTH' },
+            { debit: 61431.37, credit: 0, date: '2024-12-31', basis: 'BOTH' },
             { debit: 25082.00, credit: 0, date: '2025-12-31', basis: 'BOTH' },
+            { debit: 14000.00, credit: 0, date: '2026-08-15', basis: 'BOTH' },
           ],
         },
         {
@@ -148,6 +194,7 @@ export class CompanyLedgerEngine {
           type: 'EXPENSE',
           subType: 'COST_OF_SERVICES_SUPPLIES',
           lines: [
+            { debit: 25417.90, credit: 0, date: '2022-12-20', basis: 'BOTH' },
             { debit: 32995.00, credit: 0, date: '2025-12-20', basis: 'BOTH' },
           ],
         },
@@ -426,12 +473,15 @@ export class CompanyLedgerEngine {
 
     if (isMilla) {
       return [
-        { id: 'JE-MILA-001', date: '2025-01-01', memo: 'Abertura de Capital & Retained Earnings Milla Maid', amount: 213250.19, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-002', date: '2025-06-30', memo: 'Receitas de Serviços de Limpeza e Hotelaria (Georgia)', amount: 426461.65, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-003', date: '2025-12-15', memo: 'Pagamentos a Contratados Independentes (1099 Contractors)', amount: 108921.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-004', date: '2025-12-20', memo: 'Folha de Pagamento Salários Diretos (W-2 Wages)', amount: 108667.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-005', date: '2025-12-28', memo: 'Honorários Legais e Contábeis (Legal & CPA Fees)', amount: 77606.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-006', date: '2025-12-31', memo: 'Distribuição de Lucros / Retiradas de Sócios (Partner Draws)', amount: 32440.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2021', date: '2021-11-15', memo: 'Receitas de Limpeza 2021 Milla Maid', amount: 5008.98, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022', date: '2022-06-30', memo: 'Receitas Comerciais de Limpeza 2022 ($342.851,75)', amount: 342851.75, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2023', date: '2023-06-30', memo: 'Receitas de Serviços e Subcontratados 1099 2023', amount: 477370.70, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024', date: '2024-06-30', memo: 'Receitas e Honorários Advocatícios 2024', amount: 412313.30, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-1', date: '2025-06-30', memo: 'Receitas de Serviços de Limpeza e Hotelaria 2025', amount: 426461.65, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-2', date: '2025-12-15', memo: 'Pagamentos a Contratados Independentes (1099)', amount: 108921.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-3', date: '2025-12-20', memo: 'Folha de Pagamento Salários Diretos (W-2 Wages)', amount: 108667.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-4', date: '2025-12-28', memo: 'Honorários Legais e Contábeis (Legal & CPA Fees)', amount: 77606.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2026-1', date: '2026-04-30', memo: 'Receitas de Serviços 2026 YTD ($209.750,73)', amount: 209750.73, basis: 'BOTH', status: 'POSTED' },
       ];
     }
 

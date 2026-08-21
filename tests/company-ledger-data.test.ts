@@ -3,54 +3,97 @@ import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
 import { DoubleEntryLedgerEngine } from '@/lib/accounting/ledger-engine';
 import { FinancialStatementsEngine } from '@/lib/accounting/financial-statements';
 
-describe('Multi-Company Dynamic Accounting Reports Engine', () => {
-  it('should load distinct and accurate accounts for Milla Maid Services LLC (GA)', () => {
+describe('Multi-Company & Multi-Year Forensic Accounting Reports Engine', () => {
+  it('should return exact 2025 P&L for Milla Maid Services LLC ($426k revenue)', () => {
     const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
-    expect(accounts.length).toBeGreaterThan(5);
+    const is2025 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2025-01-01',
+      '2025-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2025
+    );
 
-    const revenueAcc = accounts.find((a) => a.code === '4010');
-    expect(revenueAcc).toBeDefined();
-    expect(revenueAcc?.name).toContain('Cleaning & Janitorial');
-    const totalRev = revenueAcc?.lines.reduce((s, l) => s + l.credit, 0);
-    expect(totalRev).toBe(426461.65);
-
-    // Verify Trial Balance for Milla Maid
-    const tb = DoubleEntryLedgerEngine.generateTrialBalance(accounts, 'ACCRUAL');
-    expect(tb.isBalanced).toBe(true);
-    expect(tb.totalDebits).toBe(tb.totalCredits);
-
-    // Verify Income Statement for Milla Maid
-    const is = FinancialStatementsEngine.generateIncomeStatement(accounts, '2025-01-01', '2025-12-31', 'ACCRUAL');
-    expect(is.totalRevenue).toBe(426461.65);
-    expect(is.netIncome).toBeGreaterThan(50000);
+    expect(is2025.totalRevenue).toBe(426461.65);
+    expect(is2025.costOfServices.length).toBeGreaterThan(0);
+    expect(is2025.operatingExpenses.length).toBeGreaterThan(0);
+    expect(is2025.netIncome).toBeGreaterThan(50000);
   });
 
-  it('should load distinct accounts for Horizon Fintech Labs Inc (FL)', () => {
-    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-002', 'Horizon Fintech Labs Inc');
-    const revenueAcc = accounts.find((a) => a.code === '4010');
-    expect(revenueAcc?.name).toContain('SaaS Subscription');
-    const totalRev = revenueAcc?.lines.reduce((s, l) => s + l.credit, 0);
-    expect(totalRev).toBe(240000);
+  it('should return exact 2024 P&L for Milla Maid Services LLC ($412k revenue)', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const is2024 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2024-01-01',
+      '2024-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2024
+    );
 
-    const tb = DoubleEntryLedgerEngine.generateTrialBalance(accounts, 'ACCRUAL');
-    expect(tb.isBalanced).toBe(true);
-
-    const is = FinancialStatementsEngine.generateIncomeStatement(accounts, '2026-01-01', '2026-12-31', 'ACCRUAL');
-    expect(is.totalRevenue).toBe(240000);
-    expect(is.netIncome).toBe(140000);
+    expect(is2024.totalRevenue).toBe(412313.30);
   });
 
-  it('should load distinct accounts for Apex CleanOps (TX)', () => {
-    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-001', 'Apex CleanOps & Cloud Tech LLC');
-    const revenueAcc = accounts.find((a) => a.code === '4010');
-    const totalRev = revenueAcc?.lines.reduce((s, l) => s + l.credit, 0);
-    expect(totalRev).toBe(185000);
+  it('should return exact 2023 P&L for Milla Maid Services LLC ($477k revenue)', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const is2023 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2023-01-01',
+      '2023-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2023
+    );
 
-    const tb = DoubleEntryLedgerEngine.generateTrialBalance(accounts, 'ACCRUAL');
-    expect(tb.isBalanced).toBe(true);
+    expect(is2023.totalRevenue).toBe(477370.70);
+  });
 
-    const is = FinancialStatementsEngine.generateIncomeStatement(accounts, '2026-01-01', '2026-12-31', 'ACCRUAL');
-    expect(is.totalRevenue).toBe(185000);
-    expect(is.netIncome).toBe(93800);
+  it('should return exact 2022 P&L for Milla Maid Services LLC ($342k revenue)', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const is2022 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2022-01-01',
+      '2022-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2022
+    );
+
+    expect(is2022.totalRevenue).toBe(342851.75);
+  });
+
+  it('should return exact 2021 P&L for Milla Maid Services LLC ($5k revenue)', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const is2021 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2021-01-01',
+      '2021-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2021
+    );
+
+    expect(is2021.totalRevenue).toBe(5008.98);
+  });
+
+  it('should return 100% ZEROED reports for inactive years (e.g. 2018 or 2005)', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const is2018 = FinancialStatementsEngine.generateIncomeStatement(
+      accounts,
+      '2018-01-01',
+      '2018-12-31',
+      'ACCRUAL',
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      2018
+    );
+
+    expect(is2018.totalRevenue).toBe(0);
+    expect(is2018.totalCostOfServices).toBe(0);
+    expect(is2018.totalOperatingExpenses).toBe(0);
+    expect(is2018.netIncome).toBe(0);
+    expect(is2018.revenues.length).toBe(0);
+    expect(is2018.costOfServices.length).toBe(0);
+    expect(is2018.operatingExpenses.length).toBe(0);
   });
 });

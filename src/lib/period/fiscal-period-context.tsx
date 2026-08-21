@@ -17,6 +17,7 @@ export interface FiscalPeriodState {
   selectQuarter: (q: 1 | 2 | 3 | 4) => void;
   setComparisonMode: (mode: ComparisonMode) => void;
   getFormattedPeriodLabel: () => string;
+  getDateRange: () => { startDate: string; endDate: string };
 }
 
 const FiscalPeriodContext = createContext<FiscalPeriodState | undefined>(undefined);
@@ -31,12 +32,37 @@ export const MONTH_NAMES_SHORT = [
   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
 ];
 
-export const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+// All historical years from 2002 to 2026
+export const AVAILABLE_YEARS = Array.from({ length: 25 }, (_, i) => 2026 - i);
+
+export function getFiscalDateRange(
+  fiscalYear: number,
+  selectedMonths: number[]
+): { startDate: string; endDate: string } {
+  if (!selectedMonths || selectedMonths.length === 0) {
+    return {
+      startDate: `${fiscalYear}-01-01`,
+      endDate: `${fiscalYear}-12-31`,
+    };
+  }
+  const sorted = [...selectedMonths].sort((a, b) => a - b);
+  const minMonth = sorted[0];
+  const maxMonth = sorted[sorted.length - 1];
+
+  const startMonthStr = minMonth.toString().padStart(2, '0');
+  const maxMonthStr = maxMonth.toString().padStart(2, '0');
+  const lastDay = new Date(fiscalYear, maxMonth, 0).getDate();
+
+  return {
+    startDate: `${fiscalYear}-${startMonthStr}-01`,
+    endDate: `${fiscalYear}-${maxMonthStr}-${lastDay.toString().padStart(2, '0')}`,
+  };
+}
 
 export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
-  const [fiscalYear, setFiscalYear] = useState<number>(2026);
-  // Default: YTD Jan to August (1 to 8)
-  const [selectedMonths, setSelectedMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8]);
+  const [fiscalYear, setFiscalYear] = useState<number>(2025);
+  // Default: Full Year (1 to 12) for historical forensic fidelity
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   const [comparisonMode, setComparisonMode] = useState<ComparisonMode>('PRIOR_YEAR_YOY');
 
   // Sync with localStorage if available
@@ -89,7 +115,7 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   };
 
   const selectYtd = () => {
-    const currentMonth = 8; // August
+    const currentMonth = fiscalYear === 2026 ? 8 : 12;
     const ytd = Array.from({ length: currentMonth }, (_, i) => i + 1);
     handleSetSelectedMonths(ytd);
   };
@@ -97,6 +123,10 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   const selectQuarter = (q: 1 | 2 | 3 | 4) => {
     const start = (q - 1) * 3 + 1;
     handleSetSelectedMonths([start, start + 1, start + 2]);
+  };
+
+  const getDateRange = () => {
+    return getFiscalDateRange(fiscalYear, selectedMonths);
   };
 
   const getFormattedPeriodLabel = (): string => {
@@ -138,6 +168,7 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
         selectQuarter,
         setComparisonMode,
         getFormattedPeriodLabel,
+        getDateRange,
       }}
     >
       {children}
@@ -149,8 +180,8 @@ export function useFiscalPeriod(): FiscalPeriodState {
   const context = useContext(FiscalPeriodContext);
   if (!context) {
     return {
-      fiscalYear: 2026,
-      selectedMonths: [1, 2, 3, 4, 5, 6, 7, 8],
+      fiscalYear: 2025,
+      selectedMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       comparisonMode: 'PRIOR_YEAR_YOY',
       setFiscalYear: () => {},
       setSelectedMonths: () => {},
@@ -160,7 +191,8 @@ export function useFiscalPeriod(): FiscalPeriodState {
       selectYtd: () => {},
       selectQuarter: () => {},
       setComparisonMode: () => {},
-      getFormattedPeriodLabel: () => 'FY 2026 • Jan a Ago (8 meses)',
+      getFormattedPeriodLabel: () => '2025 • Ano Todo',
+      getDateRange: () => ({ startDate: '2025-01-01', endDate: '2025-12-31' }),
     };
   }
   return context;

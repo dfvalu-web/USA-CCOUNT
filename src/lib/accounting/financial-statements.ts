@@ -36,11 +36,10 @@ export class FinancialStatementsEngine {
     accounts: AccountWithLines[],
     startDate: string,
     endDate: string,
-    basis: 'ACCRUAL' | 'CASH' = 'ACCRUAL'
+    basis: 'ACCRUAL' | 'CASH' = 'ACCRUAL',
+    selectedMonths?: number[],
+    fiscalYear?: number
   ): IncomeStatementReport {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
     let totalRevenue = new Decimal(0);
     const revenues: { code: string; name: string; amount: number }[] = [];
 
@@ -52,8 +51,15 @@ export class FinancialStatementsEngine {
 
     for (const acc of accounts) {
       const filteredLines = this.filterLinesByBasis(acc.lines, basis).filter(line => {
-        const lineDate = new Date(line.date);
-        return lineDate >= start && lineDate <= end;
+        const lineDateStr = typeof line.date === 'string' ? line.date : line.date.toISOString().split('T')[0];
+        const lineYear = parseInt(lineDateStr.substring(0, 4), 10);
+        const lineMonth = parseInt(lineDateStr.substring(5, 7), 10);
+
+        if (fiscalYear && lineYear !== fiscalYear) return false;
+        if (selectedMonths && selectedMonths.length > 0 && !selectedMonths.includes(lineMonth)) return false;
+        if (!fiscalYear && (lineDateStr < startDate || lineDateStr > endDate)) return false;
+
+        return true;
       });
 
       if (filteredLines.length === 0) continue;
@@ -69,7 +75,7 @@ export class FinancialStatementsEngine {
           revenues.push({ code: acc.code, name: acc.name, amount: netAmount.toNumber() });
           totalRevenue = totalRevenue.plus(netAmount);
         }
-      } else if (acc.type === 'COST_OF_SERVICE') {
+      } else if (acc.type === 'COST_OF_SERVICE' || acc.subType?.startsWith('COST_OF_SERVICE')) {
         // Cost of services is normal debit balance: Debit - Credit
         for (const line of filteredLines) {
           netAmount = netAmount.plus(new Decimal(line.debit.toString())).minus(new Decimal(line.credit.toString()));
