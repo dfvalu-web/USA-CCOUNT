@@ -19,6 +19,7 @@ import {
   Columns3,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
+import { useCompany } from '@/lib/company/company-context';
 
 interface IncomeStatementViewProps {
   data: IncomeStatementReport;
@@ -26,6 +27,7 @@ interface IncomeStatementViewProps {
 
 export function IncomeStatementView({ data }: IncomeStatementViewProps) {
   const { locale, t, basis } = useI18n();
+  const { activeCompany } = useCompany();
   const [period, setPeriod] = useState<'YTD' | 'Q1' | 'Q2' | 'MONTHLY'>('YTD');
   const [showComparative, setShowComparative] = useState<boolean>(true);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
@@ -49,40 +51,43 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
     csv += `REVENUE\n`;
     data.revenues.forEach((r) => {
       const prior = r.amount * priorYearFactor;
-      const diff = r.amount - prior;
-      const pct = prior > 0 ? ((diff / prior) * 100).toFixed(1) : '0';
-      csv += `Revenue,"${r.code}","${r.name}",${r.amount},${prior.toFixed(2)},${diff.toFixed(2)},${pct}%\n`;
+      const v = r.amount - prior;
+      const pct = prior > 0 ? (v / prior) * 100 : 0;
+      csv += `Revenue,"${r.code}","${r.name}",${r.amount},${prior.toFixed(2)},${v.toFixed(2)},${pct.toFixed(1)}%\n`;
     });
-    csv += `Total Revenue,,,${data.totalRevenue},${priorRevenue.toFixed(2)},${revVariance.toFixed(2)},${revGrowthPercent.toFixed(1)}%\n\n`;
+    csv += `TOTAL REVENUE,,,${data.totalRevenue},${priorRevenue.toFixed(2)},${revVariance.toFixed(2)},${revGrowthPercent.toFixed(1)}%\n\n`;
 
     csv += `COST OF SERVICES (COGS)\n`;
     data.costOfServices.forEach((c) => {
       const prior = c.amount * priorYearFactor;
-      const diff = c.amount - prior;
-      csv += `COGS,"${c.code}","${c.name}",${c.amount},${prior.toFixed(2)},${diff.toFixed(2)},\n`;
+      const v = c.amount - prior;
+      const pct = prior > 0 ? (v / prior) * 100 : 0;
+      csv += `Cost of Services,"${c.code}","${c.name}",${c.amount},${prior.toFixed(2)},${v.toFixed(2)},${pct.toFixed(1)}%\n`;
     });
-    csv += `Total COGS,,,${data.totalCostOfServices},${priorCogs.toFixed(2)},${(data.totalCostOfServices - priorCogs).toFixed(2)},\n`;
-    csv += `GROSS PROFIT,,,${data.grossProfit},${priorGrossProfit.toFixed(2)},${(data.grossProfit - priorGrossProfit).toFixed(2)},\n\n`;
+    csv += `TOTAL COGS,,,${data.totalCostOfServices},${priorCogs.toFixed(2)}\n\n`;
 
-    csv += `OPERATING EXPENSES (OPEX)\n`;
-    data.operatingExpenses.forEach((o) => {
-      const prior = o.amount * 0.88;
-      csv += `OPEX,"${o.code}","${o.name}",${o.amount},${prior.toFixed(2)},\n`;
+    csv += `GROSS PROFIT,,,${data.grossProfit},${priorGrossProfit.toFixed(2)}\n\n`;
+
+    csv += `OPERATING EXPENSES\n`;
+    data.operatingExpenses.forEach((e) => {
+      const prior = e.amount * 0.88;
+      const v = e.amount - prior;
+      const pct = prior > 0 ? (v / prior) * 100 : 0;
+      csv += `Operating Expense,"${e.code}","${e.name}",${e.amount},${prior.toFixed(2)},${v.toFixed(2)},${pct.toFixed(1)}%\n`;
     });
-    csv += `Total OPEX,,,${data.totalOperatingExpenses},${priorOpex.toFixed(2)},\n`;
-    csv += `OPERATING INCOME (EBITDA),,,${data.operatingIncome},\n`;
+    csv += `TOTAL OPEX,,,${data.totalOperatingExpenses},${priorOpex.toFixed(2)}\n\n`;
     csv += `NET INCOME,,,${data.netIncome},${priorNetIncome.toFixed(2)},${netVariance.toFixed(2)},${netGrowthPercent.toFixed(1)}%\n`;
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `income_statement_comparative_dre_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `income_statement_dre_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    setExportNotice('Demonstração do Resultado Comparativa (DRE MoM/YoY) exportada com sucesso em CSV!');
+    setExportNotice('Demonstração do Resultado (DRE) exportada com sucesso em formato CSV!');
   };
 
   return (
@@ -91,7 +96,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.incomeStatement')} (DRE Comparativa)</CardTitle>
+              <CardTitle>{t('nav.incomeStatement')} — {activeCompany?.legalName}</CardTitle>
               <Badge variant="outline">{basis} Basis</Badge>
               <Badge variant="success">US GAAP ASC 606</Badge>
               {showComparative && (
@@ -101,7 +106,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
               )}
             </div>
             <CardDescription>
-              {data.startDate} — {data.endDate} • Análise de Rentabilidade e Crescimento Período a Período
+              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {data.startDate} — {data.endDate} • Análise de Rentabilidade e Crescimento
             </CardDescription>
           </div>
 

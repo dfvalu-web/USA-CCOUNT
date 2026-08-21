@@ -1,7 +1,6 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
+import { useCompany } from '@/lib/company/company-context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import { SalesTaxNexusEngine, StateNexusStatus } from '@/lib/tax/sales-tax-engine';
 import { IRSMappingEngine, TaxEntityType, IRSTaxReportSummary } from '@/lib/tax/irs-mapping-engine';
@@ -29,8 +28,17 @@ import {
 
 export function TaxComplianceView() {
   const { locale, t } = useI18n();
-  const [selectedEntity, setSelectedEntity] = useState<TaxEntityType>('LLC_PARTNERSHIP_1065');
+  const { activeCompany } = useCompany();
+  const [selectedEntity, setSelectedEntity] = useState<TaxEntityType>(
+    (activeCompany?.entityType as TaxEntityType) || 'LLC_PARTNERSHIP_1065'
+  );
   const [isMefModalOpen, setIsMefModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeCompany?.entityType) {
+      setSelectedEntity(activeCompany.entityType as TaxEntityType);
+    }
+  }, [activeCompany]);
 
   // Interactive Sales Feed
   const [salesFeed, setSalesFeed] = useState([

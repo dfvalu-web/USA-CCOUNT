@@ -10,12 +10,15 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle2, Download, AlertCircle, ShieldCheck, Scale } from 'lucide-react';
 
+import { useCompany } from '@/lib/company/company-context';
+
 interface BalanceSheetViewProps {
   data: BalanceSheetReport;
 }
 
 export function BalanceSheetView({ data }: BalanceSheetViewProps) {
   const { locale, t, basis } = useI18n();
+  const { activeCompany } = useCompany();
   const [period, setPeriod] = useState<'CURRENT' | 'Q1' | 'Q2'>('CURRENT');
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
@@ -64,14 +67,14 @@ export function BalanceSheetView({ data }: BalanceSheetViewProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.balanceSheet')} (Balanço Patrimonial)</CardTitle>
+              <CardTitle>{t('nav.balanceSheet')} — {activeCompany?.legalName}</CardTitle>
               <Badge variant={data.isBalanced ? 'success' : 'danger'}>
                 {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
               </Badge>
               <Badge variant="outline">{basis} Basis</Badge>
             </div>
             <CardDescription>
-              Posição em {formatDate(data.asOfDate, locale)} • Equação Fundamental: Ativo = Passivo + Patrimônio Líquido
+              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Ativo = Passivo + Patrimônio Líquido
             </CardDescription>
           </div>
 

@@ -1,7 +1,6 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
+import { useCompany } from '@/lib/company/company-context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import { StateFranchiseTaxEngine } from '@/lib/tax/state-franchise-tax-engine';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
@@ -27,8 +26,17 @@ import {
 
 export function StateFranchiseTaxView() {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
 
-  const [activeStateTab, setActiveStateTab] = useState<'DE' | 'CA' | 'TX' | 'HISTORY'>('DE');
+  const [activeStateTab, setActiveStateTab] = useState<'DE' | 'CA' | 'TX' | 'HISTORY'>(
+    activeCompany?.formationState === 'TX' ? 'TX' : activeCompany?.formationState === 'CA' ? 'CA' : 'DE'
+  );
+
+  useEffect(() => {
+    if (activeCompany?.formationState === 'TX') setActiveStateTab('TX');
+    else if (activeCompany?.formationState === 'CA') setActiveStateTab('CA');
+    else if (activeCompany?.formationState === 'DE') setActiveStateTab('DE');
+  }, [activeCompany]);
 
   // Delaware Interactive State
   const [deIsLlc, setDeIsLlc] = useState(false);

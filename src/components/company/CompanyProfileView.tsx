@@ -10,6 +10,7 @@ import {
   TaxAccountingMethod,
   OfficerMemberProfile,
 } from '@/lib/company/company-profile-engine';
+import { useCompany } from '@/lib/company/company-context';
 import { NewPartnerModal } from './NewPartnerModal';
 import { PartnerK1Modal } from './PartnerK1Modal';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
@@ -45,12 +46,10 @@ interface CompanyProfileViewProps {
 
 export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }: CompanyProfileViewProps) {
   const { locale, t } = useI18n();
-  const [companies, setCompanies] = useState<CompanyTaxProfile[]>(CompanyProfileEngine.INITIAL_COMPANIES);
+  const { activeCompany, companies, setActiveCompanyId, addCompany, updateCompany } = useCompany();
   const [activeTab, setActiveTab] = useState<'companies' | 'federal-tax' | 'state-nexus' | 'officers'>(initialTab);
   const [selectedPartnerForK1, setSelectedPartnerForK1] = useState<OfficerMemberProfile | null>(null);
   const [simulatedProfit, setSimulatedProfit] = useState<number>(250000);
-
-  const activeCompany = companies.find((c) => c.isCurrentActiveCompany) || companies[0];
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -58,20 +57,16 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
   const handlePartnerCreated = (newPartner: OfficerMemberProfile) => {
-    const updatedCompanies = companies.map((c) => {
-      if (c.id === activeCompany.id) {
-        return {
-          ...c,
-          officersAndMembers: [...c.officersAndMembers, newPartner],
-        };
-      }
-      return c;
-    });
-
-    setCompanies(updatedCompanies);
-    setNotificationMsg(
-      `Sócio "${newPartner.fullName}" (${newPartner.title}) cadastrado com sucesso com ${newPartner.ownershipPercentage}% de participação no capital conforme a legislação societária americana!`
-    );
+    if (activeCompany) {
+      const updated: CompanyTaxProfile = {
+        ...activeCompany,
+        officersAndMembers: [...activeCompany.officersAndMembers, newPartner],
+      };
+      updateCompany(updated);
+      setNotificationMsg(
+        `Sócio "${newPartner.fullName}" (${newPartner.title}) cadastrado com sucesso com ${newPartner.ownershipPercentage}% de participação no capital conforme a legislação societária americana!`
+      );
+    }
   };
 
   // Form State
@@ -99,12 +94,8 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
   });
 
   const handleSetActiveCompany = (companyId: string) => {
-    const updated = companies.map((c) => ({
-      ...c,
-      isCurrentActiveCompany: c.id === companyId,
-    }));
-    setCompanies(updated);
-    const selected = updated.find((c) => c.id === companyId);
+    setActiveCompanyId(companyId);
+    const selected = companies.find((c) => c.id === companyId);
     if (selected && onCompanySwitch) {
       onCompanySwitch(selected);
     }
@@ -137,40 +128,43 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
       },
       contactEmail: form.contactEmail || 'contato@empresa.com',
       contactPhone: form.contactPhone || '(512) 555-0100',
-      isCurrentActiveCompany: false,
+      isCurrentActiveCompany: true,
       stateNexusProfiles: [
         {
           stateCode: form.formationState || 'TX',
-          stateName:
-            CompanyProfileEngine.STATES.find((s) => s.code === form.formationState)?.name ||
-            (form.formationState === 'TX' ? 'Texas' : 'Delaware'),
-          stateTaxId: `ST-${cleanEin.replace('-', '')}`,
+          stateName: form.formationState === 'TX' ? 'Texas' : 'Primary Nexus',
+          stateTaxId: `ST-${cleanEin.replace(/-/g, '')}`,
           sosFileNumber: `SOS-${Math.floor(1000000 + Math.random() * 9000000)}`,
           hasPhysicalNexus: true,
           hasEconomicNexus: true,
-          salesTaxPermitNumber: `ST-PERMIT-${form.formationState || 'TX'}-9912`,
-          salesTaxRate:
-            CompanyProfileEngine.STATES.find((s) => s.code === form.formationState)?.defaultSalesTaxRate || 0.0625,
-          annualReportDueDate:
-            CompanyProfileEngine.STATES.find((s) => s.code === form.formationState)?.sosAnnualReportDue || 'May 15',
+          salesTaxPermitNumber: `${form.formationState || 'TX'}-ST-991204`,
+          salesTaxRate: form.formationState === 'TX' ? 0.0825 : 0.06,
+          annualReportDueDate: 'May 15',
           franchiseTaxStatus: 'ACTIVE_GOOD_STANDING',
         },
       ],
       officersAndMembers: [
         {
           id: `off-${Date.now()}`,
-          fullName: 'Sócio Administrador Principal',
+          fullName: 'Managing Principal',
           title: 'Managing Member',
           memberType: 'MANAGING_MEMBER',
           taxClassification: 'US_CITIZEN_OR_RESIDENT',
-          ssnOrItinMasked: '•••-••-8899',
+          ssnOrItinMasked: '•••-••-1122',
+          residentialAddress: {
+            street: form.principalAddress?.street || '100 Main St',
+            city: form.principalAddress?.city || 'Austin',
+            state: form.formationState || 'TX',
+            zipCode: form.principalAddress?.zipCode || '78701',
+            country: 'USA',
+          },
           ownershipPercentage: 100.0,
           profitSharingPercentage: 100.0,
           lossSharingPercentage: 100.0,
-          beginningCapitalAccount: 10000,
-          capitalContributedYear: 10000,
+          beginningCapitalAccount: 50000,
+          capitalContributedYear: 0,
           currentYearDistributions: 0,
-          endingCapitalAccount: 10000,
+          endingCapitalAccount: 50000,
           guaranteedPaymentsYear: 0,
           isTaxMattersPartner: true,
           isMaterialParticipant: true,
@@ -180,9 +174,9 @@ export function CompanyProfileView({ onCompanySwitch, initialTab = 'companies' }
       ],
     };
 
-    setCompanies([...companies, newCompany]);
+    addCompany(newCompany);
     setIsCreateModalOpen(false);
-    setNotificationMsg(`Empresa "${newCompany.legalName}" cadastrada com sucesso com enquadramento fiscal no ${CompanyProfileEngine.getIrsTaxFormLabel(newCompany.entityType)}!`);
+    setNotificationMsg(`Empresa "${newCompany.legalName}" cadastrada com sucesso com número EIN ${cleanEin}!`);
   };
 
   return (

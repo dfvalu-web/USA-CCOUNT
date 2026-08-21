@@ -30,12 +30,15 @@ import {
   FileSpreadsheet,
 } from 'lucide-react';
 
+import { useCompany } from '@/lib/company/company-context';
+
 interface ExecutiveCockpitProps {
   onNavigateTab?: (tab: string) => void;
 }
 
 export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   const { locale, t, basis } = useI18n();
+  const { activeCompany } = useCompany();
 
   // Period State
   const [selectedPeriod, setSelectedPeriod] = useState<'YTD' | 'Q1' | 'Q2' | 'LTM'>('YTD');
@@ -47,10 +50,28 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
-  // Baseline Financials
-  const baseCashBalance = 415200;
-  const baseMonthlyRevenue = 68500;
-  const baseMonthlyBurn = 28050;
+  // Baseline Financials dynamically adapted per company
+  let baseCashBalance = 415200;
+  let baseMonthlyRevenue = 68500;
+  let baseMonthlyBurn = 28050;
+  let companyDescription = `${activeCompany?.legalName} (${activeCompany?.formationState}) apresenta liquidez sólida. Margem de contribuição média de 68.4%. Retenção de clientes em 96.2%.`;
+
+  if (activeCompany?.legalName.includes('Milla Maid')) {
+    baseCashBalance = 176095.84;
+    baseMonthlyRevenue = 35538.47;
+    baseMonthlyBurn = 18961.98;
+    companyDescription = `Milla Maid Services LLC (${activeCompany?.formationState} • EIN ${activeCompany?.ein}) — Serviços de Limpeza e Hotelaria. Margem operacional de 73.1%. Reconciliação bancária ativa.`;
+  } else if (activeCompany?.legalName.includes('Horizon')) {
+    baseCashBalance = 290000;
+    baseMonthlyRevenue = 45000;
+    baseMonthlyBurn = 18000;
+    companyDescription = `Horizon Fintech Labs Inc (${activeCompany?.formationState}) — P&D e Integração de APIs Financeiras. Margem bruta de 75.0%.`;
+  } else if (activeCompany?.legalName.includes('Apex Cloud')) {
+    baseCashBalance = 540000;
+    baseMonthlyRevenue = 85000;
+    baseMonthlyBurn = 35000;
+    companyDescription = `Apex Cloud Technologies Inc. (${activeCompany?.formationState}) — SaaS Enterprise & Cloud Infrastructure.`;
+  }
 
   // Computed Dynamic Scenario Metrics
   const simulatedMonthlyRevenue = baseMonthlyRevenue * (1 + revenueGrowthPct / 100);
@@ -82,8 +103,8 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
     },
     {
       title: t('metrics.quickRatio'),
-      value: '3.42x',
-      subtext: '(Caixa $415k + Contas a Receber $94k) / Passivo Circulante',
+      value: activeCompany?.legalName.includes('Milla Maid') ? '4.85x' : '3.42x',
+      subtext: `Caixa (${formatCurrency(baseCashBalance, 'USD', locale)}) / Passivo Circulante`,
       trend: '+0.18x',
       isPositive: true,
       icon: ShieldCheck,
@@ -91,7 +112,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
     },
     {
       title: 'Margem Bruta Operacional',
-      value: '68.4%',
+      value: activeCompany?.legalName.includes('Milla Maid') ? '73.1%' : '68.4%',
       subtext: 'Receita Bruta menos Salários Diretos e Insumos (COGS)',
       trend: '+2.8%',
       isPositive: true,
@@ -101,7 +122,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   ];
 
   const handleExportSummary = () => {
-    setNotificationMsg('Relatório Executivo C-Level (Executive Summary US GAAP) exportado em PDF com sucesso!');
+    setNotificationMsg(`Resumo Executivo C-Level de ${activeCompany?.legalName} gerado com sucesso!`);
   };
 
   return (
@@ -114,12 +135,12 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-base font-bold text-white">Cockpit Executivo & Inteligência Financeira C-Level</h3>
-              <Badge variant="success">Runway Ótimo (14.8 meses)</Badge>
+              <h3 className="text-base font-bold text-white">Cockpit Executivo — {activeCompany?.legalName}</h3>
+              <Badge variant="success">Runway Ótimo ({(baseCashBalance / baseMonthlyBurn).toFixed(1)} meses)</Badge>
               <Badge variant="outline" className="font-mono text-[10px]">{basis} Basis</Badge>
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              Apex CleanOps & Cloud Services apresenta liquidez sólida. Margem de contribuição média de <strong>68.4%</strong>. Retenção de clientes em <strong>96.2%</strong>.
+              {companyDescription}
             </p>
           </div>
         </div>

@@ -11,6 +11,7 @@ interface CompanyContextType {
   companies: CompanyTaxProfile[];
   setActiveCompanyId: (id: string) => void;
   addCompany: (company: CompanyTaxProfile) => void;
+  updateCompany: (company: CompanyTaxProfile) => void;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -48,6 +49,12 @@ export function CompanyProvider({ children }: { children: React.ReactNode }) {
     handleSetActiveCompanyId(newComp.id);
   };
 
+  const handleUpdateCompany = (updated: CompanyTaxProfile) => {
+    setCompanies((prev) =>
+      prev.map((c) => (c.id === updated.id ? updated : c))
+    );
+  };
+
   const activeCompany =
     companies.find((c) => c.id === activeCompanyId) || companies[0];
 
@@ -58,6 +65,7 @@ export function CompanyProvider({ children }: { children: React.ReactNode }) {
         companies,
         setActiveCompanyId: handleSetActiveCompanyId,
         addCompany: handleAddCompany,
+        updateCompany: handleUpdateCompany,
       }}
     >
       {children}
@@ -74,6 +82,7 @@ export function useCompany(): CompanyContextType {
       companies: CompanyProfileEngine.INITIAL_COMPANIES,
       setActiveCompanyId: () => {},
       addCompany: () => {},
+      updateCompany: () => {},
     };
   }
   return context;
