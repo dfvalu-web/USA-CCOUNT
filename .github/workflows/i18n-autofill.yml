@@ -1,0 +1,58 @@
+name: Automated AI Translation Autofill & PR Generator
+
+on:
+  push:
+    paths:
+      - 'src/locales/*.json'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-translate-and-sync:
+    name: AI Translation Autofill & Sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci || npm install
+
+      - name: 🤖 Run AI Translation Autofill
+        run: npm run translate:autofill
+
+      - name: 🌐 Audit Parity (PT / EN / ES)
+        run: npm run audit:i18n
+
+      - name: 🔀 Create Pull Request with Synchronized Translations
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "🤖 i18n(locales): auto-sync & AI translation autofill"
+          branch: i18n/automated-translations
+          title: "🤖 i18n(locales): auto-sync & AI translation autofill"
+          body: |
+            ### 🌐 Automated AI Translation & Locale Synchronization
+            
+            Este Pull Request foi gerado automaticamente pelo **Motor de IA Linguística Contábil/Fiscal** do Mister Contábil.
+            
+            - **Paridade:** 100% de correspondência entre `pt.json`, `en.json` e `es.json`.
+            - **Validação:** Todas as chaves foram verificadas e auditadas sem campos vazios.
+            - **Preservação:** Variáveis dinâmicas (`{{count}}`, `{name}`) e formatações mantidas intactas.
+          labels: |
+            i18n
+            automated
+            ai-translation
+          delete-branch: true
