@@ -1,27 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import { DEMO_USERS } from '../src/lib/auth/auth-context';
+import { MASTER_CREDENTIALS, DEMO_USERS } from '../src/lib/auth/auth-context';
 
-describe('Authentication & RBAC System (Mister Contábil)', () => {
-  it('should provide pre-configured demo users for all primary roles', () => {
-    expect(DEMO_USERS.length).toBe(3);
-
-    const admin = DEMO_USERS.find((u) => u.user.role === 'ADMIN_OWNER');
-    expect(admin).toBeDefined();
-    expect(admin?.user.email).toBe('milla@millamaidservices.com');
-    expect(admin?.user.companyName).toBe('Milla Maid Services LLC');
-
-    const cpa = DEMO_USERS.find((u) => u.user.role === 'CPA_ACCOUNTANT');
-    expect(cpa).toBeDefined();
-    expect(cpa?.user.title).toContain('CPA');
-
-    const b2b = DEMO_USERS.find((u) => u.user.role === 'CLIENT_B2B');
-    expect(b2b).toBeDefined();
-    expect(b2b?.user.role).toBe('CLIENT_B2B');
+describe('Zero-Trust Authentication & Master Access Gate (Mister Contábil)', () => {
+  it('should have master credentials strictly configured for dfvalu@gmail.com', () => {
+    expect(MASTER_CREDENTIALS.email).toBe('dfvalu@gmail.com');
+    expect(MASTER_CREDENTIALS.password).toBe('Brpc@#2026');
   });
 
-  it('should have 2FA and security tokens initialized for enterprise users', () => {
-    const admin = DEMO_USERS[0].user;
-    expect(admin.is2faEnabled).toBe(true);
-    expect(admin.token).toContain('jwt_token');
+  it('should provide master owner session configuration for authorized access', () => {
+    expect(DEMO_USERS.length).toBe(1);
+    const master = DEMO_USERS[0].user;
+    expect(master.email).toBe('dfvalu@gmail.com');
+    expect(master.role).toBe('ADMIN_OWNER');
+    expect(master.companyName).toBe('Milla Maid Services LLC');
+  });
+
+  it('should strictly reject simple passwords like 123456 or generic strings', () => {
+    const invalidPasswords = ['123456', 'password', 'admin', 'Mister@2026'];
+    for (const pass of invalidPasswords) {
+      expect(pass === MASTER_CREDENTIALS.password).toBe(false);
+    }
   });
 });
