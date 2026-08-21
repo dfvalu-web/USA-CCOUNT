@@ -105,8 +105,9 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-slate-950 flex flex-col justify-between shrink-0 select-none min-h-[calc(100vh-3.5rem)]">
-      <div className="p-3 space-y-5">
+    <aside className="w-64 border-r border-slate-800 bg-slate-950 flex flex-col justify-between shrink-0 select-none h-[calc(100vh-3.5rem)] sticky top-14 z-30">
+      {/* Scrollable Navigation Sections */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
         {menuSections.map((section) => (
           <div key={section.title} className="space-y-1">
             <h4 className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
@@ -136,35 +137,53 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         ))}
       </div>
 
-      <div className="p-3 border-t border-slate-800/80 bg-slate-900/40 space-y-2.5">
-        {user && (
-          <div className="flex items-center justify-between p-1.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div className="flex items-center space-x-2 truncate pr-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0">
-                {user.name.charAt(0)}
+      {/* Pinned Bottom Left Footer: Active Profile & Dedicated Logout Button */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-950 shrink-0 space-y-2 shadow-2xl">
+        {user ? (
+          <div className="p-2.5 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-2.5">
+            <div className="flex items-center space-x-2.5">
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 font-black text-xs shadow-md">
+                  {user.name.charAt(0)}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
               </div>
-              <div className="truncate text-left leading-tight">
+              <div className="truncate text-left leading-tight flex-1 min-w-0">
                 <span className="text-xs font-bold text-white block truncate">{user.name}</span>
-                <span className="text-[10px] text-emerald-400 font-mono block truncate">{user.title || user.role}</span>
+                <span className="text-[10px] text-emerald-400 font-mono block truncate font-medium">
+                  {user.title || user.role}
+                </span>
               </div>
             </div>
+
+            {/* Prominent Sair do Sistema Button */}
             <button
               type="button"
               onClick={handleLogout}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/50 transition-colors shrink-0 cursor-pointer"
-              title="Encerrar Sessão e Sair"
+              className="w-full h-8 px-3 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 hover:border-rose-700 text-rose-300 hover:text-rose-100 text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer group shadow-sm"
+              title="Encerrar Sessão e Voltar para a Landing Page"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-rose-400" />
+              <span>Sair do Sistema</span>
             </button>
           </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full h-8 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center space-x-2 cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5 text-rose-400" />
+            <span>Encerrar Sessão</span>
+          </button>
         )}
 
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono px-1">
           <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3 h-3 text-emerald-400" />
             <span>SOC 2 Type II</span>
           </span>
-          <span>Mister Contábil v2.5</span>
+          <span>v2.5 Diamond</span>
         </div>
       </div>
     </aside>
