@@ -473,15 +473,49 @@ export class CompanyLedgerEngine {
 
     if (isMilla) {
       return [
-        { id: 'JE-MILA-2021', date: '2021-11-15', memo: 'Receitas de Limpeza 2021 Milla Maid', amount: 5008.98, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2022', date: '2022-06-30', memo: 'Receitas Comerciais de Limpeza 2022 ($342.851,75)', amount: 342851.75, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2023', date: '2023-06-30', memo: 'Receitas de Serviços e Subcontratados 1099 2023', amount: 477370.70, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2024', date: '2024-06-30', memo: 'Receitas e Honorários Advocatícios 2024', amount: 412313.30, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2025-1', date: '2025-06-30', memo: 'Receitas de Serviços de Limpeza e Hotelaria 2025', amount: 426461.65, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2025-2', date: '2025-12-15', memo: 'Pagamentos a Contratados Independentes (1099)', amount: 108921.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2025-3', date: '2025-12-20', memo: 'Folha de Pagamento Salários Diretos (W-2 Wages)', amount: 108667.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2025-4', date: '2025-12-28', memo: 'Honorários Legais e Contábeis (Legal & CPA Fees)', amount: 77606.00, basis: 'BOTH', status: 'POSTED' },
-        { id: 'JE-MILA-2026-1', date: '2026-04-30', memo: 'Receitas de Serviços 2026 YTD ($209.750,73)', amount: 209750.73, basis: 'BOTH', status: 'POSTED' },
+        // 2021
+        { id: 'JE-MILA-2021-01', date: '2021-11-15', memo: 'Contratos Iniciais de Prestação de Serviços de Limpeza', amount: 5008.98, basis: 'BOTH', status: 'POSTED' },
+
+        // 2022
+        { id: 'JE-MILA-2022-01', date: '2022-01-01', memo: 'Integralização de Capital Inicial dos Sócios (IRC 704b)', amount: 115000.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-02', date: '2022-01-10', memo: 'Aquisição de Frota & Vans de Limpeza Comercial', amount: 48500.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-03', date: '2022-06-30', memo: 'Faturamento de Serviços de Limpeza Residencial e Comercial 2022', amount: 342851.75, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-04', date: '2022-12-15', memo: 'Folha de Pagamento Salários Diretos Operacionais W-2', amount: 3000.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-05', date: '2022-12-20', memo: 'Despesas de Operação de Frota e Combustível', amount: 15200.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-06', date: '2022-12-20', memo: 'Produtos Químicos e Insumos de Higienização', amount: 25417.90, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2022-07', date: '2022-12-31', memo: 'Distribuição de Lucros aos Sócios (Partner Draws)', amount: 40088.01, basis: 'BOTH', status: 'POSTED' },
+
+        // 2023
+        { id: 'JE-MILA-2023-01', date: '2023-06-30', memo: 'Faturamento de Serviços de Limpeza e Facilities 2023', amount: 477370.70, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2023-02', date: '2023-12-15', memo: 'Pagamentos a Subcontratados 1099 Independent Contractors', amount: 376986.76, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2023-03', date: '2023-12-20', memo: 'Despesas de Frota e Materiais Operacionais', amount: 30144.95, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2023-04', date: '2023-12-31', memo: 'Distribuição de Lucros aos Sócios (Partner Draws)', amount: 62092.05, basis: 'BOTH', status: 'POSTED' },
+
+        // 2024
+        { id: 'JE-MILA-2024-01', date: '2024-06-30', memo: 'Faturamento Anual de Serviços de Limpeza 2024', amount: 412313.30, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024-02', date: '2024-12-15', memo: 'Honorários de Subcontratados 1099', amount: 169938.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024-03', date: '2024-12-20', memo: 'Salários Operacionais Diretos Equipe W-2', amount: 141023.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024-04', date: '2024-12-28', memo: 'Honorários Jurídicos, Regulatórios e de Auditoria CPA', amount: 60484.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024-05', date: '2024-12-31', memo: 'Despesas de Veículos, Combustível e Manutenção de Frota', amount: 61431.37, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2024-06', date: '2024-12-31', memo: 'Retiradas e Distribuição de Sócios (Partner Draws)', amount: 45966.94, basis: 'BOTH', status: 'POSTED' },
+
+        // 2025
+        { id: 'JE-MILA-2025-01', date: '2025-06-30', memo: 'Faturamento de Serviços de Limpeza à Vista (Cash Revenue)', amount: 364061.65, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-02', date: '2025-11-30', memo: 'Faturamento a Prazo de Clientes Corporativos (A/R)', amount: 62400.00, basis: 'ACCRUAL', status: 'POSTED' },
+        { id: 'JE-MILA-2025-03', date: '2025-12-15', memo: 'Pagamentos de Prestadores de Serviços (1099 Contractors)', amount: 108921.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-04', date: '2025-12-20', memo: 'Salários e Encargos da Equipe Própria (W-2 Wages)', amount: 108667.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-05', date: '2025-12-28', memo: 'Honorários de Assessoria Contábil e Jurídica (Legal & CPA)', amount: 77606.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-06', date: '2025-12-31', memo: 'Despesas com Frota de Vans, Seguro e Combustível', amount: 25082.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-07', date: '2025-12-31', memo: 'Insumos Químicos e Materiais de Higienização (A/P)', amount: 32995.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-08', date: '2025-12-31', memo: 'Depreciação Anual de Vans e Equipamentos Industriais', amount: 12000.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2025-09', date: '2025-12-31', memo: 'Retiradas de Lucros pelos Sócios (Partner Draws)', amount: 32440.00, basis: 'BOTH', status: 'POSTED' },
+
+        // 2026 YTD
+        { id: 'JE-MILA-2026-01', date: '2026-04-30', memo: 'Faturamento de Serviços 2026 YTD (Jan-Abr)', amount: 209750.73, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2026-02', date: '2026-06-15', memo: 'Subcontratados 1099 2026 YTD', amount: 45000.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2026-03', date: '2026-07-20', memo: 'Salários Operacionais W-2 2026 YTD', amount: 53420.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2026-04', date: '2026-08-15', memo: 'Honorários e Materiais Operacionais 2026', amount: 21000.00, basis: 'BOTH', status: 'POSTED' },
+        { id: 'JE-MILA-2026-05', date: '2026-08-20', memo: 'Retiradas de Sócios 2026 YTD', amount: 18000.00, basis: 'BOTH', status: 'POSTED' },
       ];
     }
 

@@ -20,6 +20,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+
 export interface JournalEntryListItem {
   id: string;
   date: string;
@@ -45,12 +47,23 @@ export function JournalEntriesView({
   onOpenNewEntryModal,
 }: JournalEntriesViewProps) {
   const { locale, t, basis } = useI18n();
+  const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
   const [searchQuery, setSearchQuery] = useState('');
   const [basisFilter, setBasisFilter] = useState<string>('ALL');
   const [expandedJeId, setExpandedJeId] = useState<string | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
   const filteredEntries = journalEntries.filter((entry) => {
+    // Filtragem rigorosa por ano fiscal e meses selecionados
+    if (entry.date) {
+      const lineDateStr = typeof entry.date === 'string' ? entry.date : (entry.date as any).toISOString().split('T')[0];
+      const entryYear = parseInt(lineDateStr.substring(0, 4), 10);
+      const entryMonth = parseInt(lineDateStr.substring(5, 7), 10);
+
+      if (entryYear !== fiscalYear) return false;
+      if (selectedMonths && selectedMonths.length > 0 && !selectedMonths.includes(entryMonth)) return false;
+    }
+
     if (basisFilter !== 'ALL' && entry.basis !== basisFilter && entry.basis !== 'BOTH') return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -121,7 +134,7 @@ export function JournalEntriesView({
             onChange={(e) => setBasisFilter(e.target.value)}
             className="h-7 rounded bg-slate-950 border border-slate-800 px-2 text-white font-medium focus:outline-none focus:border-emerald-500"
           >
-            <option value="ALL">Todos os Regimes ({journalEntries.length})</option>
+            <option value="ALL">Todos os Regimes ({filteredEntries.length})</option>
             <option value="ACCRUAL">Apenas Competência (Accrual)</option>
             <option value="CASH">Apenas Caixa (Cash)</option>
             <option value="BOTH">Ambos os Regimes (Dual)</option>
@@ -153,46 +166,60 @@ export function JournalEntriesView({
         </div>
       )}
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-32">{t('accounting.entryNumber')}</TableHead>
-            <TableHead className="w-28">{t('common.date')}</TableHead>
-            <TableHead>{t('accounting.memo')} (Histórico Contábil)</TableHead>
-            <TableHead className="w-28">Regime</TableHead>
-            <TableHead className="text-right w-36">Valor Total</TableHead>
-            <TableHead className="w-28 text-center">{t('common.status')}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredEntries.map((entry) => (
-            <TableRow key={entry.id} className="hover:bg-slate-900/50 transition-colors">
-              <TableCell className="font-mono text-emerald-400 font-semibold">
-                {entry.id}
-              </TableCell>
-              <TableCell className="text-slate-400 font-mono text-xs">
-                {entry.date}
-              </TableCell>
-              <TableCell className="font-medium text-white">
-                {entry.memo}
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="text-[10px]">
-                  {entry.basis}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right font-mono tabular-nums text-emerald-300 font-bold text-sm">
-                {formatCurrency(entry.amount, 'USD', locale)}
-              </TableCell>
-              <TableCell className="text-center">
-                <Badge variant="success" className="text-[10px]">
-                  ✓ {entry.status}
-                </Badge>
-              </TableCell>
+      {filteredEntries.length === 0 ? (
+        <div className="p-12 text-center text-xs space-y-2 bg-slate-900/30">
+          <div className="w-10 h-10 rounded-full bg-slate-900 border border-dashed border-slate-700 flex items-center justify-center mx-auto text-slate-500">
+            <BookOpen className="w-5 h-5" />
+          </div>
+          <p className="font-semibold text-slate-300">
+            Nenhum Lançamento no Livro Diário para {getFormattedPeriodLabel()}
+          </p>
+          <p className="text-slate-500 text-[11px] max-w-md mx-auto">
+            Exercício fiscal sem movimentação registrada ou todos os lançamentos encontram-se fora do intervalo selecionado.
+          </p>
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-36">{t('accounting.entryNumber')}</TableHead>
+              <TableHead className="w-28">{t('common.date')}</TableHead>
+              <TableHead>{t('accounting.memo')} (Histórico Contábil)</TableHead>
+              <TableHead className="w-28">Regime</TableHead>
+              <TableHead className="text-right w-36">Valor Total</TableHead>
+              <TableHead className="w-28 text-center">{t('common.status')}</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredEntries.map((entry) => (
+              <TableRow key={entry.id} className="hover:bg-slate-900/50 transition-colors">
+                <TableCell className="font-mono text-emerald-400 font-semibold">
+                  {entry.id}
+                </TableCell>
+                <TableCell className="text-slate-400 font-mono text-xs">
+                  {entry.date}
+                </TableCell>
+                <TableCell className="font-medium text-white">
+                  {entry.memo}
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="text-[10px]">
+                    {entry.basis}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right font-mono tabular-nums text-emerald-300 font-bold text-sm">
+                  {formatCurrency(entry.amount, 'USD', locale)}
+                </TableCell>
+                <TableCell className="text-center">
+                  <Badge variant="success" className="text-[10px]">
+                    ✓ {entry.status}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </Card>
   );
 }
