@@ -96,3 +96,66 @@ export interface BalanceSheetReport {
   totalLiabilitiesAndEquity: number;
   isBalanced: boolean;
 }
+
+export interface CashFlowStatementReport {
+  fiscalYear: number;
+  basis: 'ACCRUAL' | 'CASH';
+  operatingActivities: {
+    netIncome: number;
+    depreciationAddBack: number;
+    changeInAccountsReceivable: number;
+    changeInAccountsPayable: number;
+    changeInSalesTaxPayable: number;
+    netCashFromOperating: number;
+  };
+  investingActivities: {
+    fleetAndEquipmentPurchase: number;
+    netCashFromInvesting: number;
+  };
+  financingActivities: {
+    capitalContributions: number;
+    partnerDrawsAndDistributions: number;
+    netCashFromFinancing: number;
+  };
+  netChangeInCash: number;
+  beginningCashBalance: number;
+  endingCashBalance: number;
+  isReconciled: boolean;
+}
+
+export interface StatementOfEquityReport {
+  fiscalYear: number;
+  basis: 'ACCRUAL' | 'CASH';
+  beginningBalance: number;
+  capitalContributed: number;
+  netIncomeOrLoss: number;
+  partnerDraws: number;
+  endingBalance: number;
+  scheduleM2: {
+    line1BeginningCapital: number;
+    line2CapitalContributed: number;
+    line3NetIncome: number;
+    line4OtherIncreases: number;
+    line5TotalLines1Through4: number;
+    line6Distributions: number;
+    line7OtherDecreases: number;
+    line8TotalLines6And7: number;
+    line9EndingCapital: number;
+  };
+}
+
+export interface FinancialNoteItem {
+  noteNumber: number;
+  title: string;
+  titlePt: string;
+  usGaapCodification: string;
+  content: string;
+}
+
+export interface FinancialNotesReport {
+  entityName: string;
+  fiscalYear: number;
+  basis: 'ACCRUAL' | 'CASH';
+  notes: FinancialNoteItem[];
+}
+

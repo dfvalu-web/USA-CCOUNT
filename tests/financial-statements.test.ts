@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { FinancialStatementsEngine, AccountWithLines } from '../src/lib/accounting/financial-statements';
+import { CompanyLedgerEngine } from '../src/lib/accounting/company-ledger-data';
 
-describe('FinancialStatementsEngine (P&L and Balance Sheet)', () => {
+describe('FinancialStatementsEngine (US GAAP Full Suite)', () => {
   const mockAccounts: AccountWithLines[] = [
     {
       code: '1010',
@@ -63,25 +64,47 @@ describe('FinancialStatementsEngine (P&L and Balance Sheet)', () => {
     expect(is.netIncome).toBe(30000);
   });
 
-  it('should verify the fundamental Balance Sheet equation: Assets = Liabilities + Equity', () => {
-    const is = FinancialStatementsEngine.generateIncomeStatement(
+  it('should generate balanced Balance Sheet', () => {
+    const bs = FinancialStatementsEngine.generateBalanceSheet(
       mockAccounts,
-      '2026-01-01',
       '2026-12-31',
       'ACCRUAL'
     );
 
-    const bs = FinancialStatementsEngine.generateBalanceSheet(
-      mockAccounts,
-      '2026-12-31',
-      'ACCRUAL',
-      is.netIncome
-    );
-
     expect(bs.totalAssets).toBe(100000);
     expect(bs.totalLiabilities).toBe(20000);
-    expect(bs.totalEquity).toBe(80000); // 50000 initial equity + 30000 net income
+    expect(bs.totalEquity).toBe(80000); // 50000 Equity + 30000 Net Income
     expect(bs.totalLiabilitiesAndEquity).toBe(100000);
     expect(bs.isBalanced).toBe(true);
+  });
+
+  it('should generate Statement of Cash Flows (ASC 230) for Milla Maid Services LLC', () => {
+    const millaAccounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const cf2025 = FinancialStatementsEngine.generateStatementOfCashFlows(millaAccounts, 2025, 'ACCRUAL');
+
+    expect(cf2025.fiscalYear).toBe(2025);
+    expect(cf2025.operatingActivities.netIncome).toBeGreaterThan(50000);
+    expect(cf2025.operatingActivities.netCashFromOperating).toBeDefined();
+    expect(cf2025.endingCashBalance).toBe(283617.40);
+  });
+
+  it('should generate Statement of Changes in Equity / Schedule M-2 (ASC 505 / Form 1065)', () => {
+    const millaAccounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+    const eq2025 = FinancialStatementsEngine.generateStatementOfEquity(millaAccounts, 2025, 'ACCRUAL');
+
+    expect(eq2025.fiscalYear).toBe(2025);
+    expect(eq2025.endingBalance).toBe(349522.40);
+    expect(eq2025.scheduleM2.line9EndingCapital).toBe(349522.40);
+  });
+
+  it('should generate Official Notes to Financial Statements (ASC 235)', () => {
+    const notesReport = FinancialStatementsEngine.generateNotesToFinancialStatements(
+      'Milla Maid Services LLC',
+      2025,
+      'ACCRUAL'
+    );
+
+    expect(notesReport.notes.length).toBeGreaterThanOrEqual(7);
+    expect(notesReport.notes[0].usGaapCodification).toContain('ASC');
   });
 });
