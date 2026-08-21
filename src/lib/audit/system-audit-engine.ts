@@ -1,5 +1,4 @@
-import Decimal from 'decimal.js';
-import { SAMPLE_LEDGER_ACCOUNTS } from '@/lib/accounting/sample-data';
+import { SAMPLE_LEDGER_ACCOUNTS, getSampleReports } from '@/lib/accounting/sample-data';
 import { DoubleEntryLedgerEngine } from '@/lib/accounting/ledger-engine';
 import { CompanyProfileEngine } from '@/lib/company/company-profile-engine';
 
@@ -81,7 +80,7 @@ export class SystemAuditEngine {
    * Runs a complete deep automated diagnostic scan of the entire accounting system
    */
   public static runDeepDiagnosticScan(): SystemAuditReport {
-    const tb = DoubleEntryLedgerEngine.generateTrialBalance(SAMPLE_LEDGER_ACCOUNTS as any, 'ACCRUAL');
+    const { trialBalance: tb } = getSampleReports('ACCRUAL');
     let totalLines = 0;
     SAMPLE_LEDGER_ACCOUNTS.forEach((acc) => {
       totalLines += acc.lines.length;

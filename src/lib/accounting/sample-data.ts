@@ -11,7 +11,10 @@ export const SAMPLE_LEDGER_ACCOUNTS: AccountWithLines[] = [
     subType: 'CASH_AND_CASH_EQUIVALENTS',
     lines: [
       { debit: 250000, credit: 0, date: '2026-01-01', basis: 'BOTH' }, // Initial capital
+      { debit: 0, credit: 11500, date: '2026-01-05', basis: 'BOTH' }, // Equipment cash portion
+      { debit: 35000, credit: 0, date: '2026-02-15', basis: 'BOTH' }, // Retainer received
       { debit: 150000, credit: 0, date: '2026-03-15', basis: 'BOTH' }, // Client payments
+      { debit: 0, credit: 20000, date: '2026-03-28', basis: 'BOTH' }, // Owner draw
       { debit: 0, credit: 45000, date: '2026-03-31', basis: 'BOTH' }, // Direct contractor & labor
       { debit: 0, credit: 18500, date: '2026-03-31', basis: 'BOTH' }, // SG&A expenses
     ],
@@ -64,7 +67,7 @@ export const SAMPLE_LEDGER_ACCOUNTS: AccountWithLines[] = [
     type: 'LIABILITY',
     subType: 'ACCOUNTS_PAYABLE',
     lines: [
-      { debit: 0, credit: 12500, date: '2026-03-20', basis: 'ACCRUAL' },
+      { debit: 0, credit: 12500, date: '2026-01-05', basis: 'ACCRUAL' },
     ],
   },
   {
@@ -166,12 +169,30 @@ export const SAMPLE_LEDGER_ACCOUNTS: AccountWithLines[] = [
     ],
   },
   {
+    code: '6020',
+    name: 'Employer Payroll Taxes (FICA / FUTA)',
+    type: 'EXPENSE',
+    subType: 'PAYROLL_TAXES',
+    lines: [
+      { debit: 4200, credit: 0, date: '2026-03-31', basis: 'BOTH' },
+    ],
+  },
+  {
     code: '6100',
     name: 'Software, SaaS & Productivity Tools',
     type: 'EXPENSE',
     subType: 'SOFTWARE_AND_SAAS',
     lines: [
       { debit: 3500, credit: 0, date: '2026-03-31', basis: 'BOTH' },
+    ],
+  },
+  {
+    code: '6200',
+    name: 'Depreciation Expense - Equipment',
+    type: 'EXPENSE',
+    subType: 'DEPRECIATION_EXPENSE',
+    lines: [
+      { debit: 2000, credit: 0, date: '2026-03-31', basis: 'BOTH' },
     ],
   },
   {
