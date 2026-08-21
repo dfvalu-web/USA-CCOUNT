@@ -3,6 +3,7 @@
 import React from 'react';
 import { LandingHeader } from './LandingHeader';
 import { HeroSection } from './HeroSection';
+import { VideoShowcaseSection } from './VideoShowcaseSection';
 import { InteractiveLedgerTeaser } from './InteractiveLedgerTeaser';
 import { FeatureGrid } from './FeatureGrid';
 import { PricingSection } from './PricingSection';
@@ -15,6 +16,7 @@ export function LandingPage() {
       <LandingHeader />
       <main>
         <HeroSection />
+        <VideoShowcaseSection />
         <InteractiveLedgerTeaser />
         <FeatureGrid />
         <PricingSection />
