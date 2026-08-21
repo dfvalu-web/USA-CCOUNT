@@ -2,15 +2,14 @@
 
 import React from 'react';
 import { useI18n } from '@/lib/i18n/context';
-import { useCompany } from '@/lib/company/company-context';
 import { locales } from '@/lib/i18n/config';
 import { Button } from '@/components/ui/Button';
 import {
   Command,
   CheckCircle2,
-  Building2,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
+import { GlobalCompanySelector } from '@/components/common/GlobalCompanySelector';
 
 interface HeaderProps {
   onOpenCommandMenu: () => void;
@@ -19,9 +18,6 @@ interface HeaderProps {
 
 export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
   const { locale, setLocale, basis, setBasis, t } = useI18n();
-  const { activeCompany } = useCompany();
-
-  const stateBadge = activeCompany?.formationState || activeCompany?.principalAddress?.state;
 
   return (
     <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
@@ -30,20 +26,22 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
         {/* Accrual / Cash Toggle */}
         <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
           <button
+            type="button"
             onClick={() => setBasis('ACCRUAL')}
             className={`px-2.5 py-1 rounded-md font-medium transition-all ${
               basis === 'ACCRUAL'
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'bg-emerald-600 text-white shadow-sm font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             {t('common.accrual')}
           </button>
           <button
+            type="button"
             onClick={() => setBasis('CASH')}
             className={`px-2.5 py-1 rounded-md font-medium transition-all ${
               basis === 'CASH'
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'bg-emerald-600 text-white shadow-sm font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -57,25 +55,18 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
         </div>
       </div>
 
-      {/* Center: Selected Company Badge Display (Conforme amostra destacada) */}
-      <div className="hidden md:flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs shadow-sm">
-        <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
-        <span className="font-bold text-white tracking-wide truncate max-w-[280px]">
-          {activeCompany?.legalName || 'Apex CleanOps Commercial Services LLC'}
-        </span>
-        {stateBadge && (
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold uppercase">
-            {stateBadge}
-          </span>
-        )}
+      {/* Center: Interactive Global Company Selector Dropdown (Permite selecionar qualquer empresa) */}
+      <div className="hidden md:flex items-center">
+        <GlobalCompanySelector />
       </div>
 
       {/* Right: Search / Command Menu, Language, Balanced Status & New Entry Button */}
       <div className="flex items-center space-x-3">
         {/* Quick Command Trigger */}
         <button
+          type="button"
           onClick={onOpenCommandMenu}
-          className="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors"
+          className="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-xs text-slate-400 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 transition-colors cursor-pointer"
         >
           <Command className="w-3.5 h-3.5 text-slate-400" />
           <span>{t('common.search')}</span>
@@ -89,6 +80,7 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
           {locales.map((loc) => (
             <button
               key={loc.code}
+              type="button"
               onClick={() => setLocale(loc.code)}
               className={`px-2 py-1 text-xs rounded-md transition-colors ${
                 locale === loc.code
