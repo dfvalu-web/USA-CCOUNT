@@ -1,0 +1,40 @@
+{
+  "extends": [
+    "next/core-web-vitals"
+  ],
+  "plugins": [
+    "i18next"
+  ],
+  "rules": {
+    "i18next/no-literal-string": [
+      "error",
+      {
+        "markupOnly": true,
+        "ignoreAttribute": [
+          "href",
+          "className",
+          "type",
+          "variant",
+          "size",
+          "key",
+          "id",
+          "role",
+          "lang",
+          "xmlns",
+          "viewBox",
+          "fill",
+          "stroke",
+          "d",
+          "asOfDate",
+          "initialTab",
+          "target",
+          "rel",
+          "style",
+          "name",
+          "aria-label",
+          "data-testid"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,2344 @@
+{
+  "discrepancies": [
+    {
+      "key": "accounting.accountCode",
+      "en": "Account Code",
+      "pt": "Código da Conta",
+      "es": "Código de Cuenta",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.accountName",
+      "en": "Account Name",
+      "pt": "Nome da Conta",
+      "es": "Nombre de Cuenta",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.accountType",
+      "en": "Account Type",
+      "pt": "Tipo de Conta",
+      "es": "Tipo de Cuenta",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.assets",
+      "en": "Assets",
+      "pt": "Ativos",
+      "es": "Activos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.costOfServices",
+      "en": "Cost of Services",
+      "pt": "Custo dos Serviços Prestados",
+      "es": "Costo de los Servicios Prestados",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.credit",
+      "en": "Credit",
+      "pt": "Crédito",
+      "es": "Crédito",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.currentAssets",
+      "en": "Current Assets",
+      "pt": "Ativo Circulante",
+      "es": "Activo Corriente",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.currentLiabilities",
+      "en": "Current Liabilities",
+      "pt": "Passivo Circulante",
+      "es": "Pasivo Corriente",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.debit",
+      "en": "Debit",
+      "pt": "Débito",
+      "es": "Débito",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.entryNumber",
+      "en": "Entry #",
+      "pt": "Nº Lançamento",
+      "es": "Nº Asiento",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.equity",
+      "en": "Equity",
+      "pt": "Patrimônio Líquido",
+      "es": "Patrimonio Neto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.grossMargin",
+      "en": "Gross Margin",
+      "pt": "Margem Bruta",
+      "es": "Margen Bruto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.grossProfit",
+      "en": "Gross Profit",
+      "pt": "Lucro Bruto",
+      "es": "Utilidad Bruta",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.liabilities",
+      "en": "Liabilities",
+      "pt": "Passivos",
+      "es": "Pasivos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.memo",
+      "en": "Memo / Description",
+      "pt": "Histórico / Memorando",
+      "es": "Detalle / Concepto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.netBalance",
+      "en": "Net Balance",
+      "pt": "Saldo Líquido",
+      "es": "Saldo Neto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.netIncome",
+      "en": "Net Income",
+      "pt": "Lucro Líquido",
+      "es": "Utilidad Neta",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.newEntry",
+      "en": "New Journal Entry",
+      "pt": "Novo Lançamento Contábil",
+      "es": "Nuevo Asiento de Diario",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.nonCurrentAssets",
+      "en": "Non-Current Assets",
+      "pt": "Ativo Não Circulante",
+      "es": "Activo No Corriente",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.nonCurrentLiabilities",
+      "en": "Non-Current Liabilities",
+      "pt": "Passivo Não Circulante",
+      "es": "Pasivo No Corriente",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.operatingExpenses",
+      "en": "Operating Expenses",
+      "pt": "Despesas Operacionais",
+      "es": "Gastos Operativos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.operatingIncome",
+      "en": "Operating Income",
+      "pt": "Resultado Operacional (EBITDA)",
+      "es": "Resultado Operativo (EBITDA)",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.postEntry",
+      "en": "Post Journal Entry",
+      "pt": "Registrar Lançamento",
+      "es": "Registrar Asiento",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.retainedEarnings",
+      "en": "Retained Earnings",
+      "pt": "Lucros Acumulados",
+      "es": "Utilidades Retenidas",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.revenue",
+      "en": "Revenue",
+      "pt": "Receita Operacional",
+      "es": "Ingresos Operativos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.ruleDebitCredit",
+      "en": "Debits must strictly equal Credits (US GAAP)",
+      "pt": "Os Débitos devem ser rigorosamente iguais aos Créditos (US GAAP)",
+      "es": "Los Débitos deben ser estrictamente iguales a los Créditos (US GAAP)",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "accounting.totalLiabilitiesAndEquity",
+      "en": "Total Liabilities & Equity",
+      "pt": "Total do Passivo e Patrimônio Líquido",
+      "es": "Total Pasivo y Patrimonio Neto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.accrual",
+      "en": "Accrual Basis",
+      "pt": "Regime de Competência",
+      "es": "Base de Devengado",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.actions",
+      "en": "Actions",
+      "pt": "Ações",
+      "es": "Acciones",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.appName",
+      "en": "UAS Accounting",
+      "pt": "UAS Accounting",
+      "es": "UAS Accounting",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.balanced",
+      "en": "Balanced",
+      "pt": "Balanceado",
+      "es": "Cuadrado",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.cancel",
+      "en": "Cancel",
+      "pt": "Cancelar",
+      "es": "Cancelar",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.cash",
+      "en": "Cash Basis",
+      "pt": "Regime de Caixa",
+      "es": "Base de Efectivo",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.commandPalette",
+      "en": "Command Palette",
+      "pt": "Paleta de Comandos",
+      "es": "Paleta de Comandos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.create",
+      "en": "Create",
+      "pt": "Criar",
+      "es": "Crear",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.dark",
+      "en": "Dark",
+      "pt": "Escuro",
+      "es": "Oscuro",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.date",
+      "en": "Date",
+      "pt": "Data",
+      "es": "Fecha",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.delete",
+      "en": "Delete",
+      "pt": "Excluir",
+      "es": "Eliminar",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.edit",
+      "en": "Edit",
+      "pt": "Editar",
+      "es": "Editar",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.export",
+      "en": "Export PDF/CSV",
+      "pt": "Exportar PDF/CSV",
+      "es": "Exportar PDF/CSV",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.language",
+      "en": "Language",
+      "pt": "Idioma",
+      "es": "Idioma",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.light",
+      "en": "Light",
+      "pt": "Claro",
+      "es": "Claro",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.loading",
+      "en": "Loading data...",
+      "pt": "Carregando dados...",
+      "es": "Cargando datos...",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.save",
+      "en": "Save",
+      "pt": "Salvar",
+      "es": "Guardar",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.search",
+      "en": "Search or type command...",
+      "pt": "Buscar ou digitar comando...",
+      "es": "Buscar o escribir comando...",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.status",
+      "en": "Status",
+      "pt": "Status",
+      "es": "Estado",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.tagline",
+      "en": "US GAAP Fintech Platform for Service Businesses",
+      "pt": "Plataforma Fintech US GAAP para Prestadores de Serviços",
+      "es": "Plataforma Fintech US GAAP para Empresas de Servicios",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.theme",
+      "en": "Theme",
+      "pt": "Tema",
+      "es": "Tema",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.total",
+      "en": "Total",
+      "pt": "Total",
+      "es": "Total",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "common.unbalanced",
+      "en": "Unbalanced",
+      "pt": "Desbalanceado",
+      "es": "Descuadrado",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.billableUtilization",
+      "en": "Billable Utilization",
+      "pt": "Utilização Faturável",
+      "es": "Utilización Facturable",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.days",
+      "en": "days",
+      "pt": "dias",
+      "es": "días",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.dso",
+      "en": "DSO (Days Sales Outstanding)",
+      "pt": "Prazo Médio de Recebimento (DSO)",
+      "es": "Periodo Medio de Cobro (DSO)",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.monthlyBurn",
+      "en": "Monthly Burn Rate",
+      "pt": "Burn Rate Mensal",
+      "es": "Burn Rate Mensual",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.months",
+      "en": "months",
+      "pt": "meses",
+      "es": "meses",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.netRunway",
+      "en": "Net Runway",
+      "pt": "Runway Líquido",
+      "es": "Runway Neto",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.quickRatio",
+      "en": "Quick Ratio",
+      "pt": "Índice de Liquidez Seca",
+      "es": "Ratio de Prueba Ácida",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "metrics.workingCapital",
+      "en": "Working Capital",
+      "pt": "Capital de Giro",
+      "es": "Capital de Trabajo",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.balanceSheet",
+      "en": "Balance Sheet",
+      "pt": "Balanço Patrimonial",
+      "es": "Balance General",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.chartOfAccounts",
+      "en": "Chart of Accounts",
+      "pt": "Plano de Contas",
+      "es": "Plan de Cuentas",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.dashboard",
+      "en": "Executive Cockpit",
+      "pt": "Cockpit Executivo",
+      "es": "Panel Ejecutivo",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.generalLedger",
+      "en": "General Ledger",
+      "pt": "Livro Razão Geral",
+      "es": "Libro Mayor General",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.incomeStatement",
+      "en": "Income Statement (P&L)",
+      "pt": "Demonstração do Resultado (DRE)",
+      "es": "Estado de Resultados (P&L)",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.invoicing",
+      "en": "Invoices & Billing",
+      "pt": "Faturamento & Invoices",
+      "es": "Facturación e Invoices",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.journalEntries",
+      "en": "Journal Entries",
+      "pt": "Lançamentos de Diário",
+      "es": "Asientos de Diario",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.payroll",
+      "en": "Payroll & W-2 / 1099",
+      "pt": "Departamento Pessoal & W-2 / 1099",
+      "es": "Nómina y W-2 / 1099",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.reports",
+      "en": "Financial Reports",
+      "pt": "Relatórios Financeiros",
+      "es": "Informes Financieros",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.scheduling",
+      "en": "Time Tracking & Retainers",
+      "pt": "Apontamento de Horas & Retainers",
+      "es": "Control de Horas y Anticipos",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.settings",
+      "en": "Organization Settings",
+      "pt": "Configurações da Empresa",
+      "es": "Configuración de la Empresa",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.taxCompliance",
+      "en": "Tax Compliance & Sales Tax",
+      "pt": "Compliance Fiscal & Sales Tax",
+      "es": "Cumplimiento Fiscal y Sales Tax",
+      "status": [
+        "OK"
+      ]
+    },
+    {
+      "key": "nav.trialBalance",
+      "en": "Trial Balance",
+      "pt": "Balancete de Verificação",
+      "es": "Balance de Comprobación",
+      "status": [
+        "OK"
+      ]
+    }
+  ],
+  "hardcoded_count": 283,
+  "hardcoded_sample": [
+    {
+      "file": "src/components/accounting/BalanceSheetView.tsx",
+      "line": 69,
+      "text": "BALANCE SHEET / STATEMENT OF FINANCIAL POSITION",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 101,
+      "text": "STATEMENT OF OPERATIONS & COMPREHENSIVE INCOME (DRE)",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 112,
+      "text": "US GAAP ASC 606",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 167,
+      "text": "Crescimento de Receita (YoY)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 177,
+      "text": "Margem Bruta Comparada",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 180,
+      "text": "(vs 68.2% ano anterior)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 185,
+      "text": "Expansão de Lucro Líquido",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/IncomeStatementView.tsx",
+      "line": 198,
+      "text": "Exercício Fiscal Sem Movimentação Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 178,
+      "text": "GENERAL LEDGER REPORT (LIVRO RAZÃO CONTÁBIL ANALÍTICO)",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 191,
+      "text": "Livro Razão Geral Contábil (General Ledger)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 213,
+      "text": "Contas com Movimento",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 220,
+      "text": "Total Débitos no Período",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 227,
+      "text": "Total Créditos no Período",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 234,
+      "text": "Auditoria Partidas Dobradas",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 244,
+      "text": "Filtrar Conta:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 263,
+      "text": "Buscar no histórico do razão...",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 316,
+      "text": "Saldo Inicial:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 322,
+      "text": "Saldo Final:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 334,
+      "text": "Data",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 335,
+      "text": "Histórico / Descrição Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 336,
+      "text": "Regime",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 337,
+      "text": "Débito",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 338,
+      "text": "Crédito",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/GeneralLedgerView.tsx",
+      "line": 339,
+      "text": "Saldo Acumulado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 61,
+      "text": "TRIAL BALANCE REPORT (BALANCETE DE VERIFICAÇÃO)",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 99,
+      "text": "Filtrar por Tipo:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 106,
+      "text": "Ativos (1000s)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 107,
+      "text": "Passivos (2000s)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 108,
+      "text": "Patrimônio Líquido (3000s)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 109,
+      "text": "Receitas (4000s)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 110,
+      "text": "Custos & Despesas (5000s & 6000s)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/TrialBalanceTable.tsx",
+      "line": 118,
+      "text": "Buscar conta por código ou nome...",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 104,
+      "text": "GENERAL JOURNAL ENTRIES (LIVRO DIÁRIO CONTÁBIL)",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 144,
+      "text": "Regime Contábil:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 151,
+      "text": "Apenas Competência (Accrual)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 152,
+      "text": "Apenas Caixa (Cash)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 153,
+      "text": "Ambos os Regimes (Dual)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 161,
+      "text": "Buscar por número, histórico ou valor...",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 201,
+      "text": "Regime",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/JournalEntriesView.tsx",
+      "line": 202,
+      "text": "Valor Total",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 49,
+      "text": "US GAAP Audit-Ready",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 83,
+      "text": "Prepared By",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 84,
+      "text": "Staff Accountant / Controller",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 87,
+      "text": "Reviewed & Certified By",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 88,
+      "text": "Certified Public Accountant (CPA) / EA",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 91,
+      "text": "Management Approval",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/PrintReportHeader.tsx",
+      "line": 97,
+      "text": "UAS Accounting Next-Gen Fintech • Immutable Double-Entry General Ledger",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/layout/Sidebar.tsx",
+      "line": 133,
+      "text": "US GAAP & SOC 2 Verified",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/layout/Header.tsx",
+      "line": 115,
+      "text": "Clique para alternar usuário / fazer login",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/layout/Header.tsx",
+      "line": 133,
+      "text": "Sair da sessão / Logout",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 196,
+      "text": "Simulador Executivo de Sensibilidade & Runway Financeiro",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 198,
+      "text": "Simulação em Tempo Real",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 205,
+      "text": "Crescimento de Receita Previsto:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 227,
+      "text": "Variação de Despesas Operacionais:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 240,
+      "text": "-20% (Corte)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 242,
+      "text": "+50% (Expansão)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 249,
+      "text": "Novas Contratações (Equipe):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 264,
+      "text": "+10 vagas",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 272,
+      "text": "Receita Mensal Projetada",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 279,
+      "text": "Burn Rate / Gastos Projetados",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 286,
+      "text": "Runway no Cenário Simulado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 333,
+      "text": "Lançamentos Recentes no Razão Contábil (General Ledger)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 334,
+      "text": "Partidas Dobradas US GAAP Auditadas em Tempo Real",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 370,
+      "text": "Linhas de Receita",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 371,
+      "text": "Composição do Faturamento Operacional",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 398,
+      "text": "✓ Todos os impostos estaduais em conformidade (*Good Standing*).",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/dashboard/ExecutiveCockpit.tsx",
+      "line": 399,
+      "text": "✓ 3 Contas bancárias conectadas e conciliadas em tempo real.",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 82,
+      "text": "Compliance Tributário Federal & Nexus Estadual de Sales Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 95,
+      "text": "LLC Partnership (Form 1065)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 96,
+      "text": "S-Corporation (Form 1120-S)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 97,
+      "text": "C-Corporation (Form 1120)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 98,
+      "text": "Single-Member LLC (Schedule C)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 122,
+      "text": "IRS Compliance Ready",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 129,
+      "text": "Linha IRS",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 130,
+      "text": "Descrição Oficial da Linha (IRS Tax Return)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 131,
+      "text": "Contas Contábeis de Origem",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 132,
+      "text": "Valor Mapeado (\\$)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 159,
+      "text": "Monitor de Nexus Econômico Multi-Estadual (Wayfair Standard)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 160,
+      "text": "Ajuste o volume de vendas por estado para monitorar a obrigação de Sales Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 162,
+      "text": "South Dakota v. Wayfair",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 179,
+      "text": "Vendas:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 222,
+      "text": "Estimativas Trimestrais de Imposto (IRS Form 1040-ES / 1120-W)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 223,
+      "text": "Projeções de Safe Harbor e Vencimentos Oficiais do IRS",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/TaxComplianceView.tsx",
+      "line": 226,
+      "text": "Lucro Anual:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 40,
+      "text": "Annual CPA Tax Return Binder & Workpaper Package",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 69,
+      "text": "Entity & EIN",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 75,
+      "text": "IRS Tax Mapping",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 76,
+      "text": "Form 1065 (Partnership/LLC)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 81,
+      "text": "Audit Status",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 118,
+      "text": "State Sales Tax Return Filing Schedule & Portal Pre-Filler",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 160,
+      "text": "Gross Sales (Box 1):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 166,
+      "text": "Exempt Sales (Box 2):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 172,
+      "text": "Taxable Sales (Box 3):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/CpaTaxBinderView.tsx",
+      "line": 178,
+      "text": "Net Tax Due (Box 4):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 135,
+      "text": "Form 1099-NEC — Prestadores de Serviços Autônomos (≥ $600/ano)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 150,
+      "text": "Prestador & TIN/SSN",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 151,
+      "text": "Estado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 152,
+      "text": "Box 1: Remuneração",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 153,
+      "text": "Retenção Estadual",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 154,
+      "text": "Status",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 155,
+      "text": "Ações",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 202,
+      "text": "Form W-2 — Salários e Retenções de Colaboradores",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 203,
+      "text": "Demonstrativo anual para Social Security Administration e IRS",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 215,
+      "text": "Colaborador & SSN",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 216,
+      "text": "Box 1: Salários",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 217,
+      "text": "Box 2: Fed Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 218,
+      "text": "Box 4: Social Security",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 219,
+      "text": "Box 6: Medicare",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 220,
+      "text": "Ações",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 266,
+      "text": "Form W-3 — Transmittal of Wage and Tax Statements",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 267,
+      "text": "Resumo consolidado para transmissão à Social Security Administration (SSA)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 274,
+      "text": "Total W-2s Transmitidos",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 279,
+      "text": "Total Box 1: Wages",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 286,
+      "text": "Total Box 2: Federal Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 293,
+      "text": "Total Social Security Wages",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 300,
+      "text": "Total Social Security Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/YearEndTaxFormsView.tsx",
+      "line": 307,
+      "text": "Total Medicare Tax",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 127,
+      "text": "Central de State Franchise Taxes & Relatórios Anuais (DE / CA / TX)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 192,
+      "text": "Ajuste os dados de capital para recalcular a taxa em tempo real",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 196,
+      "text": "Tipo Societário:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 290,
+      "text": "Comparador Estatutário Delaware: Authorized Shares vs Assumed Par Value",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 295,
+      "text": "Vencimento: 1 de Março (Corp) / 1 de Junho (LLC)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 302,
+      "text": "Delaware LLC Annual Flat Tax:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 303,
+      "text": "$300.00 / ano",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 331,
+      "text": "Recomendado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 346,
+      "text": "Economia Tributária Identificada:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 377,
+      "text": "Cálculo de Form 568 e taxa progressiva sobre receita da CA",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 394,
+      "text": "Tabela Progressiva FTB:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 396,
+      "text": "Até $250,000:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 397,
+      "text": "$0 Fee",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 400,
+      "text": "$250k – $499,999:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 401,
+      "text": "$900 Fee",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 404,
+      "text": "$500k – $999,999:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 405,
+      "text": "$2,500 Fee",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 408,
+      "text": "$1M – $4,999,999:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 409,
+      "text": "$6,000 Fee",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 435,
+      "text": "California Franchise Tax Board (FTB) Breakdown",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 436,
+      "text": "Resumo discriminado de taxa mínima e taxa de faturamento",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 438,
+      "text": "Vencimento: 15 de Abril (FTB 3536)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 444,
+      "text": "Taxa Mínima Anual",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 446,
+      "text": "Obrigatória para todas as LLCs",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 450,
+      "text": "LLC Fee Escalonada",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 458,
+      "text": "Total Devido à Califórnia",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 462,
+      "text": "Form 568 Schedule Q",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 479,
+      "text": "Cálculo de elegibilidade para No Tax Due (Limite de \\$2.47M)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 517,
+      "text": "Texas Franchise Tax & Public Information Report (PIR)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 518,
+      "text": "Status perante o Texas Comptroller of Public Accounts",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 520,
+      "text": "Vencimento: 15 de Maio",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 534,
+      "text": "$0.00 Devido",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 538,
+      "text": "Formulário Obrigatório a Transmitir:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 555,
+      "text": "Histórico de Protocolos & Certificados de Good Standing",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 556,
+      "text": "Comprovantes oficiais de taxas estaduais transmitidas",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 558,
+      "text": "Todas as Empresas em Good Standing",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 565,
+      "text": "ID Protocolo",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 566,
+      "text": "Estado & Entidade",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 567,
+      "text": "Relatório / Formulário",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 568,
+      "text": "Valor Pago",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 569,
+      "text": "Data do Envio",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 570,
+      "text": "Nº Confirmação SOS",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/tax/StateFranchiseTaxView.tsx",
+      "line": 571,
+      "text": "Status",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 465,
+      "text": "Transações do Período",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 478,
+      "text": "Período Fiscal Selecionado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 481,
+      "text": "3-Way Matching",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 482,
+      "text": "Banco vs Razão Contábil vs OCR",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 577,
+      "text": "Filtro de Status:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 604,
+      "text": "Buscar lançamento...",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 643,
+      "text": "Data / FITID",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 644,
+      "text": "Extrato Bancário (Descrição & Banco)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 645,
+      "text": "Conta no Razão Contábil (US GAAP)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 646,
+      "text": "Valor Bancário",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 647,
+      "text": "Confiança / Regra",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 648,
+      "text": "Ação",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 679,
+      "text": "Conta 4010 - Receita de Serviços de Limpeza",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 680,
+      "text": "Conta 5010 - Subcontratados 1099",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 681,
+      "text": "Conta 5020 - Salários Diretos W-2",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 682,
+      "text": "Conta 6010 - Honorários Legais e CPA",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 683,
+      "text": "Conta 6040 - Veículos, Combustível & Frota",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 684,
+      "text": "Conta 6050 - Insumos Químicos de Limpeza",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 685,
+      "text": "Conta 1510 - Frota & Vans Imobilizado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 686,
+      "text": "Conta 3010 - Aporte de Capital dos Sócios",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 687,
+      "text": "Conta 3030 - Distribuição de Lucros (Draws)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 772,
+      "text": "Plaid Financial Data Engine Conectado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 773,
+      "text": "Transações e extratos são baixados automaticamente via Webhook bancário instantâneo.",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 792,
+      "text": "Clique ou Arraste seu Extrato Bancário aqui",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 859,
+      "text": "OCR 100% Legível",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 869,
+      "text": "Hora: 14:32",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 875,
+      "text": "Sales Tax Apurado:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 879,
+      "text": "TOTAL DO COMPROVANTE:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 889,
+      "text": "Classificação Contábil Automática",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 890,
+      "text": "Lançamento de Despesa no Razão (US GAAP)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 895,
+      "text": "Fornecedor Identificado:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 900,
+      "text": "Conta de Despesa (Débito):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 906,
+      "text": "Conta 5020 - Insumos de Limpeza (COGS)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 907,
+      "text": "Conta 5010 - Salários & Diárias da Equipe",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 908,
+      "text": "Conta 6100 - Escritório & Tecnologia",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 909,
+      "text": "Conta 6200 - Veículos & Combustível",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 910,
+      "text": "Conta 6300 - Seguros de Responsabilidade",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 915,
+      "text": "Conta de Saída (Crédito):",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 916,
+      "text": "Conta 1010 (JPMorgan Chase Checking)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 920,
+      "text": "Valor Total do Lançamento:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 973,
+      "text": "Cancelar",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 999,
+      "text": "Beneficiário / Fornecedor",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1003,
+      "text": "Ex: Ecolab Chemicals",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1010,
+      "text": "Valor ($)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1015,
+      "text": "150.00",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1025,
+      "text": "Tipo de Movimentação",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1031,
+      "text": "Saída / Despesa (Débito Bancário)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1032,
+      "text": "Entrada / Receita (Depósito)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1036,
+      "text": "Conta do Razão Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1042,
+      "text": "Conta 5020 - Insumos de Limpeza (COGS)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1043,
+      "text": "Conta 5010 - Salários & Diárias da Equipe",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1044,
+      "text": "Conta 4010 - Receita Limpeza Residencial",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1045,
+      "text": "Conta 4020 - Receita Janitorial Comercial",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1046,
+      "text": "Conta 6100 - Escritório & Tech",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1047,
+      "text": "Conta 6200 - Veículos & Combustível",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1048,
+      "text": "Conta 6300 - Seguros de Responsabilidade",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1054,
+      "text": "Cancelar",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/accounting/SmartReconciliationHub.tsx",
+      "line": 1055,
+      "text": "Salvar Lançamento",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 84,
+      "text": "Voltar ao Site Principal",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 95,
+      "text": "SaaS Contábil & Fiscal US GAAP",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 105,
+      "text": "Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 147,
+      "text": ": isCpa ?",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 200,
+      "text": "seu.email@empresa.com",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 229,
+      "text": "••••••••••••",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 250,
+      "text": "Lembrar este dispositivo",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 255,
+      "text": "SSL 256-bit",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 265,
+      "text": "Autenticando...",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/LoginView.tsx",
+      "line": 268,
+      "text": "Entrar no Sistema",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 64,
+      "text": "Voltar ao Site Principal",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 73,
+      "text": "Cadastro Empresarial",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 83,
+      "text": "Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 114,
+      "text": "Empresa / LLC / Corp",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 127,
+      "text": "Escritório de CPA / Contador",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 144,
+      "text": "Ex: Minha Empresa LLC",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 158,
+      "text": "XX-XXXXXXX",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 176,
+      "text": "Seu Nome",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 193,
+      "text": "seu.email@empresa.com",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 211,
+      "text": "Mínimo 8 caracteres",
+      "type": "ATTR_LITERAL"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 220,
+      "text": "Inclui no teste gratuito:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 233,
+      "text": "Criando Conta...",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/auth/RegisterView.tsx",
+      "line": 236,
+      "text": "Concluir Cadastro e Acessar",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingHeader.tsx",
+      "line": 38,
+      "text": "Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingHeader.tsx",
+      "line": 107,
+      "text": "Acessar Plataforma",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 40,
+      "text": "Plataforma Oficial de Contabilidade & Compliance Fiscal US GAAP",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 53,
+      "text": "$0.00 de variância",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 62,
+      "text": "Acessar Plataforma Agora",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 71,
+      "text": "Login com 1 Clique (Demo)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 79,
+      "text": "US GAAP ASC 205/210/606",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 83,
+      "text": "IRS e-File & Form 1065 Ready",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 87,
+      "text": "SOC 2 Type II Merkle Audit Trail",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 91,
+      "text": "Auditoria Forense de $6,5M",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 113,
+      "text": "Status do Fechamento:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 125,
+      "text": "Ativo Total Auditado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 132,
+      "text": "✓ 100% Conciliado com Caixa & Frota",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 138,
+      "text": "Passivo + Patrimônio Líquido",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 145,
+      "text": "✓ Ativo = Passivo + PL (Balanço Equilibrado)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 151,
+      "text": "Partidas Dobradas no Diário",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 158,
+      "text": "✓ Débito = Crédito (21.438 Lançamentos)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 166,
+      "text": "Acesse direto:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/HeroSection.tsx",
+      "line": 182,
+      "text": "Explorar Cockpit Executivo",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 37,
+      "text": "Simulador Interativo US GAAP",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 89,
+      "text": "1. Ativo Total (Assets)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 97,
+      "text": "1010 • Caixa & Bancos (Truist/Chase)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 101,
+      "text": "1510 • Frota de Veículos & Equipamentos",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 110,
+      "text": "2. Patrimônio Líquido (Members’ Equity)",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 118,
+      "text": "3010 • Capital Social Aportado",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 122,
+      "text": "3020 • Lucros Retidos Acumulados",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 123,
+      "text": "Conciliado 100%",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 155,
+      "text": "Receita Bruta de Serviços:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 162,
+      "text": "Lucro Líquido do Exercício:",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 175,
+      "text": "Ver DRE Completa no Sistema",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 184,
+      "text": "Impressão em Padrão Diamante",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/InteractiveLedgerTeaser.tsx",
+      "line": 197,
+      "text": "Testar emissão de PDF",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/FeatureGrid.tsx",
+      "line": 79,
+      "text": "Módulos de Alta Tecnologia",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/FeatureGrid.tsx",
+      "line": 124,
+      "text": "Explorar módulo",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/PricingSection.tsx",
+      "line": 85,
+      "text": "Planos Claros & Transparentes",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/PricingSection.tsx",
+      "line": 112,
+      "text": "Cobrança Anual",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/PricingSection.tsx",
+      "line": 158,
+      "text": "/ mês",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/TrustSecuritySection.tsx",
+      "line": 48,
+      "text": "Segurança Institucional & Auditoria",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingFooter.tsx",
+      "line": 28,
+      "text": "Contábil",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingFooter.tsx",
+      "line": 39,
+      "text": "2300 Global Forum Blvd, Suite 813 • Doraville, GA 30340",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingFooter.tsx",
+      "line": 43,
+      "text": "contato@mistercontabil.com",
+      "type": "JSX_CONTENT"
+    },
+    {
+      "file": "src/components/landing/LandingFooter.tsx",
+      "line": 47,
+      "text": "mistercontabil.com",
+      "type": "JSX_CONTENT"
+    }
+  ]
+}

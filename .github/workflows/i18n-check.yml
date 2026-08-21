@@ -1,0 +1,37 @@
+name: Continuous i18n Parity & Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  i18n-audit-and-quality-gate:
+    name: i18n Dictionary Parity & Lint Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci || npm install
+
+      - name: 🌐 Audit 100% i18n Dictionary Parity (PT / EN / ES)
+        run: npm run audit:i18n
+
+      - name: 🔍 ESLint i18n & JSX Literal Check
+        run: npm run lint
+
+      - name: 🧪 Run Automated Financial & i18n Tests
+        run: npm test
+
+      - name: 🏗️ Verify Next.js Production Build
+        run: npm run build
