@@ -100,9 +100,9 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   };
 
   const getFormattedPeriodLabel = (): string => {
-    if (selectedMonths.length === 0) return `FY ${fiscalYear}`;
+    if (selectedMonths.length === 0) return `${fiscalYear}`;
     if (selectedMonths.length === 12) {
-      return `FY ${fiscalYear} • Ano Todo (12 meses)`;
+      return `${fiscalYear} • Ano Todo`;
     }
     if (selectedMonths.length === 1) {
       return `${MONTH_NAMES_FULL[selectedMonths[0] - 1]} / ${fiscalYear}`;
@@ -116,11 +116,11 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
     if (isContiguous) {
       const first = MONTH_NAMES_SHORT[selectedMonths[0] - 1];
       const last = MONTH_NAMES_SHORT[selectedMonths[selectedMonths.length - 1] - 1];
-      return `FY ${fiscalYear} • ${first} a ${last} (${selectedMonths.length} meses)`;
+      return `${fiscalYear} • ${first} a ${last}`;
     }
 
     const shortList = selectedMonths.map((m) => MONTH_NAMES_SHORT[m - 1]).join(', ');
-    return `FY ${fiscalYear} • ${shortList}`;
+    return `${fiscalYear} • ${shortList}`;
   };
 
   return (

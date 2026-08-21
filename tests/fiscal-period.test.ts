@@ -18,8 +18,8 @@ describe('Corporate Fiscal Period & Intuitive Month Selection', () => {
     const selectedMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     const isAll = selectedMonths.length === 12;
     expect(isAll).toBe(true);
-    const label = `FY ${year} • Ano Todo (12 meses)`;
-    expect(label).toBe('FY 2025 • Ano Todo (12 meses)');
+    const label = `${year} • Ano Todo`;
+    expect(label).toBe('2025 • Ano Todo');
   });
 
   it('should format single month selection accurately', () => {
@@ -33,7 +33,7 @@ describe('Corporate Fiscal Period & Intuitive Month Selection', () => {
     const selectedMonths = [1, 2, 3]; // Q1
     const first = MONTH_NAMES_SHORT[selectedMonths[0] - 1];
     const last = MONTH_NAMES_SHORT[selectedMonths[selectedMonths.length - 1] - 1];
-    const label = `FY 2026 • ${first} a ${last} (${selectedMonths.length} meses)`;
-    expect(label).toBe('FY 2026 • Jan a Mar (3 meses)');
+    const label = `${2026} • ${first} a ${last}`;
+    expect(label).toBe('2026 • Jan a Mar');
   });
 });
