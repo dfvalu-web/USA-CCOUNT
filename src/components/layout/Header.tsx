@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { useI18n } from '@/lib/i18n/context';
+import { useCompany } from '@/lib/company/company-context';
 import { locales } from '@/lib/i18n/config';
 import { Button } from '@/components/ui/Button';
 import {
   Command,
   CheckCircle2,
+  Building2,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
 
@@ -17,6 +19,9 @@ interface HeaderProps {
 
 export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
   const { locale, setLocale, basis, setBasis, t } = useI18n();
+  const { activeCompany } = useCompany();
+
+  const stateBadge = activeCompany?.formationState || activeCompany?.principalAddress?.state;
 
   return (
     <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
@@ -50,6 +55,19 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
         <div className="flex items-center">
           <CorporateFiscalPeriodSelector />
         </div>
+      </div>
+
+      {/* Center: Selected Company Badge Display (Conforme amostra destacada) */}
+      <div className="hidden md:flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs shadow-sm">
+        <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <span className="font-bold text-white tracking-wide truncate max-w-[280px]">
+          {activeCompany?.legalName || 'Apex CleanOps Commercial Services LLC'}
+        </span>
+        {stateBadge && (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold uppercase">
+            {stateBadge}
+          </span>
+        )}
       </div>
 
       {/* Right: Search / Command Menu, Language, Balanced Status & New Entry Button */}
