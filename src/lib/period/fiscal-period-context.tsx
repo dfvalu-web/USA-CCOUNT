@@ -107,7 +107,20 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
 export function useFiscalPeriod(): FiscalPeriodState {
   const context = useContext(FiscalPeriodContext);
   if (!context) {
-    throw new Error('useFiscalPeriod must be used within a FiscalPeriodProvider');
+    return {
+      fiscalYear: 2026,
+      periodType: 'YTD',
+      selectedMonth: 8,
+      customStartDate: '2026-01-01',
+      customEndDate: '2026-08-31',
+      comparisonMode: 'PRIOR_YEAR_YOY',
+      setFiscalYear: () => {},
+      setPeriodType: () => {},
+      setSelectedMonth: () => {},
+      setCustomRange: () => {},
+      setComparisonMode: () => {},
+      getFormattedPeriodLabel: () => 'FY 2026 • YTD (Acumulado no Ano) (vs. 2025 YoY)',
+    };
   }
   return context;
 }

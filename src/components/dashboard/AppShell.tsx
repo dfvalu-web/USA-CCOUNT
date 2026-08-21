@@ -53,6 +53,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 
+import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
+
 interface AppShellProps {
   initialTab?: string;
 }
@@ -63,32 +65,52 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
 
-  // Synchronize activeTab from window URL pathname on load
+  // Sync if initialTab prop changes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname.replace(/^\//, '');
-      if (path) {
-        if (path === 'modulo-contabil') setActiveTab('trial-balance');
-        else if (path === 'modulo-dp') setActiveTab('payroll');
-        else if (path === 'modulo-fiscal' || path === 'tax-compliance' || path === 'compliance-fiscal' || path === 'impostos') setActiveTab('tax-compliance');
-        else if (path === 'state-taxes' || path === 'franchise-tax' || path === 'taxas-estaduais') setActiveTab('state-taxes');
-        else if (path === 'audit-trail' || path === 'auditoria' || path === 'soc2') setActiveTab('audit-trail');
-        else if (path === 'modulo-agendamento') setActiveTab('scheduling');
-        else if (path === 'modulo-bi' || path === 'monte-carlo' || path === 'unit-economics' || path === 'bi' || path === 'reports' || path === 'inteligencia-financeira') setActiveTab('reports');
-        else if (path === 'partners' || path === 'socios' || path === 'quadro-societario') setActiveTab('partners');
-        else if (path === 'portal-colaborador' || path === 'worker-portal' || path === 'contracts' || path === 'contratos' || path === 'e-sign') setActiveTab('worker-portal');
-        else if (path === 'banking' || path === 'banking-disbursements' || path === 'aprovacao-bancaria') setActiveTab('banking-disbursements');
-        else if (path === 'software-migration' || path === 'migration' || path === 'importacao' || path === 'importar-software') setActiveTab('software-migration');
-        else if (path === 'system-audit' || path === 'auditoria-sistema' || path === 'auditoria-geral' || path === 'health-check') setActiveTab('system-audit');
-        else if (path === 'sandbox' || path === 'ambiente-sandbox' || path === 'staging' || path === 'isolamento') setActiveTab('sandbox');
-        else if (path === 'year-end-tax' || path === 'irs-forms' || path === 'fechamento-anual') setActiveTab('year-end-tax');
-        else if (path === 'client-portal' || path === 'portal-cliente' || path === 'faturas-cliente') setActiveTab('client-portal');
-        else if (path === 'budget-variance' || path === 'orcamento' || path === 'budget') setActiveTab('budget-variance');
-        else if (path === 'multi-entity' || path === 'consolidacao' || path === 'holding') setActiveTab('multi-entity');
-        else setActiveTab(path);
-      }
+    if (initialTab) {
+      setActiveTab(initialTab);
     }
+  }, [initialTab]);
+
+  // Synchronize activeTab from window URL pathname on load and popstate
+  useEffect(() => {
+    const syncFromUrl = () => {
+      if (typeof window !== 'undefined') {
+        const path = window.location.pathname.replace(/^\//, '');
+        if (path) {
+          if (path === 'modulo-contabil') setActiveTab('trial-balance');
+          else if (path === 'modulo-dp') setActiveTab('payroll');
+          else if (path === 'modulo-fiscal' || path === 'tax-compliance' || path === 'compliance-fiscal' || path === 'impostos') setActiveTab('tax-compliance');
+          else if (path === 'state-taxes' || path === 'franchise-tax' || path === 'taxas-estaduais') setActiveTab('state-taxes');
+          else if (path === 'audit-trail' || path === 'auditoria' || path === 'soc2') setActiveTab('audit-trail');
+          else if (path === 'modulo-agendamento') setActiveTab('scheduling');
+          else if (path === 'modulo-bi' || path === 'monte-carlo' || path === 'unit-economics' || path === 'bi' || path === 'reports' || path === 'inteligencia-financeira') setActiveTab('reports');
+          else if (path === 'partners' || path === 'socios' || path === 'quadro-societario') setActiveTab('partners');
+          else if (path === 'portal-colaborador' || path === 'worker-portal' || path === 'contracts' || path === 'contratos' || path === 'e-sign') setActiveTab('worker-portal');
+          else if (path === 'banking' || path === 'banking-disbursements' || path === 'aprovacao-bancaria') setActiveTab('banking-disbursements');
+          else if (path === 'software-migration' || path === 'migration' || path === 'importacao' || path === 'importar-software') setActiveTab('software-migration');
+          else if (path === 'system-audit' || path === 'auditoria-sistema' || path === 'auditoria-geral' || path === 'health-check') setActiveTab('system-audit');
+          else if (path === 'sandbox' || path === 'ambiente-sandbox' || path === 'staging' || path === 'isolamento') setActiveTab('sandbox');
+          else if (path === 'year-end-tax' || path === 'irs-forms' || path === 'fechamento-anual') setActiveTab('year-end-tax');
+          else if (path === 'client-portal' || path === 'portal-cliente' || path === 'faturas-cliente') setActiveTab('client-portal');
+          else if (path === 'budget-variance' || path === 'orcamento' || path === 'budget') setActiveTab('budget-variance');
+          else if (path === 'multi-entity' || path === 'consolidacao' || path === 'holding') setActiveTab('multi-entity');
+          else setActiveTab(path);
+        }
+      }
+    };
+
+    syncFromUrl();
+    window.addEventListener('popstate', syncFromUrl);
+    return () => window.removeEventListener('popstate', syncFromUrl);
   }, []);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    if (typeof window !== 'undefined' && window.history) {
+      window.history.pushState(null, '', `/${newTab}`);
+    }
+  };
 
   // Dynamic ledger state
   const [accountsState, setAccountsState] = useState<AccountWithLines[]>(SAMPLE_LEDGER_ACCOUNTS);
@@ -174,23 +196,24 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950">
-      {/* Top Header */}
-      <Header
-        onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
-        onOpenNewEntry={() => setIsNewEntryOpen(true)}
-      />
+    <FiscalPeriodProvider>
+      <div className="min-h-screen flex flex-col bg-slate-950">
+        {/* Top Header */}
+        <Header
+          onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
+          onOpenNewEntry={() => setIsNewEntryOpen(true)}
+        />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex">
-        {/* Sidebar */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        {/* Main Content Area */}
+        <div className="flex-1 flex">
+          {/* Sidebar */}
+          <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
 
-        {/* Dynamic Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
-          {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              <ExecutiveCockpit onNavigateTab={setActiveTab} />
+          {/* Dynamic Page Content */}
+          <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                <ExecutiveCockpit onNavigateTab={handleTabChange} />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <ReceiptOcrScanner onPostSuccess={handleEntrySuccess} />
                 <CfaAiCopilotChat />
@@ -339,5 +362,6 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
         onSuccess={handleEntrySuccess}
       />
     </div>
+    </FiscalPeriodProvider>
   );
 }
