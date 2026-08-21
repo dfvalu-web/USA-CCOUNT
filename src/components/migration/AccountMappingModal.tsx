@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency } from '@/lib/i18n/formatters';
 import {
   ImportedStatementPackage,
   SmartAccountMapping,
+  SoftwareMigrationEngine,
 } from '@/lib/migration/software-migration-engine';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -39,6 +40,18 @@ export function AccountMappingModal({
   const { locale } = useI18n();
 
   const [mappings, setMappings] = useState<SmartAccountMapping[]>(pkg?.mappings || []);
+
+  useEffect(() => {
+    if (pkg) {
+      if (pkg.mappings && pkg.mappings.length > 0) {
+        setMappings(pkg.mappings);
+      } else if (pkg.rawLines && pkg.rawLines.length > 0) {
+        setMappings(pkg.rawLines.map(SoftwareMigrationEngine.autoMapAccount));
+      } else {
+        setMappings([]);
+      }
+    }
+  }, [pkg]);
 
   if (!isOpen || !pkg) return null;
 
