@@ -137,46 +137,17 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         ))}
       </div>
 
-      {/* Pinned Bottom Left Footer: Active Profile & Dedicated Logout Button */}
+      {/* Pinned Bottom Left Footer: Dedicated Minimalist Logout Button */}
       <div className="p-3 border-t border-slate-800/80 bg-slate-950 shrink-0 space-y-2 shadow-2xl">
-        {user ? (
-          <div className="p-2.5 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-2.5">
-            <div className="flex items-center space-x-2.5">
-              <div className="relative shrink-0">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 font-black text-xs shadow-md">
-                  {user.name.charAt(0)}
-                </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
-              </div>
-              <div className="truncate text-left leading-tight flex-1 min-w-0">
-                <span className="text-xs font-bold text-white block truncate">{user.name}</span>
-                <span className="text-[10px] text-emerald-400 font-mono block truncate font-medium">
-                  {user.title || user.role}
-                </span>
-              </div>
-            </div>
-
-            {/* Prominent Sair do Sistema Button */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="w-full h-8 px-3 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 hover:border-rose-700 text-rose-300 hover:text-rose-100 text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer group shadow-sm"
-              title="Encerrar Sessão e Voltar para a Landing Page"
-            >
-              <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-rose-400" />
-              <span>Sair do Sistema</span>
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="w-full h-8 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center space-x-2 cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5 text-rose-400" />
-            <span>Encerrar Sessão</span>
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-full h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-rose-950/50 border border-slate-800 hover:border-rose-800/60 text-slate-300 hover:text-rose-200 text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer group shadow-sm"
+          title="Encerrar Sessão e Voltar para a Landing Page"
+        >
+          <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-rose-400" />
+          <span>Sair</span>
+        </button>
 
         <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono px-1">
           <span className="flex items-center gap-1">
