@@ -19,7 +19,6 @@ import {
   Lock,
   UserCheck,
   Fingerprint,
-  FileSignature,
   Sparkles,
   Package,
   Building2,
@@ -42,54 +41,53 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       title: 'US GAAP Accounting',
       items: [
         { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
-        { id: 'general-ledger', label: 'Livro Razão (General Ledger)', icon: BookOpen },
+        { id: 'general-ledger', label: t('nav.generalLedger'), icon: BookOpen },
         { id: 'trial-balance', label: t('nav.trialBalance'), icon: Scale },
         { id: 'income-statement', label: t('nav.incomeStatement'), icon: TrendingUp },
         { id: 'balance-sheet', label: t('nav.balanceSheet'), icon: FileSpreadsheet },
         { id: 'journal-entries', label: t('nav.journalEntries'), icon: BookOpen },
-        { id: 'bank-reconciliation', label: 'Conciliação Bancária & OCR', icon: Landmark },
-        { id: 'software-migration', label: 'Importação & Migração de Softwares', icon: ArrowRightLeft },
-        { id: 'multi-currency', label: 'Multi-Currency & FX (ASC 830)', icon: Globe },
+        { id: 'bank-reconciliation', label: t('nav.bankReconciliation'), icon: Landmark },
+        { id: 'software-migration', label: t('nav.softwareMigration'), icon: ArrowRightLeft },
+        { id: 'multi-currency', label: t('nav.multiCurrency'), icon: Globe },
         { id: 'chart-of-accounts', label: t('nav.chartOfAccounts'), icon: ListTree },
       ],
     },
     {
       title: 'Service Operations',
       items: [
-        { id: 'directory', label: 'Clientes, Equipe & Fornecedores', icon: Users2 },
-        { id: 'client-portal', label: 'Portal do Cliente B2B', icon: Globe },
-        { id: 'service-catalog', label: 'Catálogo & Indicações', icon: Package },
+        { id: 'directory', label: t('nav.directory'), icon: Users2 },
+        { id: 'client-portal', label: t('nav.clientPortal'), icon: Globe },
+        { id: 'service-catalog', label: t('nav.serviceCatalog'), icon: Package },
         { id: 'invoicing', label: t('nav.invoicing'), icon: Receipt },
-        { id: 'scheduling', label: 'Agendamento & Apontamento de Horas', icon: Clock },
+        { id: 'scheduling', label: t('nav.scheduling'), icon: Clock },
         { id: 'payroll', label: t('nav.payroll'), icon: Users2 },
-        { id: 'worker-portal', label: 'Worker Portal & e-Sign SOW', icon: UserCheck },
-        { id: 'banking-disbursements', label: 'Banking & Dual Approval', icon: Lock },
+        { id: 'worker-portal', label: t('nav.workerPortal'), icon: UserCheck },
+        { id: 'banking-disbursements', label: t('nav.bankingDisbursements'), icon: Lock },
       ],
     },
     {
       title: 'Tax & Compliance',
       items: [
-        { id: 'company-profile', label: 'Cadastro de Empresas (Tax)', icon: Building2 },
-        { id: 'partners', label: 'Sócios & Quadro Societário (K-1)', icon: Users2 },
-        { id: 'year-end-tax', label: 'IRS Year-End Forms (1099/W-2)', icon: FileText },
+        { id: 'company-profile', label: t('nav.companyProfile'), icon: Building2 },
+        { id: 'partners', label: t('nav.partners'), icon: Users2 },
+        { id: 'year-end-tax', label: t('nav.yearEndTax'), icon: FileText },
         { id: 'tax-compliance', label: t('nav.taxCompliance'), icon: Landmark },
-        { id: 'state-taxes', label: 'State Franchise Taxes (DE/CA/TX)', icon: Landmark },
-        { id: 'multi-entity', label: 'Consolidação Multi-Empresas', icon: Building2 },
-        { id: 'audit-trail', label: 'Audit Trail (SOC 2 Merkle)', icon: Fingerprint },
+        { id: 'state-taxes', label: t('nav.stateTaxes'), icon: Landmark },
+        { id: 'multi-entity', label: t('nav.multiEntity'), icon: Building2 },
+        { id: 'audit-trail', label: t('nav.auditTrail'), icon: Fingerprint },
       ],
     },
     {
       title: 'CFA Intelligence & BI',
       items: [
-        { id: 'reports', label: 'Monte Carlo & Unit Economics', icon: Sparkles },
-        { id: 'budget-variance', label: 'Orçamento vs. Realizado', icon: Target },
+        { id: 'reports', label: t('nav.reports'), icon: Sparkles },
+        { id: 'budget-variance', label: t('nav.budgetVariance'), icon: Target },
       ],
     },
     {
       title: 'System & Security',
       items: [
-        { id: 'system-audit', label: 'Auditoria do Sistema & Anomalias', icon: ShieldCheck },
-        { id: 'sandbox', label: 'Ambiente Sandbox (Isolamento)', icon: FlaskConical },
+        { id: 'system-audit', label: t('nav.systemAudit'), icon: ShieldCheck },
         { id: 'settings', label: t('nav.settings'), icon: Settings },
       ],
     },
@@ -130,10 +128,10 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <div className="p-4 border-t border-slate-800/80 bg-slate-900/30">
         <div className="flex items-center space-x-2 text-[11px] text-slate-400">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>US GAAP & SOC 2 Verified</span>
+          <span>{t('reports.auditStamp')}</span>
         </div>
         <div className="text-[10px] text-slate-500 mt-0.5 font-mono">
-          UAS v2.4 • Active Multi-Tenant
+          Mister Contábil v2.5 • Multi-Tenant
         </div>
       </div>
     </aside>

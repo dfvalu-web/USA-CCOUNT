@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -46,17 +46,156 @@ import { ClientPortalView } from '@/components/portal/ClientPortalView';
 import { BudgetVarianceView } from '@/components/budget/BudgetVarianceView';
 import { MultiEntityConsolidationView } from '@/components/company/MultiEntityConsolidationView';
 import { NewJournalEntryModal } from '@/components/accounting/NewJournalEntryModal';
-import { SAMPLE_LEDGER_ACCOUNTS } from '@/lib/accounting/sample-data';
 import { DoubleEntryLedgerEngine } from '@/lib/accounting/ledger-engine';
 import { FinancialStatementsEngine, AccountWithLines } from '@/lib/accounting/financial-statements';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
-import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 
 import { useFiscalPeriod, getFiscalDateRange } from '@/lib/period/fiscal-period-context';
-import { CompanyProvider, useCompany } from '@/lib/company/company-context';
+import { useCompany } from '@/lib/company/company-context';
 import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
+
+export function normalizeTabId(rawTab: string): string {
+  const clean = (rawTab || '').toLowerCase().trim().replace(/^\//, '');
+  switch (clean) {
+    case '':
+    case 'dashboard':
+    case 'cockpit':
+      return 'dashboard';
+    case 'general-ledger':
+    case 'razao':
+    case 'livro-razao':
+      return 'general-ledger';
+    case 'trial-balance':
+    case 'balancete':
+    case 'modulo-contabil':
+    case 'balancete-verificacao':
+      return 'trial-balance';
+    case 'income-statement':
+    case 'dre':
+    case 'demonstrativos':
+    case 'demonstracao-resultado':
+      return 'income-statement';
+    case 'balance-sheet':
+    case 'balanco':
+    case 'balanco-patrimonial':
+      return 'balance-sheet';
+    case 'journal-entries':
+    case 'diario':
+    case 'livro-diario':
+      return 'journal-entries';
+    case 'bank-reconciliation':
+    case 'conciliacao':
+    case 'conciliacao-bancaria':
+      return 'bank-reconciliation';
+    case 'software-migration':
+    case 'migration':
+    case 'importacao':
+    case 'importar-software':
+      return 'software-migration';
+    case 'multi-currency':
+    case 'fx':
+    case 'cambio':
+      return 'multi-currency';
+    case 'chart-of-accounts':
+    case 'plano-de-contas':
+      return 'chart-of-accounts';
+    case 'directory':
+    case 'cadastros':
+    case 'clientes':
+    case 'fornecedores':
+    case 'equipe':
+      return 'directory';
+    case 'client-portal':
+    case 'portal-cliente':
+    case 'faturas-cliente':
+      return 'client-portal';
+    case 'service-catalog':
+    case 'catalogo':
+    case 'servicos':
+      return 'service-catalog';
+    case 'invoicing':
+    case 'faturamento':
+    case 'faturas':
+      return 'invoicing';
+    case 'scheduling':
+    case 'modulo-agendamento':
+    case 'agendamento':
+    case 'cleaning-dispatch':
+      return 'scheduling';
+    case 'payroll':
+    case 'modulo-dp':
+    case 'folha':
+    case 'departamento-pessoal':
+      return 'payroll';
+    case 'worker-portal':
+    case 'portal-colaborador':
+    case 'contracts':
+    case 'contratos':
+    case 'e-sign':
+      return 'worker-portal';
+    case 'banking-disbursements':
+    case 'banking':
+    case 'aprovacao-bancaria':
+      return 'banking-disbursements';
+    case 'company-profile':
+    case 'empresas':
+    case 'cadastro-empresa':
+      return 'company-profile';
+    case 'partners':
+    case 'socios':
+    case 'quadro-societario':
+      return 'partners';
+    case 'year-end-tax':
+    case 'irs-forms':
+    case 'fechamento-anual':
+      return 'year-end-tax';
+    case 'tax-compliance':
+    case 'modulo-fiscal':
+    case 'compliance-fiscal':
+    case 'impostos':
+      return 'tax-compliance';
+    case 'state-taxes':
+    case 'franchise-tax':
+    case 'taxas-estaduais':
+      return 'state-taxes';
+    case 'multi-entity':
+    case 'consolidacao':
+    case 'holding':
+      return 'multi-entity';
+    case 'audit-trail':
+    case 'auditoria':
+    case 'soc2':
+      return 'audit-trail';
+    case 'reports':
+    case 'modulo-bi':
+    case 'monte-carlo':
+    case 'unit-economics':
+    case 'bi':
+    case 'inteligencia-financeira':
+      return 'reports';
+    case 'budget-variance':
+    case 'orcamento':
+    case 'budget':
+      return 'budget-variance';
+    case 'system-audit':
+    case 'auditoria-sistema':
+    case 'auditoria-geral':
+    case 'health-check':
+      return 'system-audit';
+    case 'sandbox':
+    case 'ambiente-sandbox':
+    case 'staging':
+    case 'isolamento':
+      return 'sandbox';
+    case 'settings':
+    case 'configuracoes':
+      return 'settings';
+    default:
+      return clean || 'dashboard';
+  }
+}
 
 interface AppShellProps {
   initialTab?: string;
@@ -65,7 +204,7 @@ interface AppShellProps {
 export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   const { locale, t, basis } = useI18n();
   const { activeCompany } = useCompany();
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState<string>(() => normalizeTabId(initialTab));
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
 
@@ -103,7 +242,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   // Sync if initialTab prop changes
   useEffect(() => {
     if (initialTab) {
-      setActiveTab(initialTab);
+      setActiveTab(normalizeTabId(initialTab));
     }
   }, [initialTab]);
 
@@ -113,24 +252,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
       if (typeof window !== 'undefined') {
         const path = window.location.pathname.replace(/^\//, '');
         if (path) {
-          if (path === 'modulo-contabil') setActiveTab('trial-balance');
-          else if (path === 'modulo-dp') setActiveTab('payroll');
-          else if (path === 'modulo-fiscal' || path === 'tax-compliance' || path === 'compliance-fiscal' || path === 'impostos') setActiveTab('tax-compliance');
-          else if (path === 'state-taxes' || path === 'franchise-tax' || path === 'taxas-estaduais') setActiveTab('state-taxes');
-          else if (path === 'audit-trail' || path === 'auditoria' || path === 'soc2') setActiveTab('audit-trail');
-          else if (path === 'modulo-agendamento') setActiveTab('scheduling');
-          else if (path === 'modulo-bi' || path === 'monte-carlo' || path === 'unit-economics' || path === 'bi' || path === 'reports' || path === 'inteligencia-financeira') setActiveTab('reports');
-          else if (path === 'partners' || path === 'socios' || path === 'quadro-societario') setActiveTab('partners');
-          else if (path === 'portal-colaborador' || path === 'worker-portal' || path === 'contracts' || path === 'contratos' || path === 'e-sign') setActiveTab('worker-portal');
-          else if (path === 'banking' || path === 'banking-disbursements' || path === 'aprovacao-bancaria') setActiveTab('banking-disbursements');
-          else if (path === 'software-migration' || path === 'migration' || path === 'importacao' || path === 'importar-software') setActiveTab('software-migration');
-          else if (path === 'system-audit' || path === 'auditoria-sistema' || path === 'auditoria-geral' || path === 'health-check') setActiveTab('system-audit');
-          else if (path === 'sandbox' || path === 'ambiente-sandbox' || path === 'staging' || path === 'isolamento') setActiveTab('sandbox');
-          else if (path === 'year-end-tax' || path === 'irs-forms' || path === 'fechamento-anual') setActiveTab('year-end-tax');
-          else if (path === 'client-portal' || path === 'portal-cliente' || path === 'faturas-cliente') setActiveTab('client-portal');
-          else if (path === 'budget-variance' || path === 'orcamento' || path === 'budget') setActiveTab('budget-variance');
-          else if (path === 'multi-entity' || path === 'consolidacao' || path === 'holding') setActiveTab('multi-entity');
-          else setActiveTab(path);
+          setActiveTab(normalizeTabId(path));
         }
       }
     };
@@ -140,12 +262,13 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
     return () => window.removeEventListener('popstate', syncFromUrl);
   }, []);
 
-  const handleTabChange = (newTab: string) => {
-    setActiveTab(newTab);
+  const handleTabChange = useCallback((newTab: string) => {
+    const target = normalizeTabId(newTab);
+    setActiveTab(target);
     if (typeof window !== 'undefined' && window.history) {
-      window.history.pushState(null, '', `/${newTab}`);
+      window.history.pushState(null, '', `/${target}`);
     }
-  };
+  }, []);
 
   const { fiscalYear, selectedMonths } = useFiscalPeriod();
 
@@ -232,16 +355,16 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
         onOpenNewEntry={() => setIsNewEntryOpen(true)}
       />
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex">
-          {/* Sidebar */}
-          <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
+      {/* Main Content Area */}
+      <div className="flex-1 flex">
+        {/* Sidebar */}
+        <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
 
-          {/* Dynamic Page Content */}
-          <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
-            {activeTab === 'dashboard' && (
-              <div className="space-y-6">
-                <ExecutiveCockpit onNavigateTab={handleTabChange} />
+        {/* Dynamic Page Content */}
+        <main className="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto w-full space-y-6">
+          {activeTab === 'dashboard' && (
+            <div className="space-y-6">
+              <ExecutiveCockpit onNavigateTab={handleTabChange} />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <ReceiptOcrScanner onPostSuccess={handleEntrySuccess} />
                 <CfaAiCopilotChat />
@@ -254,7 +377,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
               <FixedAssetsView onPostDepreciation={handleEntrySuccess} />
             </div>
           )}
-          {(activeTab === 'general-ledger' || activeTab === 'razao') && (
+          {activeTab === 'general-ledger' && (
             <div className="space-y-6">
               <GeneralLedgerView />
             </div>
@@ -288,7 +411,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
           )}
           {activeTab === 'state-taxes' && <StateFranchiseTaxView />}
           {activeTab === 'audit-trail' && <AuditTrailSecurityView />}
-          {(activeTab === 'scheduling' || activeTab === 'cleaning-dispatch') && (
+          {activeTab === 'scheduling' && (
             <div className="space-y-6">
               <CleaningSchedulingView onPostJobAccounting={handleEntrySuccess} />
             </div>
@@ -357,11 +480,11 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
               <div className="space-y-4 max-w-xl text-xs">
                 <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
                   <span className="text-slate-300">Entity Legal Name</span>
-                  <span className="text-white font-medium">Apex Cloud Services LLC</span>
+                  <span className="text-white font-medium">{activeCompany?.legalName || 'Apex Cloud Services LLC'}</span>
                 </div>
                 <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
                   <span className="text-slate-300">Jurisdiction & Entity Structure</span>
-                  <span className="text-white font-medium">Delaware LLC (Treated as Partnership / 1065)</span>
+                  <span className="text-white font-medium">{activeCompany?.formationState || 'Delaware'} LLC (Form 1065)</span>
                 </div>
                 <div className="p-3 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
                   <span className="text-slate-300">Tax Accounting Basis</span>
@@ -377,6 +500,44 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
                 </div>
               </div>
             </Card>
+          )}
+
+          {/* Safety Fallback: if activeTab is not matched, render ExecutiveCockpit */}
+          {![
+            'dashboard',
+            'trial-balance',
+            'general-ledger',
+            'income-statement',
+            'balance-sheet',
+            'chart-of-accounts',
+            'multi-currency',
+            'directory',
+            'service-catalog',
+            'invoicing',
+            'payroll',
+            'worker-portal',
+            'banking-disbursements',
+            'company-profile',
+            'partners',
+            'tax-compliance',
+            'state-taxes',
+            'audit-trail',
+            'scheduling',
+            'reports',
+            'bank-reconciliation',
+            'software-migration',
+            'journal-entries',
+            'system-audit',
+            'sandbox',
+            'year-end-tax',
+            'client-portal',
+            'budget-variance',
+            'multi-entity',
+            'settings',
+          ].includes(activeTab) && (
+            <div className="space-y-6">
+              <ExecutiveCockpit onNavigateTab={handleTabChange} />
+            </div>
           )}
         </main>
       </div>

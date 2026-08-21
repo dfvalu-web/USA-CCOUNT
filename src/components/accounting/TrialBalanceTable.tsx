@@ -58,9 +58,9 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
     <div className="space-y-6">
       {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
       <PrintReportHeader
-        reportTitle="TRIAL BALANCE REPORT (BALANCETE DE VERIFICAÇÃO)"
+        reportTitle={t('reports.trialBalanceTitle')}
         reportSubtitle={`US GAAP Chart of Accounts Trial Balance • ${basis} Basis`}
-        asOfDate={formatDate(data.asOfDate, locale)}
+        asOfDate={formatDate(data.asOfDate)}
       />
 
       <Card className="border-slate-800 bg-slate-950">
@@ -75,18 +75,18 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
                 <Badge variant="outline">{basis} Basis</Badge>
               </div>
               <CardDescription>
-                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Balancete de Verificação US GAAP
+                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {t('reports.asOfDate')} {formatDate(data.asOfDate)} • {t('accounting.ruleDebitCredit')}
               </CardDescription>
             </div>
 
             <div className="flex items-center space-x-2 no-print">
               <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
                 <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                {t('common.export')} CSV
+                {t('common.export')}
               </Button>
               <Button size="sm" variant="primary" onClick={() => window.print()} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
                 <Printer className="w-3.5 h-3.5 mr-1" />
-                Imprimir Balancete (PDF)
+                {t('common.print')}
               </Button>
             </div>
           </div>
@@ -96,18 +96,18 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
       <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs no-print">
         <div className="flex items-center space-x-2">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-400 font-semibold">Filtrar por Tipo:</span>
+          <span className="text-slate-400 font-semibold">{t('filters.accountTypeFilter')}</span>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
             className="h-7 rounded bg-slate-950 border border-slate-800 px-2 text-white font-medium focus:outline-none focus:border-emerald-500"
           >
-            <option value="ALL">Todas as Contas ({data.items.length})</option>
-            <option value="ASSET">Ativos (1000s)</option>
-            <option value="LIABILITY">Passivos (2000s)</option>
-            <option value="EQUITY">Patrimônio Líquido (3000s)</option>
-            <option value="REVENUE">Receitas (4000s)</option>
-            <option value="EXPENSE">Custos & Despesas (5000s & 6000s)</option>
+            <option value="ALL">{t('filters.allTypes')} ({data.items.length})</option>
+            <option value="ASSET">{t('filters.assetsOnly')}</option>
+            <option value="LIABILITY">{t('filters.liabilitiesOnly')}</option>
+            <option value="EQUITY">{t('filters.equityOnly')}</option>
+            <option value="REVENUE">{t('filters.revenueOnly')}</option>
+            <option value="EXPENSE">{t('filters.expensesOnly')}</option>
           </select>
         </div>
 
@@ -115,7 +115,7 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
           <input
             type="text"
-            placeholder="Buscar conta por código ou nome..."
+            placeholder={t('filters.searchAccounts')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-7 rounded bg-slate-950 border border-slate-800 pl-7 pr-2 text-xs text-white focus:outline-none focus:border-emerald-500"
@@ -131,7 +131,7 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
             <span>{exportNotice}</span>
           </div>
           <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setExportNotice(null)}>
-            Fechar
+            {t('common.close')}
           </Button>
         </div>
       )}

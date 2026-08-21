@@ -11,28 +11,31 @@ import {
   Server,
   Award,
 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n/context';
 
 export function TrustSecuritySection() {
+  const { t } = useI18n();
+
   const securityPillars = [
     {
       icon: ShieldCheck,
-      title: 'Conformidade US GAAP & FASB',
-      description: 'Todos os cálculos contábeis obedecem rigorosamente às normas ASC 205, 210, 230 e 606 para partidas dobradas e reconhecimento de receita.',
+      title: 'US GAAP & FASB Standards',
+      description: 'ASC 205, ASC 210, ASC 230, and ASC 606 double-entry compliance with rigorous mathematical verification.',
     },
     {
       icon: Landmark,
-      title: 'Padrão Oficial IRS MeF XML',
-      description: 'Estruturação pronta para entrega eletrônica do Form 1065, Schedules K-1 dos sócios, 1099-NEC para prestadores e W-2 para funcionários.',
+      title: 'Official IRS MeF & Form 1065',
+      description: 'Structured e-File readiness for Form 1065, Partner Schedules K-1, Forms 1099-NEC, and W-2 filings.',
     },
     {
       icon: Fingerprint,
-      title: 'Trilha de Auditoria SOC 2 Merkle',
-      description: 'Cada lançamento contábil recebe um hash SHA-256 encadeado com registro indelével de data, hora, IP e usuário para blindagem jurídica.',
+      title: 'SOC 2 Type II Merkle Audit Trail',
+      description: 'SHA-256 cryptographic chaining for every posted journal transaction ensuring tamper-proof legal defense.',
     },
     {
       icon: Lock,
-      title: 'Criptografia Bancária TLS 256-Bit',
-      description: 'Proteção máxima para dados sensíveis, extratos bancários de bancos parceiros (Truist, Chase) e números fiscais (EIN / SSN).',
+      title: '256-Bit Bank-Grade TLS Encryption',
+      description: 'Enterprise protection for sensitive banking feeds (Truist, Chase) and federal tax identification data (EIN).',
     },
   ];
 
@@ -45,14 +48,14 @@ export function TrustSecuritySection() {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">
             <Award className="w-3.5 h-3.5" />
-            <span>Segurança Institucional & Auditoria</span>
+            <span>{t('reports.auditStamp')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white font-serif tracking-tight">
-            Blindagem Jurídica & Integridade de Dados
+            {t('landing.securityTitle')}
           </h2>
           <p className="text-sm sm:text-base text-slate-400">
-            Construído para suportar auditorias forenses e atender às mais rígidas exigências de órgãos fiscais federais e estaduais dos EUA.
+            {t('landing.securitySubtitle')}
           </p>
         </div>
 
@@ -80,16 +83,16 @@ export function TrustSecuritySection() {
         <div className="mt-12 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-emerald-950/30 to-slate-900 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="text-base font-bold text-white font-serif">
-              Precisa resolver pendências de anos anteriores (2022 a 2025)?
+              {t('reports.notesTitle')}
             </h4>
             <p className="text-xs text-slate-300">
-              O sistema reconstrói o Livro Diário e Livro Razão de múltiplos exercícios fiscais instantaneamente com prova de $0.00 de variância.
+              {t('accounting.balanceSheetEquation')} • {t('accounting.balancedProof')}
             </p>
           </div>
 
           <div className="flex items-center space-x-3 shrink-0">
             <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 px-3 py-1.5 rounded-xl border border-emerald-800">
-              Audit-Proof
+              {t('reports.auditStamp')}
             </span>
           </div>
         </div>

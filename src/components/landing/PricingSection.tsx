@@ -12,65 +12,67 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/lib/i18n/context';
 
 export function PricingSection() {
+  const { t, formatCurrency } = useI18n();
   const [isAnnual, setIsAnnual] = useState(true);
 
   const plans = [
     {
       name: 'Starter Business',
-      badge: 'Pequenas LLCs',
+      badge: 'Small Business / LLC',
       priceMonthly: 189,
       priceAnnual: 149,
-      description: 'Ideal para empresas em fase de estruturação que precisam de escrituração US GAAP básica.',
+      description: 'Ideal for establishing US companies requiring core US GAAP books and statements.',
       features: [
-        'Livro Diário Contábil (General Journal)',
-        'Balancete de Verificação (Trial Balance)',
-        'Balanço Patrimonial & DRE',
-        'Conciliação Bancária com OCR (até 150 recibos/mês)',
-        '1 Empresa / Entidade Fiscal',
-        'Exportação de relatórios em CSV',
+        t('nav.journalEntries'),
+        t('nav.trialBalance'),
+        `${t('nav.balanceSheet')} & ${t('nav.incomeStatement')}`,
+        `${t('nav.bankReconciliation')} (150 OCR receipts/mo)`,
+        '1 Company / Tax Entity',
+        'CSV & PDF Financial Exports',
       ],
-      ctaText: 'Começar com Starter',
+      ctaText: 'Get Started',
       isPopular: false,
       href: '/cadastro',
     },
     {
       name: 'Diamond Corporate',
-      badge: 'Mais Popular • Recomendado',
+      badge: 'Most Popular • Recommended',
       priceMonthly: 429,
       priceAnnual: 349,
-      description: 'A solução contábil e fiscal completa para empresas operacionais e holdings nos EUA.',
+      description: 'Comprehensive financial, tax compliance, and automated reporting suite for US operating LLCs.',
       features: [
-        'Tudo do Plano Starter',
-        'Livro Razão Analítico Geral (General Ledger)',
-        'Demonstração dos Fluxos de Caixa (ASC 230)',
-        'Pacote Fiscal IRS (Form 1065, K-1s, 1099-NEC & W-2)',
-        'Impressão em Padrão Diamante para Bancos e IRS (PDF)',
-        'Inteligência Artificial CFA Copilot & Monte Carlo BI',
-        'Portal do Cliente B2B com Assinatura Digital de Contratos',
-        'Até 3 Empresas Vinculadas',
+        'All Starter Business Features',
+        t('nav.generalLedger'),
+        t('nav.cashFlow'),
+        t('taxCompliance.cpaBinderTitle'),
+        t('reports.notesTitle'),
+        t('nav.reports'),
+        t('nav.clientPortal'),
+        'Up to 3 Linked Companies',
       ],
-      ctaText: 'Acessar Plano Diamond',
+      ctaText: 'Choose Diamond Corporate',
       isPopular: true,
       href: '/cadastro',
     },
     {
       name: 'CPA Firm & Holding',
-      badge: 'Escritórios & Grupos',
+      badge: 'Firms & Holdings',
       priceMonthly: 989,
       priceAnnual: 799,
-      description: 'Desenvolvido para escritórios de contabilidade, CPAs e grupos com múltiplas empresas.',
+      description: 'Tailored for CPA firms, accounting offices, and multi-state corporate holdings.',
       features: [
-        'Tudo do Plano Diamond',
-        'Empresas Ilimitadas (Multi-Entity Consolidation)',
-        'Transmissão Direta IRS MeF XML & FIRE System',
-        'Trilha de Auditoria SOC 2 Merkle Inviolável',
-        'Acesso Dedicado para Clientes dos Escritórios',
-        'API de Integração Contábil & Webhooks Bancários',
-        'Gerente de Contas & Suporte Prioritário por CPA',
+        'All Diamond Corporate Features',
+        t('nav.multiEntity'),
+        'IRS MeF XML Direct e-File Mapping',
+        t('nav.auditTrail'),
+        'Dedicated Client Access Workspaces',
+        'Direct Bank Feeds & Automated Webhooks',
+        'Dedicated Account Manager & CPA Support',
       ],
-      ctaText: 'Falar com Especialista',
+      ctaText: 'Contact Sales',
       isPopular: false,
       href: '/cadastro',
     },
@@ -82,20 +84,20 @@ export function PricingSection() {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">
             <Zap className="w-3.5 h-3.5" />
-            <span>Planos Claros & Transparentes</span>
+            <span>SaaS Pricing & Compliance</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white font-serif tracking-tight">
-            Invista na Conformidade & Crescimento da sua Empresa
+            {t('landing.pricingTitle')}
           </h2>
           <p className="text-sm sm:text-base text-slate-400">
-            Economize milhares de dólares em multas fiscais e retrabalho contábil com uma plataforma institucional.
+            {t('landing.pricingSubtitle')}
           </p>
 
           {/* Monthly / Annual Toggle */}
           <div className="flex items-center justify-center space-x-3 pt-4">
             <span className={`text-xs font-semibold ${!isAnnual ? 'text-white' : 'text-slate-400'}`}>
-              Cobrança Mensal
+              {t('landing.monthlyBilling')}
             </span>
             <button
               type="button"
@@ -109,9 +111,9 @@ export function PricingSection() {
               />
             </button>
             <span className={`text-xs font-semibold flex items-center gap-1.5 ${isAnnual ? 'text-white' : 'text-slate-400'}`}>
-              <span>Cobrança Anual</span>
+              <span>{t('landing.annualBilling')}</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
-                Economize 20%
+                {t('landing.save20')}
               </span>
             </span>
           </div>
@@ -153,19 +155,19 @@ export function PricingSection() {
                   <div className="pt-2">
                     <div className="flex items-baseline space-x-1">
                       <span className="text-4xl sm:text-5xl font-black text-white font-mono">
-                        ${price}
+                        {formatCurrency(price)}
                       </span>
-                      <span className="text-xs text-slate-400 font-semibold">/ mês</span>
+                      <span className="text-xs text-slate-400 font-semibold">/ mo</span>
                     </div>
                     <span className="text-[11px] text-slate-500 block mt-1">
-                      {isAnnual ? 'Faturado anualmente em USD' : 'Faturado mensalmente em USD'}
+                      {isAnnual ? 'Billed annually (USD)' : 'Billed monthly (USD)'}
                     </span>
                   </div>
 
                   {/* Features List */}
                   <div className="space-y-3 pt-4 border-t border-slate-800">
                     <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
-                      Recursos Inclusos:
+                      Features Included:
                     </span>
                     {p.features.map((feat, fIdx) => (
                       <div key={fIdx} className="flex items-start space-x-2.5 text-xs text-slate-300">

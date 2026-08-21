@@ -19,7 +19,7 @@ interface LandingHeaderProps {
 }
 
 export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -50,19 +50,19 @@ export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8 text-xs font-semibold text-slate-300">
           <a href="#recursos" className="hover:text-emerald-400 transition-colors">
-            Recursos & Módulos
+            {t('nav.reports')}
           </a>
           <a href="#demonstrativos" className="hover:text-emerald-400 transition-colors">
-            Demonstrativos US GAAP
+            {t('nav.balanceSheet')}
           </a>
           <a href="#tributacao" className="hover:text-emerald-400 transition-colors">
-            IRS & Compliance Fiscal
+            {t('nav.taxCompliance')}
           </a>
           <a href="#precos" className="hover:text-emerald-400 transition-colors">
-            Planos
+            {t('landing.pricingTitle')}
           </a>
           <a href="#seguranca" className="hover:text-emerald-400 transition-colors">
-            Segurança & SOC 2
+            {t('landing.securityTitle')}
           </a>
         </nav>
 
@@ -97,14 +97,14 @@ export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
             href="/login"
             className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-900 transition-colors"
           >
-            Entrar
+            {t('auth.loginTitle')}
           </Link>
 
           <Link
             href="/dashboard"
             className="h-9 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center space-x-1.5"
           >
-            <span>Acessar Plataforma</span>
+            <span>{t('landing.ctaAccess')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -119,57 +119,86 @@ export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-950 border-b border-slate-800 px-6 py-5 space-y-4 text-sm font-semibold text-slate-300">
-          <a
-            href="#recursos"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block hover:text-emerald-400"
-          >
-            Recursos & Módulos
-          </a>
-          <a
-            href="#demonstrativos"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block hover:text-emerald-400"
-          >
-            Demonstrativos US GAAP
-          </a>
-          <a
-            href="#tributacao"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block hover:text-emerald-400"
-          >
-            IRS & Compliance Fiscal
-          </a>
-          <a
-            href="#precos"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block hover:text-emerald-400"
-          >
-            Planos
-          </a>
-          <a
-            href="#seguranca"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block hover:text-emerald-400"
-          >
-            Segurança & SOC 2
-          </a>
+        <div className="md:hidden bg-slate-950 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+          <nav className="flex flex-col space-y-3 text-sm font-semibold text-slate-300">
+            <a
+              href="#recursos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-emerald-400 py-1"
+            >
+              {t('nav.reports')}
+            </a>
+            <a
+              href="#demonstrativos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-emerald-400 py-1"
+            >
+              {t('nav.balanceSheet')}
+            </a>
+            <a
+              href="#tributacao"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-emerald-400 py-1"
+            >
+              {t('nav.taxCompliance')}
+            </a>
+            <a
+              href="#precos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-emerald-400 py-1"
+            >
+              {t('landing.pricingTitle')}
+            </a>
+            <a
+              href="#seguranca"
+              onClick={() => setMobileMenuOpen(false)}
+              className="hover:text-emerald-400 py-1"
+            >
+              {t('landing.securityTitle')}
+            </a>
+          </nav>
 
-          <div className="pt-4 border-t border-slate-800 flex flex-col space-y-2">
+          <div className="pt-4 border-t border-slate-800 flex flex-col space-y-3">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-slate-400 font-semibold">{t('common.language')}:</span>
+              <button
+                type="button"
+                onClick={() => setLocale('pt')}
+                className={`px-3 py-1 rounded text-xs font-bold ${locale === 'pt' ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-slate-400'}`}
+              >
+                Português
+              </button>
+              <button
+                type="button"
+                onClick={() => setLocale('en')}
+                className={`px-3 py-1 rounded text-xs font-bold ${locale === 'en' ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-slate-400'}`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => setLocale('es')}
+                className={`px-3 py-1 rounded text-xs font-bold ${locale === 'es' ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-slate-400'}`}
+              >
+                Español
+              </button>
+            </div>
+
             <Link
               href="/login"
-              className="w-full text-center py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white font-bold"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-2.5 rounded-xl bg-slate-900 text-white text-center font-bold text-xs"
             >
-              Fazer Login
+              {t('auth.loginTitle')}
             </Link>
             <Link
               href="/dashboard"
-              className="w-full text-center py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-2.5 rounded-xl bg-emerald-600 text-white text-center font-bold text-xs"
             >
-              Acessar Plataforma
+              {t('landing.ctaAccess')}
             </Link>
           </div>
         </div>

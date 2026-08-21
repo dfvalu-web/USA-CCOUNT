@@ -18,8 +18,11 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/lib/i18n/context';
 
 export function HeroSection() {
+  const { t, formatCurrency } = useI18n();
+
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden bg-slate-950">
       {/* 4K Background Radial Glows & Grid Mesh */}
@@ -37,20 +40,20 @@ export function HeroSection() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>Plataforma Oficial de Contabilidade & Compliance Fiscal US GAAP</span>
+            <span>{t('landing.heroBadge')}</span>
           </div>
 
           {/* Main 4K Headline */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white font-serif leading-[1.1]">
-            A Inteligência Contábil & Fiscal Definitiva nos{' '}
+            {t('landing.heroTitle1')}{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400">
-              Estados Unidos
+              {t('landing.heroTitle2')}
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
-            Escrituração completa em partidas dobradas com <strong className="text-emerald-400 font-semibold">$0.00 de variância</strong>, Balanço Patrimonial, Livro Razão, DRE, Fluxo de Caixa e declarações fiscais do IRS (Form 1065, K-1, 1099 e W-2) em padrão Diamante.
+            {t('landing.heroSubtitle')}
           </p>
 
           {/* CTAs Action Buttons */}
@@ -59,7 +62,7 @@ export function HeroSection() {
               href="/dashboard"
               className="w-full sm:w-auto h-13 px-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-base shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center space-x-2 group hover:scale-[1.02]"
             >
-              <span>Acessar Plataforma Agora</span>
+              <span>{t('landing.ctaAccess')}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
@@ -68,7 +71,7 @@ export function HeroSection() {
               className="w-full sm:w-auto h-13 px-7 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-slate-200 hover:text-white font-bold text-sm backdrop-blur-md transition-all flex items-center justify-center space-x-2"
             >
               <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>Login com 1 Clique (Demo)</span>
+              <span>{t('landing.ctaDemo')}</span>
             </Link>
           </div>
 
@@ -80,7 +83,7 @@ export function HeroSection() {
             </div>
             <div className="flex items-center space-x-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>IRS e-File & Form 1065 Ready</span>
+              <span>IRS Form 1065 / K-1 Ready</span>
             </div>
             <div className="flex items-center space-x-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -88,7 +91,7 @@ export function HeroSection() {
             </div>
             <div className="flex items-center space-x-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Auditoria Forense de $6,5M</span>
+              <span>{t('accounting.balancedProof')}</span>
             </div>
           </div>
         </div>
@@ -110,10 +113,10 @@ export function HeroSection() {
               </div>
 
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-slate-400 font-semibold">Status do Fechamento:</span>
+                <span className="text-xs text-slate-400 font-semibold">{t('common.status')}:</span>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  100% Fechado ($0.00 Variância)
+                  {t('accounting.balancedProof')}
                 </span>
               </div>
             </div>
@@ -122,40 +125,40 @@ export function HeroSection() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
               <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90 space-y-1">
                 <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-                  <span>Ativo Total Auditado</span>
+                  <span>{t('accounting.totalAssets')}</span>
                   <Scale className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-2xl font-bold font-mono text-white">
-                  US$ 320.771,75
+                  {formatCurrency(320771.75)}
                 </div>
                 <div className="text-[10px] text-emerald-400 flex items-center gap-1">
-                  <span>✓ 100% Conciliado com Caixa & Frota</span>
+                  <span>✓ 100% US GAAP Compliant</span>
                 </div>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90 space-y-1">
                 <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-                  <span>Passivo + Patrimônio Líquido</span>
+                  <span>{t('accounting.totalLiabilitiesAndEquity')}</span>
                   <TrendingUp className="w-4 h-4 text-sky-400" />
                 </div>
                 <div className="text-2xl font-bold font-mono text-white">
-                  US$ 320.771,75
+                  {formatCurrency(320771.75)}
                 </div>
                 <div className="text-[10px] text-sky-400 flex items-center gap-1">
-                  <span>✓ Ativo = Passivo + PL (Balanço Equilibrado)</span>
+                  <span>✓ {t('accounting.balanceSheetEquation')}</span>
                 </div>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/90 space-y-1">
                 <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-                  <span>Partidas Dobradas no Diário</span>
+                  <span>{t('nav.journalEntries')}</span>
                   <BookOpen className="w-4 h-4 text-teal-400" />
                 </div>
                 <div className="text-2xl font-bold font-mono text-emerald-400">
-                  US$ 6.577.924,35
+                  {formatCurrency(6577924.35)}
                 </div>
                 <div className="text-[10px] text-teal-300 flex items-center gap-1">
-                  <span>✓ Débito = Crédito (21.438 Lançamentos)</span>
+                  <span>✓ {t('accounting.ruleDebitCredit')}</span>
                 </div>
               </div>
             </div>
@@ -163,15 +166,15 @@ export function HeroSection() {
             {/* Live Navigation Tabs Preview */}
             <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center space-x-2 text-slate-400">
-                <span className="font-semibold">Acesse direto:</span>
+                <span className="font-semibold">{t('common.actions')}:</span>
                 <Link href="/balanco" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
-                  Balanço Patrimonial ➔
+                  {t('nav.balanceSheet')} ➔
                 </Link>
                 <Link href="/razao" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
-                  Livro Razão ➔
+                  {t('nav.generalLedger')} ➔
                 </Link>
                 <Link href="/demonstrativos" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
-                  DRE & Fluxo de Caixa ➔
+                  {t('nav.incomeStatement')} ➔
                 </Link>
               </div>
 
@@ -179,7 +182,7 @@ export function HeroSection() {
                 href="/dashboard"
                 className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
               >
-                <span>Explorar Cockpit Executivo</span>
+                <span>{t('nav.dashboard')}</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>

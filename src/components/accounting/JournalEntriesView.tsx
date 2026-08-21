@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+import { useCompany } from '@/lib/company/company-context';
 import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 export interface JournalEntryListItem {
@@ -48,7 +49,8 @@ export function JournalEntriesView({
   journalEntries,
   onOpenNewEntryModal,
 }: JournalEntriesViewProps) {
-  const { locale, t, basis } = useI18n();
+  const { locale, t, basis, formatCurrency, formatDate } = useI18n();
+  const { activeCompany } = useCompany();
   const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
   const [searchQuery, setSearchQuery] = useState('');
   const [basisFilter, setBasisFilter] = useState<string>('ALL');
@@ -94,14 +96,13 @@ export function JournalEntriesView({
     link.click();
     document.body.removeChild(link);
 
-    setExportNotice('Livro Diário (General Journal) exportado com sucesso em formato CSV!');
+    setExportNotice(t('common.exportSuccess'));
   };
 
   return (
     <div className="space-y-6">
-      {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
       <PrintReportHeader
-        reportTitle="GENERAL JOURNAL ENTRIES (LIVRO DIÁRIO CONTÁBIL)"
+        reportTitle={t('reports.journalEntriesTitle')}
         reportSubtitle={`Chronological Double-Entry Journal • ${basis} Basis`}
       />
 
@@ -113,9 +114,9 @@ export function JournalEntriesView({
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
-                <CardTitle>{t('nav.journalEntries')} (Livro Diário Contábil)</CardTitle>
+                <CardTitle>{t('nav.journalEntries')} — {activeCompany?.legalName}</CardTitle>
                 <CardDescription>
-                  Registro Cronológico Contínuo de Partidas Dobradas (General Journal US GAAP)
+                  {t('accounting.ruleDebitCredit')} • {getFormattedPeriodLabel()}
                 </CardDescription>
               </div>
             </div>
@@ -123,15 +124,15 @@ export function JournalEntriesView({
             <div className="flex items-center space-x-2 no-print">
               <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
                 <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                Exportar CSV
+                {t('common.export')}
               </Button>
               <Button size="sm" variant="outline" onClick={() => window.print()} className="text-xs bg-slate-900 border-slate-700 text-white font-semibold">
                 <Printer className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                Imprimir Diário (PDF)
+                {t('common.print')}
               </Button>
               <Button size="sm" variant="primary" onClick={onOpenNewEntryModal} className="text-xs">
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Novo Lançamento Diário
+                {t('accounting.newEntry')}
               </Button>
             </div>
           </div>
@@ -141,16 +142,16 @@ export function JournalEntriesView({
       <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs no-print">
         <div className="flex items-center space-x-2">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-400 font-semibold">Regime Contábil:</span>
+          <span className="text-slate-400 font-semibold">{t('filters.accountingBasis')}</span>
           <select
             value={basisFilter}
             onChange={(e) => setBasisFilter(e.target.value)}
             className="h-7 rounded bg-slate-950 border border-slate-800 px-2 text-white font-medium focus:outline-none focus:border-emerald-500"
           >
-            <option value="ALL">Todos os Regimes ({filteredEntries.length})</option>
-            <option value="ACCRUAL">Apenas Competência (Accrual)</option>
-            <option value="CASH">Apenas Caixa (Cash)</option>
-            <option value="BOTH">Ambos os Regimes (Dual)</option>
+            <option value="ALL">{t('filters.allTypes')} ({filteredEntries.length})</option>
+            <option value="ACCRUAL">{t('filters.accrualOnly')}</option>
+            <option value="CASH">{t('filters.cashOnly')}</option>
+            <option value="BOTH">{t('filters.dualBasis')}</option>
           </select>
         </div>
 
@@ -158,7 +159,7 @@ export function JournalEntriesView({
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
           <input
             type="text"
-            placeholder="Buscar por número, histórico ou valor..."
+            placeholder={t('filters.searchJournal')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-7 rounded bg-slate-950 border border-slate-800 pl-7 pr-2 text-xs text-white focus:outline-none focus:border-emerald-500"
@@ -174,7 +175,7 @@ export function JournalEntriesView({
             <span>{exportNotice}</span>
           </div>
           <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setExportNotice(null)}>
-            Fechar
+            {t('common.close')}
           </Button>
         </div>
       )}
@@ -185,22 +186,23 @@ export function JournalEntriesView({
             <BookOpen className="w-5 h-5" />
           </div>
           <p className="font-semibold text-slate-300">
-            Nenhum Lançamento no Livro Diário para {getFormattedPeriodLabel()}
+            {t('reports.noActivity')} — {getFormattedPeriodLabel()}
           </p>
           <p className="text-slate-500 text-[11px] max-w-md mx-auto">
-            Exercício fiscal sem movimentação registrada ou todos os lançamentos encontram-se fora do intervalo selecionado.
+            {t('reports.auditStamp')}
           </p>
         </div>
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-36">{t('accounting.entryNumber')}</TableHead>
+              <TableHead className="w-24">{t('accounting.entryNumber')}</TableHead>
               <TableHead className="w-28">{t('common.date')}</TableHead>
-              <TableHead>{t('accounting.memo')} (Histórico Contábil)</TableHead>
-              <TableHead className="w-28">Regime</TableHead>
-              <TableHead className="text-right w-36">Valor Total</TableHead>
+              <TableHead>{t('accounting.memo')}</TableHead>
+              <TableHead className="w-24 text-center">{t('filters.accountingBasis')}</TableHead>
+              <TableHead className="w-32 text-right">{t('common.total')}</TableHead>
               <TableHead className="w-28 text-center">{t('common.status')}</TableHead>
+              <TableHead className="w-16 no-print"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -221,7 +223,7 @@ export function JournalEntriesView({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right font-mono tabular-nums text-emerald-300 font-bold text-sm">
-                  {formatCurrency(entry.amount, 'USD', locale)}
+                  {formatCurrency(entry.amount)}
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge variant="success" className="text-[10px]">

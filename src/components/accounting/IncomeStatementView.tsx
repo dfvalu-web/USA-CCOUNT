@@ -28,7 +28,7 @@ interface IncomeStatementViewProps {
 }
 
 export function IncomeStatementView({ data }: IncomeStatementViewProps) {
-  const { locale, t, basis } = useI18n();
+  const { locale, t, basis, formatCurrency, formatDate } = useI18n();
   const { activeCompany } = useCompany();
   const [period, setPeriod] = useState<'YTD' | 'Q1' | 'Q2' | 'MONTHLY'>('YTD');
   const [showComparative, setShowComparative] = useState<boolean>(true);
@@ -98,7 +98,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
     <div className="space-y-6">
       {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
       <PrintReportHeader
-        reportTitle="STATEMENT OF OPERATIONS & COMPREHENSIVE INCOME (DRE)"
+        reportTitle={t('reports.incomeStatementTitle')}
         reportSubtitle={`US GAAP ASC 606 Revenue Recognition • ${basis} Basis`}
       />
 
@@ -112,12 +112,12 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                 <Badge variant="success">US GAAP ASC 606</Badge>
                 {showComparative && (
                   <Badge variant="info" className="text-[9px]">
-                    YoY Comparativo Ativo
+                    {t('reports.comparative')}
                   </Badge>
                 )}
               </div>
               <CardDescription>
-                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {data.startDate} — {data.endDate} • Análise de Rentabilidade e Crescimento
+                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {formatDate(data.startDate)} — {formatDate(data.endDate)}
               </CardDescription>
             </div>
 
@@ -131,17 +131,17 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                 onClick={() => setShowComparative(!showComparative)}
               >
                 <Columns3 className="w-3.5 h-3.5 mr-1" />
-                {showComparative ? 'Ocultar Comparativo' : 'Comparativo YoY'}
+                {t('reports.comparative')}
               </Button>
 
               <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
                 <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                {t('common.export')} CSV
+                {t('common.export')}
               </Button>
 
               <Button size="sm" variant="primary" onClick={() => window.print()} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
                 <Printer className="w-3.5 h-3.5 mr-1" />
-                Imprimir DRE (PDF)
+                {t('common.print')}
               </Button>
             </div>
           </div>
@@ -155,7 +155,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
             <span>{exportNotice}</span>
           </div>
           <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setExportNotice(null)}>
-            Fechar
+            {t('common.close')}
           </Button>
         </div>
       )}
@@ -164,9 +164,9 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
       {showComparative && (
         <div className="mx-6 p-4 rounded-xl bg-slate-900/80 border border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-semibold">Crescimento de Receita (YoY)</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-semibold">{t('reports.yoyRevenueGrowth')}</span>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-sm font-bold font-mono text-white">+{formatCurrency(revVariance, 'USD', locale)}</span>
+              <span className="text-sm font-bold font-mono text-white">+{formatCurrency(revVariance)}</span>
               <Badge variant="success" className="text-[10px]">
                 <ArrowUpRight className="w-3 h-3 mr-0.5" /> +{revGrowthPercent.toFixed(1)}%
               </Badge>
@@ -174,17 +174,17 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
           </div>
 
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-semibold">Margem Bruta Comparada</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-semibold">{t('reports.grossMarginComp')}</span>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-sm font-bold font-mono text-emerald-400">{data.grossMarginPercentage}%</span>
-              <span className="text-slate-500 text-[10px]">(vs 68.2% ano anterior)</span>
+              <span className="text-slate-500 text-[10px]">({t('reports.comparative')})</span>
             </div>
           </div>
 
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-semibold">Expansão de Lucro Líquido</span>
+            <span className="text-slate-400 block text-[10px] uppercase font-semibold">{t('reports.netIncomeExpansion')}</span>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-sm font-bold font-mono text-emerald-400">+{formatCurrency(netVariance, 'USD', locale)}</span>
+              <span className="text-sm font-bold font-mono text-emerald-400">+{formatCurrency(netVariance)}</span>
               <Badge variant="success" className="text-[10px]">
                 +{netGrowthPercent.toFixed(1)}% YoY
               </Badge>
@@ -195,9 +195,9 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
 
       {isZeroed && (
         <div className="mx-6 p-4 rounded-xl bg-slate-900/60 border border-dashed border-slate-700 text-center text-xs space-y-1">
-          <div className="font-bold text-slate-300">Exercício Fiscal Sem Movimentação Contábil</div>
+          <div className="font-bold text-slate-300">{t('reports.noActivity')}</div>
           <div className="text-slate-500 text-[11px]">
-            Todos os lançamentos do período encontram-se fidedignamente zerados ($0.00) conforme as diretrizes US GAAP e auditoria forense.
+            {t('reports.auditStamp')}
           </div>
         </div>
       )}
@@ -206,15 +206,15 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         {/* REVENUE SECTION */}
         <div>
           <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-            <span>1. {t('accounting.revenue')} (Receita Operacional)</span>
+            <span>1. {t('accounting.revenue')}</span>
             <div className="flex items-center space-x-4">
               {showComparative && (
                 <span className="font-mono text-slate-400 text-xs font-normal">
-                  Ano Anterior: {formatCurrency(priorRevenue, 'USD', locale)}
+                  {t('reports.comparative')}: {formatCurrency(priorRevenue)}
                 </span>
               )}
               <span className="font-mono text-emerald-400 font-bold">
-                {formatCurrency(data.totalRevenue, 'USD', locale)}
+                {formatCurrency(data.totalRevenue)}
               </span>
             </div>
           </h4>
@@ -230,7 +230,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                     <TableCell className="font-medium text-white">{item.name}</TableCell>
                     {showComparative && (
                       <TableCell className="text-right font-mono tabular-nums text-slate-400 w-32 text-xs">
-                        {formatCurrency(prior, 'USD', locale)}
+                        {formatCurrency(prior)}
                       </TableCell>
                     )}
                     {showComparative && (
@@ -239,7 +239,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                       </TableCell>
                     )}
                     <TableCell className="text-right font-mono tabular-nums text-emerald-300 font-semibold w-36">
-                      {formatCurrency(item.amount, 'USD', locale)}
+                      {formatCurrency(item.amount)}
                     </TableCell>
                   </TableRow>
                 );
@@ -251,15 +251,15 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         {/* COST OF SERVICES SECTION */}
         <div>
           <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-            <span>2. {t('accounting.costOfServices')} (Custos Diretos COGS)</span>
+            <span>2. {t('accounting.costOfServices')}</span>
             <div className="flex items-center space-x-4">
               {showComparative && (
                 <span className="font-mono text-slate-400 text-xs font-normal">
-                  Ano Anterior: ({formatCurrency(priorCogs, 'USD', locale)})
+                  {t('reports.comparativePriorYear')}: ({formatCurrency(priorCogs)})
                 </span>
               )}
               <span className="font-mono text-rose-400 font-bold">
-                ({formatCurrency(data.totalCostOfServices, 'USD', locale)})
+                ({formatCurrency(data.totalCostOfServices)})
               </span>
             </div>
           </h4>
@@ -273,7 +273,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                     <TableCell className="text-slate-300">{item.name}</TableCell>
                     {showComparative && (
                       <TableCell className="text-right font-mono tabular-nums text-slate-400 w-32 text-xs">
-                        ({formatCurrency(prior, 'USD', locale)})
+                        ({formatCurrency(prior)})
                       </TableCell>
                     )}
                     {showComparative && (
@@ -282,7 +282,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                       </TableCell>
                     )}
                     <TableCell className="text-right font-mono tabular-nums text-rose-300 font-semibold w-36">
-                      ({formatCurrency(item.amount, 'USD', locale)})
+                      ({formatCurrency(item.amount)})
                     </TableCell>
                   </TableRow>
                 );
@@ -294,34 +294,34 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         {/* GROSS PROFIT HIGHLIGHT */}
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between">
           <div>
-            <div className="text-xs font-bold text-white uppercase">{t('accounting.grossProfit')} (Lucro Bruto)</div>
+            <div className="text-xs font-bold text-white uppercase">{t('accounting.grossProfit')}</div>
             <div className="text-xs text-slate-400 mt-0.5">
               {t('accounting.grossMargin')}:{' '}
               <strong className="text-emerald-400 font-mono font-bold">{formatPercent(data.grossMarginPercentage, locale)}</strong>
               {showComparative && (
                 <span className="text-slate-500 ml-2">
-                  (Ano Anterior: {formatCurrency(priorGrossProfit, 'USD', locale)})
+                  ({t('reports.comparativePriorYear')}: {formatCurrency(priorGrossProfit)})
                 </span>
               )}
             </div>
           </div>
           <div className="text-xl font-bold font-mono text-emerald-400">
-            {formatCurrency(data.grossProfit, 'USD', locale)}
+            {formatCurrency(data.grossProfit)}
           </div>
         </div>
 
         {/* OPERATING EXPENSES SECTION */}
         <div>
           <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-            <span>3. {t('accounting.operatingExpenses')} (Despesas Operacionais OPEX)</span>
+            <span>3. {t('accounting.operatingExpenses')}</span>
             <div className="flex items-center space-x-4">
               {showComparative && (
                 <span className="font-mono text-slate-400 text-xs font-normal">
-                  Ano Anterior: ({formatCurrency(priorOpex, 'USD', locale)})
+                  {t('reports.comparativePriorYear')}: ({formatCurrency(priorOpex)})
                 </span>
               )}
               <span className="font-mono text-rose-400 font-bold">
-                ({formatCurrency(data.totalOperatingExpenses, 'USD', locale)})
+                ({formatCurrency(data.totalOperatingExpenses)})
               </span>
             </div>
           </h4>
@@ -333,7 +333,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                   <TableCell className="text-slate-300">{item.name}</TableCell>
                   {showComparative && (
                     <TableCell className="text-right font-mono tabular-nums text-slate-400 w-32 text-xs">
-                      ({formatCurrency(item.amount * 0.88, 'USD', locale)})
+                      ({formatCurrency(item.amount * 0.88)})
                     </TableCell>
                   )}
                   {showComparative && (
@@ -342,7 +342,7 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
                     </TableCell>
                   )}
                   <TableCell className="text-right font-mono tabular-nums text-rose-300 font-semibold w-36">
-                    ({formatCurrency(item.amount, 'USD', locale)})
+                    ({formatCurrency(item.amount)})
                   </TableCell>
                 </TableRow>
               ))}
@@ -354,22 +354,22 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/40 flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider block">
-              {t('accounting.netIncome')} (Resultado / Lucro Líquido Final)
+              {t('accounting.netIncome')}
             </span>
             <span className="text-xs text-slate-400">
-              Margem Líquida:{' '}
+              {t('metrics.ebitdaMargin')}:{' '}
               <strong className="text-emerald-400 font-mono">
                 {formatPercent(data.totalRevenue > 0 ? data.netIncome / data.totalRevenue : 0, locale)}
               </strong>
               {showComparative && (
                 <span className="text-slate-500 ml-2">
-                  (Ano Anterior: {formatCurrency(priorNetIncome, 'USD', locale)})
+                  ({t('reports.comparativePriorYear')}: {formatCurrency(priorNetIncome)})
                 </span>
               )}
             </span>
           </div>
           <div className="text-2xl font-bold font-mono text-emerald-400">
-            {formatCurrency(data.netIncome, 'USD', locale)}
+            {formatCurrency(data.netIncome)}
           </div>
         </div>
       </div>

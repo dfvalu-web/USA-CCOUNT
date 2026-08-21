@@ -14,13 +14,9 @@ interface PrintReportHeaderProps {
 export function PrintReportHeader({ reportTitle, reportSubtitle, asOfDate }: PrintReportHeaderProps) {
   const { activeCompany } = useCompany();
   const { fiscalYear, getFormattedPeriodLabel } = useFiscalPeriod();
-  const { basis } = useI18n();
+  const { basis, t, formatDate } = useI18n();
 
-  const currentDateFormatted = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const currentDateFormatted = formatDate(new Date());
 
   return (
     <div className="print-only mb-6 border-b-2 border-slate-900 pb-4 text-slate-900">
@@ -46,9 +42,9 @@ export function PrintReportHeader({ reportTitle, reportSubtitle, asOfDate }: Pri
 
         {/* Forensic Audit Stamp */}
         <div className="text-right border border-slate-800 p-2 rounded text-[10px] bg-slate-50">
-          <div className="font-bold text-slate-900 uppercase">US GAAP Audit-Ready</div>
-          <div className="text-slate-600 font-mono">Basis: {basis} Standard</div>
-          <div className="text-slate-500 font-mono text-[9px]">Gen: {currentDateFormatted}</div>
+          <div className="font-bold text-slate-900 uppercase">{t('reports.auditStamp')}</div>
+          <div className="text-slate-600 font-mono">{t('filters.accountingBasis')} {basis}</div>
+          <div className="text-slate-500 font-mono text-[9px]">{t('common.date')}: {currentDateFormatted}</div>
         </div>
       </div>
 
@@ -59,8 +55,8 @@ export function PrintReportHeader({ reportTitle, reportSubtitle, asOfDate }: Pri
         </h2>
         <div className="text-xs text-slate-700 font-medium mt-0.5">
           {asOfDate
-            ? `As of ${asOfDate}`
-            : `Fiscal Period: ${getFormattedPeriodLabel()} (${fiscalYear})`}
+            ? `${t('reports.asOfDate')} ${asOfDate}`
+            : `${t('common.year')}: ${getFormattedPeriodLabel()} (${fiscalYear})`}
           {reportSubtitle && <span> • {reportSubtitle}</span>}
         </div>
       </div>
@@ -70,32 +66,29 @@ export function PrintReportHeader({ reportTitle, reportSubtitle, asOfDate }: Pri
 
 export function PrintReportFooter() {
   const { activeCompany } = useCompany();
-  const currentDateFormatted = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const { t, formatDate } = useI18n();
+  const currentDateFormatted = formatDate(new Date());
 
   return (
     <div className="print-only mt-8 pt-4 border-t border-slate-300 text-slate-800 text-[10px]">
       <div className="grid grid-cols-3 gap-6 pt-4 text-center">
         <div className="border-t border-slate-600 pt-1">
-          <span className="font-semibold block">Prepared By</span>
-          <span className="text-[9px] text-slate-500">Staff Accountant / Controller</span>
+          <span className="font-semibold block">{t('reports.preparedBy')}</span>
+          <span className="text-[9px] text-slate-500">{t('reports.preparerTitle')}</span>
         </div>
         <div className="border-t border-slate-600 pt-1">
-          <span className="font-semibold block">Reviewed & Certified By</span>
-          <span className="text-[9px] text-slate-500">Certified Public Accountant (CPA) / EA</span>
+          <span className="font-semibold block">{t('reports.certifiedBy')}</span>
+          <span className="text-[9px] text-slate-500">{t('reports.certifierTitle')}</span>
         </div>
         <div className="border-t border-slate-600 pt-1">
-          <span className="font-semibold block">Management Approval</span>
+          <span className="font-semibold block">{t('reports.managementApproval')}</span>
           <span className="text-[9px] text-slate-500">{activeCompany?.legalName || 'Authorized Signatory'}</span>
         </div>
       </div>
 
       <div className="flex justify-between items-center mt-4 text-[9px] text-slate-500 font-mono">
-        <span>UAS Accounting Next-Gen Fintech • Immutable Double-Entry General Ledger</span>
-        <span>Printed on: {currentDateFormatted} • Confidential Financial Statement</span>
+        <span>{t('reports.auditStamp')}</span>
+        <span>{t('common.date')}: {currentDateFormatted} • Confidential Financial Statement</span>
       </div>
     </div>
   );

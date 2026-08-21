@@ -15,8 +15,10 @@ import {
   FileSpreadsheet,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/lib/i18n/context';
 
 export function InteractiveLedgerTeaser() {
+  const { t, formatCurrency } = useI18n();
   const [selectedYear, setSelectedYear] = useState<number>(2024);
 
   const yearData: Record<number, { assets: number; cash: number; fleet: number; equity: number; revenue: number; netIncome: number }> = {
@@ -34,14 +36,14 @@ export function InteractiveLedgerTeaser() {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">
             <Calculator className="w-3.5 h-3.5" />
-            <span>Simulador Interativo US GAAP</span>
+            <span>US GAAP ASC 210 / ASC 606</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-serif tracking-tight">
-            Demonstrações Contábeis com Fechamento Exato
+            {t('landing.interactiveTitle')}
           </h2>
           <p className="text-sm text-slate-400">
-            Selecione o ano fiscal para verificar a evolução patrimonial e a conciliação matemática de partidas dobradas em tempo real.
+            {t('landing.interactiveSubtitle')}
           </p>
 
           {/* Year Buttons */}
@@ -57,7 +59,7 @@ export function InteractiveLedgerTeaser() {
                     : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
                 }`}
               >
-                Exercício {yr}
+                {t('common.year')} {yr}
               </button>
             ))}
           </div>
@@ -73,33 +75,33 @@ export function InteractiveLedgerTeaser() {
                   US GAAP ASC 210
                 </span>
                 <h3 className="text-lg font-bold text-white font-serif">
-                  Balanço Patrimonial ({selectedYear})
+                  {t('nav.balanceSheet')} ({selectedYear})
                 </h3>
               </div>
 
               <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                $0.00 Variância
+                {t('accounting.balancedProof')}
               </span>
             </div>
 
             {/* Asset Breakdown */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-bold text-slate-300 uppercase">
-                <span>1. Ativo Total (Assets)</span>
+                <span>1. {t('accounting.totalAssets')}</span>
                 <span className="font-mono text-emerald-400 text-sm font-extrabold">
-                  ${current.assets.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {formatCurrency(current.assets)}
                 </span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800/80 space-y-2 text-xs">
                 <div className="flex justify-between items-center text-slate-300">
-                  <span className="font-mono text-emerald-400">1010 • Caixa & Bancos (Truist/Chase)</span>
-                  <span className="font-mono font-semibold">${current.cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span className="font-mono text-emerald-400">1010 • Cash & Equivalents (Truist/Chase)</span>
+                  <span className="font-mono font-semibold">{formatCurrency(current.cash)}</span>
                 </div>
                 <div className="flex justify-between items-center text-slate-300">
-                  <span className="font-mono text-emerald-400">1510 • Frota de Veículos & Equipamentos</span>
-                  <span className="font-mono font-semibold">${current.fleet.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span className="font-mono text-emerald-400">1510 • Vehicles & Equipment (Property, Plant)</span>
+                  <span className="font-mono font-semibold">{formatCurrency(current.fleet)}</span>
                 </div>
               </div>
             </div>
@@ -107,20 +109,20 @@ export function InteractiveLedgerTeaser() {
             {/* Equity Breakdown */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-bold text-slate-300 uppercase">
-                <span>2. Patrimônio Líquido (Members’ Equity)</span>
+                <span>2. {t('accounting.totalEquity')}</span>
                 <span className="font-mono text-sky-400 text-sm font-extrabold">
-                  ${current.equity.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {formatCurrency(current.equity)}
                 </span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800/80 space-y-2 text-xs">
                 <div className="flex justify-between items-center text-slate-300">
-                  <span className="font-mono text-sky-400">3010 • Capital Social Aportado</span>
-                  <span className="font-mono font-semibold">$115,000.00</span>
+                  <span className="font-mono text-sky-400">3010 • Members’ Contributed Capital</span>
+                  <span className="font-mono font-semibold">{formatCurrency(115000)}</span>
                 </div>
                 <div className="flex justify-between items-center text-slate-300">
-                  <span className="font-mono text-sky-400">3020 • Lucros Retidos Acumulados</span>
-                  <span className="font-mono font-semibold">Conciliado 100%</span>
+                  <span className="font-mono text-sky-400">3020 • {t('accounting.retainedEarnings')}</span>
+                  <span className="font-mono font-semibold">100% {t('common.balanced')}</span>
                 </div>
               </div>
             </div>
@@ -128,10 +130,10 @@ export function InteractiveLedgerTeaser() {
             {/* Bottom Equality Proof */}
             <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/40 flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Igualdade Fundamental: Ativo = Passivo + PL
+                {t('accounting.balanceSheetEquation')}
               </span>
               <span className="text-base font-bold font-mono text-emerald-400">
-                ✓ EQUILIBRADO
+                ✓ {t('accounting.balancedProof')}
               </span>
             </div>
           </div>
@@ -143,7 +145,7 @@ export function InteractiveLedgerTeaser() {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-emerald-400" />
-                  <h4 className="text-sm font-bold text-white">DRE • Resultado ({selectedYear})</h4>
+                  <h4 className="text-sm font-bold text-white">{t('nav.incomeStatement')} ({selectedYear})</h4>
                 </div>
                 <span className="text-[10px] font-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded">
                   US GAAP ASC 606
@@ -152,16 +154,16 @@ export function InteractiveLedgerTeaser() {
 
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Receita Bruta de Serviços:</span>
+                  <span className="text-slate-400">{t('accounting.revenue')}:</span>
                   <span className="font-mono font-bold text-white">
-                    ${current.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatCurrency(current.revenue)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Lucro Líquido do Exercício:</span>
+                  <span className="text-slate-400">{t('accounting.netIncome')}:</span>
                   <span className={`font-mono font-bold ${current.netIncome >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    ${current.netIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatCurrency(current.netIncome)}
                   </span>
                 </div>
               </div>
@@ -172,7 +174,7 @@ export function InteractiveLedgerTeaser() {
                   className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition-colors flex items-center justify-center space-x-2"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                  <span>Ver DRE Completa no Sistema</span>
+                  <span>{t('nav.incomeStatement')} ➔</span>
                 </Link>
               </div>
             </div>
@@ -181,20 +183,20 @@ export function InteractiveLedgerTeaser() {
             <div className="bg-gradient-to-br from-emerald-950/50 via-slate-950 to-slate-900 rounded-3xl border border-emerald-500/30 p-6 space-y-3 shadow-xl">
               <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                 <Printer className="w-4 h-4" />
-                <span>Impressão em Padrão Diamante</span>
+                <span>{t('reports.auditStamp')}</span>
               </div>
               <h4 className="text-base font-bold text-white font-serif">
-                Pronto para Bancos, SBA Loans & Auditoria do IRS
+                {t('reports.preparedBy')} CPA & SBA Loan Ready
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Gere PDFs limpos em papel branco com cabeçalhos corporativos oficiais, selos de auditoria e linhas formais de assinatura do CPA.
+                {t('reports.notesTitle')}
               </p>
               <div className="pt-1">
                 <Link
                   href="/balanco"
                   className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
                 >
-                  <span>Testar emissão de PDF</span>
+                  <span>{t('common.print')} (PDF)</span>
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>

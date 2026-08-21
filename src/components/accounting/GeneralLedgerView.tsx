@@ -25,7 +25,7 @@ import {
 import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 export function GeneralLedgerView() {
-  const { locale, t, basis } = useI18n();
+  const { locale, t, basis, formatCurrency, formatDate } = useI18n();
   const { activeCompany } = useCompany();
   const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
 
@@ -175,7 +175,7 @@ export function GeneralLedgerView() {
     <div className="space-y-6">
       {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
       <PrintReportHeader
-        reportTitle="GENERAL LEDGER REPORT (LIVRO RAZÃO CONTÁBIL ANALÍTICO)"
+        reportTitle={t('reports.generalLedgerTitle')}
         reportSubtitle={`US GAAP Double-Entry General Ledger • ${basis} Basis`}
       />
 
@@ -188,9 +188,9 @@ export function GeneralLedgerView() {
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
-                <CardTitle>Livro Razão Geral Contábil (General Ledger)</CardTitle>
+                <CardTitle>{t('nav.generalLedger')} — {activeCompany?.legalName}</CardTitle>
                 <CardDescription>
-                  {activeCompany?.legalName} • Razão Analítico por Conta • {getFormattedPeriodLabel()} ({fiscalYear})
+                  {activeCompany?.legalName} • {getFormattedPeriodLabel()} ({fiscalYear})
                 </CardDescription>
               </div>
             </div>
@@ -198,11 +198,11 @@ export function GeneralLedgerView() {
             <div className="flex items-center space-x-2">
               <Button size="sm" variant="outline" onClick={handleExportCsv} className="text-xs">
                 <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-                Exportar CSV
+                {t('common.export')}
               </Button>
               <Button size="sm" variant="primary" onClick={handlePrint} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
                 <Printer className="w-3.5 h-3.5 mr-1" />
-                Imprimir Livro Razão (PDF)
+                {t('common.print')}
               </Button>
             </div>
           </div>
@@ -210,30 +210,30 @@ export function GeneralLedgerView() {
           {/* Metric Summary Ribbon */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 pt-3 border-t border-slate-800 text-xs">
             <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Contas com Movimento</span>
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">{t('nav.chartOfAccounts')}</span>
               <span className="text-lg font-mono font-bold text-white mt-0.5 block">
-                {filteredAccounts.length} Contas
+                {filteredAccounts.length}
               </span>
             </div>
 
             <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total Débitos no Período</span>
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">{t('accounting.debit')} Total</span>
               <span className="text-lg font-mono font-bold text-emerald-400 mt-0.5 block">
-                {formatCurrency(ledgerData.totalPeriodDebits, 'USD', locale)}
+                {formatCurrency(ledgerData.totalPeriodDebits)}
               </span>
             </div>
 
             <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total Créditos no Período</span>
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">{t('accounting.credit')} Total</span>
               <span className="text-lg font-mono font-bold text-sky-400 mt-0.5 block">
-                {formatCurrency(ledgerData.totalPeriodCredits, 'USD', locale)}
+                {formatCurrency(ledgerData.totalPeriodCredits)}
               </span>
             </div>
 
             <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Auditoria Partidas Dobradas</span>
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">{t('reports.auditStamp')}</span>
               <Badge variant="success" className="mt-1">
-                ✓ 100% Equilibrado ($0 Var)
+                ✓ {t('accounting.balancedProof')}
               </Badge>
             </div>
           </div>
@@ -241,13 +241,13 @@ export function GeneralLedgerView() {
           {/* Filter Ribbon */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs">
             <div className="flex items-center space-x-2">
-              <span className="text-slate-400">Filtrar Conta:</span>
+              <span className="text-slate-400">{t('filters.accountTypeFilter')}</span>
               <select
                 value={selectedAccountFilter}
                 onChange={(e) => setSelectedAccountFilter(e.target.value)}
                 className="h-8 rounded-lg bg-slate-900 border border-slate-800 text-white px-2.5 text-xs focus:outline-none focus:border-emerald-500"
               >
-                <option value="ALL">Todas as Contas do Razão ({allAccounts.length})</option>
+                <option value="ALL">{t('filters.allTypes')} ({allAccounts.length})</option>
                 {allAccounts.map((acc) => (
                   <option key={acc.code} value={acc.code}>
                     {acc.code} — {acc.name} ({acc.type})
@@ -260,7 +260,7 @@ export function GeneralLedgerView() {
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
               <input
                 type="text"
-                placeholder="Buscar no histórico do razão..."
+                placeholder={t('filters.searchAccounts')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-8 rounded-lg bg-slate-900 border border-slate-800 pl-8 pr-2 text-xs text-white focus:outline-none focus:border-emerald-500"
@@ -278,7 +278,7 @@ export function GeneralLedgerView() {
             <span>{exportNotice}</span>
           </div>
           <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setExportNotice(null)}>
-            Fechar
+            {t('common.close')}
           </Button>
         </div>
       )}
@@ -290,10 +290,10 @@ export function GeneralLedgerView() {
             <BookOpen className="w-5 h-5" />
           </div>
           <p className="font-semibold text-slate-300">
-            Nenhuma Movimentação no Livro Razão para {getFormattedPeriodLabel()} ({fiscalYear})
+            {t('reports.noActivity')} — {getFormattedPeriodLabel()} ({fiscalYear})
           </p>
           <p className="text-slate-500 text-[11px] max-w-md mx-auto">
-            Não há lançamentos contábeis registrados nas contas selecionadas para este exercício fiscal de {activeCompany?.legalName}.
+            {t('reports.auditStamp')}
           </p>
         </Card>
       ) : (
@@ -313,15 +313,15 @@ export function GeneralLedgerView() {
 
               <div className="flex items-center space-x-4 mt-2 sm:mt-0 font-mono text-xs">
                 <div>
-                  <span className="text-slate-400 text-[10px] uppercase block">Saldo Inicial:</span>
+                  <span className="text-slate-400 text-[10px] uppercase block">{t('accounting.startingBalance')}:</span>
                   <span className="font-bold text-slate-200">
-                    {formatCurrency(acc.startingBalance, 'USD', locale)}
+                    {formatCurrency(acc.startingBalance)}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 text-[10px] uppercase block">Saldo Final:</span>
+                  <span className="text-slate-400 text-[10px] uppercase block">{t('accounting.endingBalance')}:</span>
                   <span className="font-bold text-emerald-400">
-                    {formatCurrency(acc.endingBalance, 'USD', locale)}
+                    {formatCurrency(acc.endingBalance)}
                   </span>
                 </div>
               </div>
@@ -331,23 +331,23 @@ export function GeneralLedgerView() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-28">Data</TableHead>
-                  <TableHead>Histórico / Descrição Contábil</TableHead>
-                  <TableHead className="w-20 text-center">Regime</TableHead>
-                  <TableHead className="w-28 text-right">Débito</TableHead>
-                  <TableHead className="w-28 text-right">Crédito</TableHead>
-                  <TableHead className="w-32 text-right">Saldo Acumulado</TableHead>
+                  <TableHead className="w-28">{t('common.date')}</TableHead>
+                  <TableHead>{t('accounting.memo')}</TableHead>
+                  <TableHead className="w-20 text-center">{t('filters.accountingBasis')}</TableHead>
+                  <TableHead className="w-28 text-right">{t('accounting.debit')}</TableHead>
+                  <TableHead className="w-28 text-right">{t('accounting.credit')}</TableHead>
+                  <TableHead className="w-32 text-right">{t('accounting.runningBalance')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {/* Starting Balance Row */}
                 <TableRow className="bg-slate-950/40 text-slate-400 italic">
-                  <TableCell className="font-mono text-xs">{fiscalYear}-01-01</TableCell>
+                  <TableCell className="font-mono text-xs">{formatDate(`${fiscalYear}-01-01`)}</TableCell>
                   <TableCell colSpan={4} className="font-medium">
-                    Saldo Inicial Transportado do Exercício Anterior
+                    {t('accounting.carriedForwardBalance')}
                   </TableCell>
                   <TableCell className="text-right font-mono font-bold text-slate-300">
-                    {formatCurrency(acc.startingBalance, 'USD', locale)}
+                    {formatCurrency(acc.startingBalance)}
                   </TableCell>
                 </TableRow>
 
@@ -362,20 +362,20 @@ export function GeneralLedgerView() {
                   acc.lines.map((line) => (
                     <TableRow key={line.id}>
                       <TableCell className="font-mono text-xs text-white">
-                        {formatDate(line.date, locale)}
+                        {formatDate(line.date)}
                       </TableCell>
                       <TableCell className="text-slate-200 text-xs">{line.memo}</TableCell>
                       <TableCell className="text-center font-mono text-[10px] text-slate-400">
                         {line.basis}
                       </TableCell>
                       <TableCell className="text-right font-mono text-xs text-emerald-400">
-                        {line.debit > 0 ? formatCurrency(line.debit, 'USD', locale) : '-'}
+                        {line.debit > 0 ? formatCurrency(line.debit) : '-'}
                       </TableCell>
                       <TableCell className="text-right font-mono text-xs text-sky-400">
-                        {line.credit > 0 ? formatCurrency(line.credit, 'USD', locale) : '-'}
+                        {line.credit > 0 ? formatCurrency(line.credit) : '-'}
                       </TableCell>
                       <TableCell className="text-right font-mono font-bold text-xs text-white">
-                        {formatCurrency(line.runningBalance, 'USD', locale)}
+                        {formatCurrency(line.runningBalance)}
                       </TableCell>
                     </TableRow>
                   ))
@@ -384,16 +384,16 @@ export function GeneralLedgerView() {
                 {/* Ending Balance Summary Row */}
                 <TableRow className="bg-slate-900/80 font-bold border-t-2 border-slate-700 text-white print-double-underline">
                   <TableCell colSpan={3} className="text-xs uppercase tracking-wider text-slate-300">
-                    Total Movimentação da Conta {acc.code} • Saldo Final
+                    {t('accounting.endingBalance')} • {acc.code} — {acc.name}
                   </TableCell>
                   <TableCell className="text-right font-mono text-xs text-emerald-400">
-                    {formatCurrency(acc.totalPeriodDebit, 'USD', locale)}
+                    {formatCurrency(acc.totalPeriodDebit)}
                   </TableCell>
                   <TableCell className="text-right font-mono text-xs text-sky-400">
-                    {formatCurrency(acc.totalPeriodCredit, 'USD', locale)}
+                    {formatCurrency(acc.totalPeriodCredit)}
                   </TableCell>
                   <TableCell className="text-right font-mono font-black text-sm text-emerald-400">
-                    {formatCurrency(acc.endingBalance, 'USD', locale)}
+                    {formatCurrency(acc.endingBalance)}
                   </TableCell>
                 </TableRow>
               </TableBody>
