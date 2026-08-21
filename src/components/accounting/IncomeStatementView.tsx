@@ -17,9 +17,11 @@ import {
   ArrowDownRight,
   Layers,
   Columns3,
+  Printer,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
 import { useCompany } from '@/lib/company/company-context';
+import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 interface IncomeStatementViewProps {
   data: IncomeStatementReport;
@@ -93,45 +95,57 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-950">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.incomeStatement')} — {activeCompany?.legalName}</CardTitle>
-              <Badge variant="outline">{basis} Basis</Badge>
-              <Badge variant="success">US GAAP ASC 606</Badge>
-              {showComparative && (
-                <Badge variant="info" className="text-[9px]">
-                  YoY Comparativo Ativo
-                </Badge>
-              )}
+    <div className="space-y-6">
+      {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
+      <PrintReportHeader
+        reportTitle="STATEMENT OF OPERATIONS & COMPREHENSIVE INCOME (DRE)"
+        reportSubtitle={`US GAAP ASC 606 Revenue Recognition • ${basis} Basis`}
+      />
+
+      <Card className="border-slate-800 bg-slate-950">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center space-x-2">
+                <CardTitle>{t('nav.incomeStatement')} — {activeCompany?.legalName}</CardTitle>
+                <Badge variant="outline">{basis} Basis</Badge>
+                <Badge variant="success">US GAAP ASC 606</Badge>
+                {showComparative && (
+                  <Badge variant="info" className="text-[9px]">
+                    YoY Comparativo Ativo
+                  </Badge>
+                )}
+              </div>
+              <CardDescription>
+                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {data.startDate} — {data.endDate} • Análise de Rentabilidade e Crescimento
+              </CardDescription>
             </div>
-            <CardDescription>
-              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • {data.startDate} — {data.endDate} • Análise de Rentabilidade e Crescimento
-            </CardDescription>
+
+            <div className="flex items-center space-x-2 flex-wrap gap-y-2 no-print">
+              <CorporateFiscalPeriodSelector />
+
+              <Button
+                variant="outline"
+                size="sm"
+                className={`text-xs ${showComparative ? 'bg-slate-900 border-emerald-500/50 text-emerald-400 font-bold' : ''}`}
+                onClick={() => setShowComparative(!showComparative)}
+              >
+                <Columns3 className="w-3.5 h-3.5 mr-1" />
+                {showComparative ? 'Ocultar Comparativo' : 'Comparativo YoY'}
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
+                <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                {t('common.export')} CSV
+              </Button>
+
+              <Button size="sm" variant="primary" onClick={() => window.print()} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
+                <Printer className="w-3.5 h-3.5 mr-1" />
+                Imprimir DRE (PDF)
+              </Button>
+            </div>
           </div>
-
-          <div className="flex items-center space-x-2 flex-wrap gap-y-2">
-            <CorporateFiscalPeriodSelector />
-
-            <Button
-              variant="outline"
-              size="sm"
-              className={`text-xs ${showComparative ? 'bg-slate-900 border-emerald-500/50 text-emerald-400 font-bold' : ''}`}
-              onClick={() => setShowComparative(!showComparative)}
-            >
-              <Columns3 className="w-3.5 h-3.5 mr-1" />
-              {showComparative ? 'Ocultar Comparativo' : 'Comparativo YoY'}
-            </Button>
-
-            <Button variant="outline" size="sm" onClick={handleExportCsv}>
-              <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-              {t('common.export')} CSV
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       {/* Export Notice Banner */}
       {exportNotice && (
@@ -360,5 +374,9 @@ export function IncomeStatementView({ data }: IncomeStatementViewProps) {
         </div>
       </div>
     </Card>
+
+    {/* Diamond-Standard Print Footer (Visible only on print/PDF) */}
+    <PrintReportFooter />
+  </div>
   );
 }

@@ -18,9 +18,11 @@ import {
   Layers,
   ChevronDown,
   ChevronRight,
+  Printer,
 } from 'lucide-react';
 
 import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 export interface JournalEntryListItem {
   id: string;
@@ -96,33 +98,44 @@ export function JournalEntriesView({
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-950">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <div>
-              <CardTitle>{t('nav.journalEntries')} (Livro Diário Contábil)</CardTitle>
-              <CardDescription>
-                Registro Cronológico Contínuo de Partidas Dobradas (General Journal US GAAP)
-              </CardDescription>
-            </div>
-          </div>
+    <div className="space-y-6">
+      {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
+      <PrintReportHeader
+        reportTitle="GENERAL JOURNAL ENTRIES (LIVRO DIÁRIO CONTÁBIL)"
+        reportSubtitle={`Chronological Double-Entry Journal • ${basis} Basis`}
+      />
 
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleExportCsv}>
-              <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-              Exportar CSV
-            </Button>
-            <Button size="sm" variant="primary" onClick={onOpenNewEntryModal}>
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              Novo Lançamento Diário
-            </Button>
+      <Card className="border-slate-800 bg-slate-950">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <div>
+                <CardTitle>{t('nav.journalEntries')} (Livro Diário Contábil)</CardTitle>
+                <CardDescription>
+                  Registro Cronológico Contínuo de Partidas Dobradas (General Journal US GAAP)
+                </CardDescription>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 no-print">
+              <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
+                <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                Exportar CSV
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => window.print()} className="text-xs bg-slate-900 border-slate-700 text-white font-semibold">
+                <Printer className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                Imprimir Diário (PDF)
+              </Button>
+              <Button size="sm" variant="primary" onClick={onOpenNewEntryModal} className="text-xs">
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                Novo Lançamento Diário
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       {/* Filter and Search Bar */}
       <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -221,5 +234,9 @@ export function JournalEntriesView({
         </Table>
       )}
     </Card>
+
+    {/* Diamond-Standard Print Footer (Visible only on print/PDF) */}
+    <PrintReportFooter />
+  </div>
   );
 }

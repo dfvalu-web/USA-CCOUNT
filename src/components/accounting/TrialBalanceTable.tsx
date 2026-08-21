@@ -7,9 +7,10 @@ import { TrialBalanceReport } from '@/lib/accounting/types';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { CheckCircle2, AlertCircle, Download, Search, Filter, Layers, FileSpreadsheet } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Download, Search, Filter, Layers, FileSpreadsheet, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useCompany } from '@/lib/company/company-context';
+import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 interface TrialBalanceTableProps {
   data: TrialBalanceReport;
@@ -54,30 +55,42 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-950">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.trialBalance')} — {activeCompany?.legalName}</CardTitle>
-              <Badge variant={data.isBalanced ? 'success' : 'danger'}>
-                {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
-              </Badge>
-              <Badge variant="outline">{basis} Basis</Badge>
-            </div>
-            <CardDescription>
-              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Balancete de Verificação US GAAP
-            </CardDescription>
-          </div>
+    <div className="space-y-6">
+      {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
+      <PrintReportHeader
+        reportTitle="TRIAL BALANCE REPORT (BALANCETE DE VERIFICAÇÃO)"
+        reportSubtitle={`US GAAP Chart of Accounts Trial Balance • ${basis} Basis`}
+        asOfDate={formatDate(data.asOfDate, locale)}
+      />
 
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleExportCsv}>
-              <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-              {t('common.export')} CSV
-            </Button>
+      <Card className="border-slate-800 bg-slate-950">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center space-x-2">
+                <CardTitle>{t('nav.trialBalance')} — {activeCompany?.legalName}</CardTitle>
+                <Badge variant={data.isBalanced ? 'success' : 'danger'}>
+                  {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
+                </Badge>
+                <Badge variant="outline">{basis} Basis</Badge>
+              </div>
+              <CardDescription>
+                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Balancete de Verificação US GAAP
+              </CardDescription>
+            </div>
+
+            <div className="flex items-center space-x-2 no-print">
+              <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
+                <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                {t('common.export')} CSV
+              </Button>
+              <Button size="sm" variant="primary" onClick={() => window.print()} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
+                <Printer className="w-3.5 h-3.5 mr-1" />
+                Imprimir Balancete (PDF)
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       {/* Filters & Search Toolbar */}
       <div className="px-6 py-3 border-y border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -180,5 +193,9 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
         </TableBody>
       </Table>
     </Card>
+
+    {/* Diamond-Standard Print Footer (Visible only on print/PDF) */}
+    <PrintReportFooter />
+  </div>
   );
 }

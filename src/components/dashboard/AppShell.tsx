@@ -7,6 +7,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { CommandMenu } from '@/components/ui/CommandMenu';
 import { ExecutiveCockpit } from '@/components/dashboard/ExecutiveCockpit';
 import { TrialBalanceTable } from '@/components/accounting/TrialBalanceTable';
+import { GeneralLedgerView } from '@/components/accounting/GeneralLedgerView';
 import { IncomeStatementView } from '@/components/accounting/IncomeStatementView';
 import { BalanceSheetView } from '@/components/accounting/BalanceSheetView';
 import { ChartOfAccountsView } from '@/components/accounting/ChartOfAccountsView';
@@ -251,6 +252,11 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
             <div className="space-y-6">
               <TrialBalanceTable data={reports.trialBalance} />
               <FixedAssetsView onPostDepreciation={handleEntrySuccess} />
+            </div>
+          )}
+          {(activeTab === 'general-ledger' || activeTab === 'razao') && (
+            <div className="space-y-6">
+              <GeneralLedgerView />
             </div>
           )}
           {activeTab === 'income-statement' && <IncomeStatementView data={reports.incomeStatement} />}

@@ -8,9 +8,10 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Ca
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { CheckCircle2, Download, AlertCircle, ShieldCheck, Scale } from 'lucide-react';
+import { CheckCircle2, Download, AlertCircle, ShieldCheck, Scale, Printer } from 'lucide-react';
 
 import { useCompany } from '@/lib/company/company-context';
+import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 
 interface BalanceSheetViewProps {
   data: BalanceSheetReport;
@@ -62,30 +63,42 @@ export function BalanceSheetView({ data }: BalanceSheetViewProps) {
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-950">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.balanceSheet')} — {activeCompany?.legalName}</CardTitle>
-              <Badge variant={data.isBalanced ? 'success' : 'danger'}>
-                {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
-              </Badge>
-              <Badge variant="outline">{basis} Basis</Badge>
-            </div>
-            <CardDescription>
-              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Ativo = Passivo + Patrimônio Líquido
-            </CardDescription>
-          </div>
+    <div className="space-y-6">
+      {/* Diamond-Standard Print Header (Visible only on print/PDF) */}
+      <PrintReportHeader
+        reportTitle="BALANCE SHEET / STATEMENT OF FINANCIAL POSITION"
+        reportSubtitle={`US GAAP ASC 210 Balance Sheet • ${basis} Basis`}
+        asOfDate={formatDate(data.asOfDate, locale)}
+      />
 
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleExportCsv}>
-              <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
-              {t('common.export')} CSV
-            </Button>
+      <Card className="border-slate-800 bg-slate-950">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center space-x-2">
+                <CardTitle>{t('nav.balanceSheet')} — {activeCompany?.legalName}</CardTitle>
+                <Badge variant={data.isBalanced ? 'success' : 'danger'}>
+                  {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
+                </Badge>
+                <Badge variant="outline">{basis} Basis</Badge>
+              </div>
+              <CardDescription>
+                {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Ativo = Passivo + Patrimônio Líquido
+              </CardDescription>
+            </div>
+
+            <div className="flex items-center space-x-2 no-print">
+              <Button variant="outline" size="sm" onClick={handleExportCsv} className="text-xs">
+                <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                {t('common.export')} CSV
+              </Button>
+              <Button size="sm" variant="primary" onClick={() => window.print()} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
+                <Printer className="w-3.5 h-3.5 mr-1" />
+                Imprimir Balanço (PDF)
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       {/* Export Notice Banner */}
       {exportNotice && (
@@ -224,5 +237,9 @@ export function BalanceSheetView({ data }: BalanceSheetViewProps) {
         </div>
       </div>
     </Card>
+
+    {/* Diamond-Standard Print Footer (Visible only on print/PDF) */}
+    <PrintReportFooter />
+  </div>
   );
 }

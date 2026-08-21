@@ -42,6 +42,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       title: 'US GAAP Accounting',
       items: [
         { id: 'dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+        { id: 'general-ledger', label: 'Livro Razão (General Ledger)', icon: BookOpen },
         { id: 'trial-balance', label: t('nav.trialBalance'), icon: Scale },
         { id: 'income-statement', label: t('nav.incomeStatement'), icon: TrendingUp },
         { id: 'balance-sheet', label: t('nav.balanceSheet'), icon: FileSpreadsheet },
