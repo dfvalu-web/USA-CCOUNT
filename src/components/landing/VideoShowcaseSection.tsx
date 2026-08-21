@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import {
   Play,
@@ -13,31 +13,58 @@ import {
   Zap,
   CheckCircle2,
   BookOpen,
+  RotateCcw,
 } from 'lucide-react';
 
 export function VideoShowcaseSection() {
   const { t } = useI18n();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.log('Autoplay muted note:', err);
+            setIsPlaying(false);
+          });
+      }
+    }
+  }, []);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
-    if (isPlaying) {
+    if (videoRef.current.paused) {
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((e) => console.error('Play error:', e));
+    } else {
       videoRef.current.pause();
       setIsPlaying(false);
-    } else {
-      videoRef.current.play();
-      setIsPlaying(true);
-      setHasStarted(true);
     }
   };
 
   const toggleMute = () => {
     if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const newMuted = !videoRef.current.muted;
+    videoRef.current.muted = newMuted;
+    setIsMuted(newMuted);
+  };
+
+  const handleRestart = () => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = 0;
+    videoRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((e) => console.error(e));
   };
 
   const toggleFullscreen = () => {
@@ -48,15 +75,15 @@ export function VideoShowcaseSection() {
   };
 
   return (
-    <section className="relative py-20 md:py-28 bg-slate-950 overflow-hidden border-t border-b border-slate-800/80">
+    <section className="relative py-16 md:py-24 bg-slate-950 overflow-hidden border-t border-b border-slate-800/80">
       {/* 4K Background Radial Mesh Glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/15 blur-[160px] pointer-events-none rounded-full" />
-      <div className="absolute top-1/3 right-10 w-[450px] h-[350px] bg-teal-500/10 blur-[130px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[550px] bg-emerald-500/15 blur-[160px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/4 right-5 w-[450px] h-[350px] bg-teal-500/10 blur-[130px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-semibold backdrop-blur-xl shadow-lg">
+        <div className="text-center max-w-3xl mx-auto space-y-4 mb-10">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-semibold backdrop-blur-xl shadow-lg">
             <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
             <span>{t('landing.videoBadge')}</span>
           </div>
@@ -65,7 +92,7 @@ export function VideoShowcaseSection() {
             {t('landing.videoTitle')}
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto">
             {t('landing.videoSubtitle')}
           </p>
         </div>
@@ -84,80 +111,77 @@ export function VideoShowcaseSection() {
                 <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
                 <span className="text-xs font-mono text-slate-400 pl-2">
-                  mistercontabil.com • Apresentação Oficial 4K
+                  mistercontabil.com • Demonstração da Plataforma
                 </span>
               </div>
-              <div className="flex items-center space-x-2 text-[11px] font-mono text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>HD • 1080p US GAAP</span>
+
+              {/* Quick Action Pills in Header */}
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-emerald-400 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer font-medium"
+                >
+                  {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                  <span>{isMuted ? 'Ativar Áudio 🔊' : 'Silenciado 🔇'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleRestart}
+                  className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title="Reiniciar Vídeo"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
 
-            {/* Video Area */}
-            <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+            {/* Video Player Box with Native HTML5 Controls & Direct Video Stream */}
+            <div className="relative aspect-video bg-black flex items-center justify-center">
               <video
                 ref={videoRef}
-                src="/video.mp4"
-                playsInline
-                preload="metadata"
+                autoPlay
                 loop
-                muted={isMuted}
+                muted
+                playsInline
+                controls
+                controlsList="nodownload"
+                preload="auto"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
-                onClick={togglePlay}
-                className="w-full h-full object-cover cursor-pointer"
-              />
+                onVolumeChange={() => {
+                  if (videoRef.current) {
+                    setIsMuted(videoRef.current.muted);
+                  }
+                }}
+                onError={() => setHasError(true)}
+                className="w-full h-full object-cover"
+              >
+                <source src="/video.mp4" type="video/mp4" />
+                Seu navegador não suporta a tag de vídeo.
+              </video>
 
-              {/* Large Center Play Overlay (when paused or initial) */}
-              {!isPlaying && (
-                <div
-                  onClick={togglePlay}
-                  className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center cursor-pointer transition-all hover:bg-black/30 group/btn"
-                >
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500/90 group-hover/btn:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-2xl shadow-emerald-500/50 transform group-hover/btn:scale-110 transition-all">
-                    <Play className="w-9 h-9 sm:w-11 sm:h-11 fill-current ml-1" />
-                  </div>
+              {hasError && (
+                <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center space-y-3">
+                  <span className="text-amber-400 font-bold text-sm">Aviso de Reprodução</span>
+                  <p className="text-xs text-slate-400 max-w-md">
+                    O vídeo está disponível diretamente no servidor.
+                  </p>
+                  <a
+                    href="/video.mp4"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
+                  >
+                    Abrir Vídeo em Nova Aba ➔
+                  </a>
                 </div>
               )}
-
-              {/* Bottom Custom Overlay Controls Bar */}
-              <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between text-white transition-opacity duration-300 opacity-90 hover:opacity-100">
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={togglePlay}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-emerald-400 hover:text-white transition-colors"
-                    title={isPlaying ? 'Pausar' : 'Reproduzir'}
-                  >
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-                  </button>
-
-                  <button
-                    onClick={toggleMute}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-                    title={isMuted ? 'Ativar Áudio' : 'Mutar Áudio'}
-                  >
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </button>
-
-                  <span className="text-xs font-mono text-slate-300 hidden sm:inline">
-                    Mister Contábil — Visão Geral do Sistema
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={toggleFullscreen}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-                    title="Tela Cheia"
-                  >
-                    <Maximize className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* Video Footer Highlights Grid */}
-            <div className="p-4 sm:p-6 bg-slate-950/80 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="p-4 sm:p-6 bg-slate-950/90 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
               <div className="flex items-start space-x-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                   <Zap className="w-4 h-4" />
