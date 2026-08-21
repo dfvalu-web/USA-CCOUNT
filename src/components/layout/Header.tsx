@@ -1,23 +1,14 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useI18n } from '@/lib/i18n/context';
-import { useAuth } from '@/lib/auth/auth-context';
 import { locales } from '@/lib/i18n/config';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import {
-  Globe,
   Command,
-  Building2,
   CheckCircle2,
-  Sun,
-  Moon,
-  LogOut,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
-import { GlobalCompanySelector } from '@/components/common/GlobalCompanySelector';
 
 interface HeaderProps {
   onOpenCommandMenu: () => void;
@@ -26,16 +17,13 @@ interface HeaderProps {
 
 export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
   const { locale, setLocale, basis, setBasis, t } = useI18n();
-  const { user, logout } = useAuth();
 
   return (
     <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
-      {/* Left: Global Company Selector & Accounting Basis Switch */}
+      {/* Left: Accounting Basis Switch & Corporate Fiscal Period Selector */}
       <div className="flex items-center space-x-3 sm:space-x-4">
-        <GlobalCompanySelector />
-
         {/* Accrual / Cash Toggle */}
-        <div className="hidden lg:flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
+        <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
           <button
             onClick={() => setBasis('ACCRUAL')}
             className={`px-2.5 py-1 rounded-md font-medium transition-all ${
@@ -57,14 +45,14 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
             {t('common.cash')}
           </button>
         </div>
+
+        {/* Corporate Fiscal Period Selector (Global) */}
+        <div className="flex items-center">
+          <CorporateFiscalPeriodSelector />
+        </div>
       </div>
 
-      {/* Center: Corporate Fiscal Period Selector (Global) */}
-      <div className="hidden md:flex items-center">
-        <CorporateFiscalPeriodSelector />
-      </div>
-
-      {/* Right: Search / Command Menu, Language, New Entry Button */}
+      {/* Right: Search / Command Menu, Language, Balanced Status & New Entry Button */}
       <div className="flex items-center space-x-3">
         {/* Quick Command Trigger */}
         <button
@@ -106,36 +94,6 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
         <Button size="sm" variant="primary" onClick={onOpenNewEntry}>
           + {t('accounting.newEntry')}
         </Button>
-
-        {/* Logged in User Profile & Role Indicator */}
-        <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-          <Link
-            href="/login"
-            className="flex items-center space-x-2 p-1 rounded-xl hover:bg-slate-900 transition-colors group"
-            title="Clique para alternar usuário / fazer login"
-          >
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs">
-              {user?.name ? user.name.charAt(0) : 'M'}
-            </div>
-            <div className="hidden xl:block text-left text-xs leading-none">
-              <span className="font-bold text-white block group-hover:text-emerald-300 transition-colors">
-                {user?.name || 'Milla Santos'}
-              </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                {user?.role === 'CPA_ACCOUNTANT' ? 'CPA Auditor' : user?.role === 'CLIENT_B2B' ? 'Cliente B2B' : 'Admin LLC'}
-              </span>
-            </div>
-          </Link>
-
-          <button
-            type="button"
-            onClick={logout}
-            title="Sair da sessão / Logout"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
       </div>
     </header>
   );
