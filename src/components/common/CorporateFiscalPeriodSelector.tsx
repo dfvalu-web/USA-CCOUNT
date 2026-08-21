@@ -1,25 +1,23 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useFiscalPeriod, PeriodType, ComparisonMode } from '@/lib/period/fiscal-period-context';
-import { Button } from '@/components/ui/Button';
+import {
+  useFiscalPeriod,
+  MONTH_NAMES_SHORT,
+  MONTH_NAMES_FULL,
+  AVAILABLE_YEARS,
+} from '@/lib/period/fiscal-period-context';
 import { Badge } from '@/components/ui/Badge';
 import {
   Calendar,
   ChevronDown,
-  Clock,
-  ArrowRightLeft,
-  CheckCircle2,
-  Filter,
+  Check,
   Sparkles,
-  Layers,
+  ArrowRightLeft,
   X,
+  Layers,
+  Clock,
 } from 'lucide-react';
-
-const MONTHS_SHORT = [
-  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-];
 
 interface CorporateFiscalPeriodSelectorProps {
   compact?: boolean;
@@ -32,28 +30,27 @@ export function CorporateFiscalPeriodSelector({
 }: CorporateFiscalPeriodSelectorProps) {
   const {
     fiscalYear,
-    periodType,
-    selectedMonth,
-    customStartDate,
-    customEndDate,
+    selectedMonths,
     comparisonMode,
     setFiscalYear,
-    setPeriodType,
-    setSelectedMonth,
-    setCustomRange,
+    toggleMonth,
+    selectAllYear,
+    selectYtd,
+    selectQuarter,
     setComparisonMode,
     getFormattedPeriodLabel,
   } = useFiscalPeriod();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [tempStart, setTempStart] = useState(customStartDate);
-  const [tempEnd, setTempEnd] = useState(customEndDate);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -65,11 +62,7 @@ export function CorporateFiscalPeriodSelector({
     };
   }, [isOpen]);
 
-  const handleApplyCustom = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCustomRange(tempStart, tempEnd);
-    setIsOpen(false);
-  };
+  const isAllYearSelected = selectedMonths.length === 12;
 
   return (
     <div className={`relative ${className}`} ref={containerRef}>
@@ -77,244 +70,205 @@ export function CorporateFiscalPeriodSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-emerald-500/60 transition-all text-xs text-slate-100 shadow-sm"
+        className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-emerald-500/60 transition-all text-xs text-slate-100 shadow-sm group"
       >
-        <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-          <Calendar className="w-3.5 h-3.5" />
+        <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+          <Calendar className="w-4 h-4" />
         </div>
 
         <div className="text-left font-sans">
-          <div className="font-bold text-white flex items-center gap-1.5">
+          <div className="font-bold text-white text-xs flex items-center gap-1.5">
             <span>{getFormattedPeriodLabel()}</span>
-            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
+                isOpen ? 'rotate-180 text-emerald-400' : ''
+              }`}
+            />
           </div>
           {!compact && (
-            <div className="text-[10px] text-slate-400 flex items-center gap-1">
-              <span>Exercício Fiscal: FY {fiscalYear}</span>
+            <div className="text-[10px] text-slate-400 flex items-center gap-1 font-mono">
+              <span className="text-emerald-400 font-bold">FY {fiscalYear}</span>
               <span>•</span>
-              <span className="text-emerald-400 font-medium">
-                {comparisonMode === 'PRIOR_YEAR_YOY' ? 'YoY Ativo' : comparisonMode === 'PRIOR_PERIOD' ? 'MoM/QoQ Ativo' : 'Sem benchmark'}
-              </span>
+              <span>{selectedMonths.length} {selectedMonths.length === 1 ? 'mês' : 'meses'} ativos</span>
+              {comparisonMode === 'PRIOR_YEAR_YOY' && (
+                <>
+                  <span>•</span>
+                  <span className="text-sky-400">vs. {fiscalYear - 1} YoY</span>
+                </>
+              )}
             </div>
           )}
         </div>
       </button>
 
-      {/* Popover Dropdown Modal */}
+      {/* Direct Dropdown Filter Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 z-50 w-96 rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl p-4 space-y-4 animate-in fade-in zoom-in-95">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div className="absolute right-0 sm:left-0 mt-2 w-80 sm:w-[420px] rounded-2xl bg-slate-950 border border-slate-700/80 shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 text-xs">
+          {/* Panel Header */}
+          <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-emerald-400" />
-              <span className="font-bold text-xs text-white">Seletor de Período Fiscal Corporativo</span>
+              <div className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <Calendar className="w-3.5 h-3.5" />
+              </div>
+              <span className="font-bold text-white text-xs">
+                Filtro de Período Contábil (Ano & Meses)
+              </span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-slate-400 hover:text-white p-1 rounded"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Section 1: Fiscal Year Selection */}
-          <div>
-            <label className="text-[10px] text-slate-400 uppercase font-bold block mb-1.5">
-              1. Ano Fiscal (Fiscal Year):
-            </label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {[2026, 2025, 2024, 2023].map((yr) => (
+          <div className="p-4 space-y-4">
+            {/* 1. SELEÇÃO DO ANO FISCAL */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                1. Selecione o Ano Fiscal:
+              </label>
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                {AVAILABLE_YEARS.map((yr) => {
+                  const isCurrent = yr === fiscalYear;
+                  return (
+                    <button
+                      key={yr}
+                      type="button"
+                      onClick={() => setFiscalYear(yr)}
+                      className={`py-1.5 px-2 rounded-lg font-mono font-bold text-xs transition-all ${
+                        isCurrent
+                          ? 'bg-emerald-600 text-white border border-emerald-400 shadow-md shadow-emerald-950 scale-[1.02]'
+                          : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                      }`}
+                    >
+                      {yr}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2. SELEÇÃO LIVRE DOS MESES (12 MESES) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  2. Escolha os Meses ({selectedMonths.length}/12 selecionados):
+                </label>
+                <span className="text-[9px] text-slate-500">Clique para ativar/desativar</span>
+              </div>
+
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
+                {MONTH_NAMES_SHORT.map((monthName, idx) => {
+                  const monthNum = idx + 1;
+                  const isSelected = selectedMonths.includes(monthNum);
+                  return (
+                    <button
+                      key={monthNum}
+                      type="button"
+                      onClick={() => toggleMonth(monthNum)}
+                      className={`py-2 px-1 rounded-xl text-center font-medium text-xs transition-all relative ${
+                        isSelected
+                          ? 'bg-emerald-950/60 border border-emerald-500 text-white font-bold shadow-sm'
+                          : 'bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <span>{monthName}</span>
+                      {isSelected && (
+                        <Check className="w-3 h-3 text-emerald-400 absolute top-1 right-1" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. ATALHOS RÁPIDOS */}
+            <div className="space-y-1.5 pt-1 border-t border-slate-900">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Atalhos Rápidos de Fechamento:
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                 <button
-                  key={yr}
                   type="button"
-                  onClick={() => setFiscalYear(yr)}
-                  className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    fiscalYear === yr
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
+                  onClick={selectAllYear}
+                  className={`py-1 px-2 rounded-lg text-[11px] font-medium border text-left flex items-center justify-between ${
+                    isAllYearSelected
+                      ? 'bg-emerald-950 border-emerald-500 text-emerald-300 font-bold'
+                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850'
                   }`}
                 >
-                  FY {yr} {yr === 2026 ? '(Atual)' : ''}
+                  <span>✨ Ano Todo (12M)</span>
+                  {isAllYearSelected && <Check className="w-3 h-3 text-emerald-400" />}
                 </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Section 2: Macro Financial Presets */}
-          <div>
-            <label className="text-[10px] text-slate-400 uppercase font-bold block mb-1.5">
-              2. Intervalos Padrão do Mercado Financeiro:
-            </label>
-            <div className="grid grid-cols-3 gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setPeriodType('YTD');
-                  setIsOpen(false);
-                }}
-                className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center ${
-                  periodType === 'YTD'
-                    ? 'bg-sky-600 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                YTD (Acumulado)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPeriodType('TTM');
-                  setIsOpen(false);
-                }}
-                className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center ${
-                  periodType === 'TTM'
-                    ? 'bg-sky-600 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                TTM (12 Meses)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPeriodType('ALL');
-                  setIsOpen(false);
-                }}
-                className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-center ${
-                  periodType === 'ALL'
-                    ? 'bg-sky-600 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                Todo Histórico
-              </button>
-            </div>
-          </div>
-
-          {/* Section 3: Quarter Selection */}
-          <div>
-            <label className="text-[10px] text-slate-400 uppercase font-bold block mb-1.5">
-              3. Trimestres Fiscais (Quarters):
-            </label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {(['Q1', 'Q2', 'Q3', 'Q4'] as const).map((q) => (
                 <button
-                  key={q}
                   type="button"
-                  onClick={() => {
-                    setPeriodType(q);
-                    setIsOpen(false);
-                  }}
-                  className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    periodType === q
-                      ? 'bg-amber-600 text-white'
-                      : 'bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800'
-                  }`}
+                  onClick={selectYtd}
+                  className="py-1 px-2 rounded-lg text-[11px] font-medium bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 text-left flex items-center justify-between"
                 >
-                  {q} {q === 'Q1' ? '(Jan-Mar)' : q === 'Q2' ? '(Abr-Jun)' : q === 'Q3' ? '(Jul-Set)' : '(Out-Dez)'}
+                  <span>⚡ YTD (Até Hoje)</span>
                 </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Section 4: Individual Month Selection */}
-          <div>
-            <label className="text-[10px] text-slate-400 uppercase font-bold block mb-1.5">
-              4. Mês Individual ({fiscalYear}):
-            </label>
-            <div className="grid grid-cols-6 gap-1 text-[11px]">
-              {MONTHS_SHORT.map((mName, idx) => {
-                const monthNum = idx + 1;
-                const isSelected = periodType === 'MONTH' && selectedMonth === monthNum;
-                return (
+                <div className="grid grid-cols-2 gap-1 sm:col-span-1">
                   <button
-                    key={mName}
                     type="button"
-                    onClick={() => {
-                      setSelectedMonth(monthNum);
-                      setPeriodType('MONTH');
-                      setIsOpen(false);
-                    }}
-                    className={`py-1 rounded-md font-medium transition-all ${
-                      isSelected
-                        ? 'bg-indigo-600 text-white font-bold'
-                        : 'bg-slate-900 border border-slate-800/80 text-slate-300 hover:bg-slate-800'
-                    }`}
+                    onClick={() => selectQuarter(1)}
+                    className="py-1 px-1.5 rounded-lg text-[10px] font-medium bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 text-center"
                   >
-                    {mName}
+                    Q1 (Jan-Mar)
                   </button>
-                );
-              })}
+                  <button
+                    type="button"
+                    onClick={() => selectQuarter(2)}
+                    className="py-1 px-1.5 rounded-lg text-[10px] font-medium bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 text-center"
+                  >
+                    Q2 (Abr-Jun)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. COMPARATIVO YoY */}
+            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-sky-400" />
+                <span className="text-[11px] text-slate-300 font-medium">
+                  Benchmark Comparativo com Ano Anterior ({fiscalYear - 1} YoY):
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setComparisonMode(
+                    comparisonMode === 'PRIOR_YEAR_YOY' ? 'NONE' : 'PRIOR_YEAR_YOY'
+                  )
+                }
+                className={`w-9 h-5 rounded-full transition-colors relative p-0.5 ${
+                  comparisonMode === 'PRIOR_YEAR_YOY' ? 'bg-emerald-600' : 'bg-slate-800'
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                    comparisonMode === 'PRIOR_YEAR_YOY' ? 'translate-x-4' : 'translate-x-0'
+                  }`}
+                />
+              </button>
             </div>
           </div>
 
-          {/* Section 5: Custom Date Range */}
-          <form onSubmit={handleApplyCustom} className="pt-2 border-t border-slate-800 space-y-2">
-            <label className="text-[10px] text-slate-400 uppercase font-bold block">
-              5. Intervalo Customizado Livre (De / Até):
-            </label>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <span className="text-[9px] text-slate-500 block mb-0.5">Data Inicial:</span>
-                <input
-                  type="date"
-                  value={tempStart}
-                  onChange={(e) => setTempStart(e.target.value)}
-                  className="w-full h-7 rounded bg-slate-900 border border-slate-800 px-2 text-white text-[11px]"
-                />
-              </div>
-              <div>
-                <span className="text-[9px] text-slate-500 block mb-0.5">Data Final:</span>
-                <input
-                  type="date"
-                  value={tempEnd}
-                  onChange={(e) => setTempEnd(e.target.value)}
-                  className="w-full h-7 rounded bg-slate-900 border border-slate-800 px-2 text-white text-[11px]"
-                />
-              </div>
-            </div>
-            <Button type="submit" size="sm" variant="outline" className="w-full h-7 text-xs font-bold border-slate-700">
-              Aplicar Intervalo Customizado
-            </Button>
-          </form>
-
-          {/* Section 6: Comparative Benchmark Analysis */}
-          <div className="pt-2 border-t border-slate-800 space-y-1.5">
-            <label className="text-[10px] text-slate-400 uppercase font-bold block">
-              6. Modo de Comparação Contábil / Benchmark:
-            </label>
-            <div className="grid grid-cols-3 gap-1.5 text-[11px]">
-              <button
-                type="button"
-                onClick={() => setComparisonMode('PRIOR_YEAR_YOY')}
-                className={`py-1 px-1.5 rounded-lg font-bold transition-all text-center ${
-                  comparisonMode === 'PRIOR_YEAR_YOY'
-                    ? 'bg-emerald-700 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                YoY (Ano Ant.)
-              </button>
-              <button
-                type="button"
-                onClick={() => setComparisonMode('PRIOR_PERIOD')}
-                className={`py-1 px-1.5 rounded-lg font-bold transition-all text-center ${
-                  comparisonMode === 'PRIOR_PERIOD'
-                    ? 'bg-emerald-700 text-white'
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                MoM / QoQ
-              </button>
-              <button
-                type="button"
-                onClick={() => setComparisonMode('NONE')}
-                className={`py-1 px-1.5 rounded-lg font-medium transition-all text-center ${
-                  comparisonMode === 'NONE'
-                    ? 'bg-slate-800 text-white font-bold'
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                Sem Comparação
-              </button>
-            </div>
+          {/* Footer */}
+          <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
+            <span className="text-[10px] text-slate-400">
+              Período Ativo: <strong className="text-white">{getFormattedPeriodLabel()}</strong>
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="py-1 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
+            >
+              Aplicar Filtro
+            </button>
           </div>
         </div>
       )}

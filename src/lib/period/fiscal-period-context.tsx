@@ -1,100 +1,141 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export type PeriodType = 'ALL' | 'YTD' | 'TTM' | 'Q1' | 'Q2' | 'Q3' | 'Q4' | 'MONTH' | 'CUSTOM';
-export type ComparisonMode = 'NONE' | 'PRIOR_PERIOD' | 'PRIOR_YEAR_YOY';
+export type ComparisonMode = 'NONE' | 'PRIOR_YEAR_YOY' | 'PRIOR_PERIOD';
 
 export interface FiscalPeriodState {
   fiscalYear: number;
-  periodType: PeriodType;
-  selectedMonth: number; // 1 to 12
-  customStartDate: string;
-  customEndDate: string;
+  selectedMonths: number[]; // 1 to 12
   comparisonMode: ComparisonMode;
   setFiscalYear: (year: number) => void;
-  setPeriodType: (type: PeriodType) => void;
-  setSelectedMonth: (month: number) => void;
-  setCustomRange: (start: string, end: string) => void;
+  setSelectedMonths: (months: number[]) => void;
+  toggleMonth: (month: number) => void;
+  selectSingleMonth: (month: number) => void;
+  selectAllYear: () => void;
+  selectYtd: () => void;
+  selectQuarter: (q: 1 | 2 | 3 | 4) => void;
   setComparisonMode: (mode: ComparisonMode) => void;
   getFormattedPeriodLabel: () => string;
 }
 
 const FiscalPeriodContext = createContext<FiscalPeriodState | undefined>(undefined);
 
-const MONTH_NAMES = [
+export const MONTH_NAMES_FULL = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
+export const MONTH_NAMES_SHORT = [
+  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+];
+
+export const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+
 export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   const [fiscalYear, setFiscalYear] = useState<number>(2026);
-  const [periodType, setPeriodType] = useState<PeriodType>('YTD');
-  const [selectedMonth, setSelectedMonth] = useState<number>(8); // August
-  const [customStartDate, setCustomStartDate] = useState<string>('2026-01-01');
-  const [customEndDate, setCustomEndDate] = useState<string>('2026-08-31');
+  // Default: YTD Jan to August (1 to 8)
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8]);
   const [comparisonMode, setComparisonMode] = useState<ComparisonMode>('PRIOR_YEAR_YOY');
 
-  const setCustomRange = (start: string, end: string) => {
-    setCustomStartDate(start);
-    setCustomEndDate(end);
-    setPeriodType('CUSTOM');
+  // Sync with localStorage if available
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedYear = localStorage.getItem('uas_fiscal_year');
+      const storedMonths = localStorage.getItem('uas_fiscal_months');
+      if (storedYear) setFiscalYear(parseInt(storedYear, 10));
+      if (storedMonths) {
+        try {
+          const parsed = JSON.parse(storedMonths);
+          if (Array.isArray(parsed) && parsed.length > 0) setSelectedMonths(parsed);
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  const handleSetFiscalYear = (year: number) => {
+    setFiscalYear(year);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('uas_fiscal_year', year.toString());
+    }
+  };
+
+  const handleSetSelectedMonths = (months: number[]) => {
+    const sorted = [...months].sort((a, b) => a - b);
+    setSelectedMonths(sorted);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('uas_fiscal_months', JSON.stringify(sorted));
+    }
+  };
+
+  const toggleMonth = (month: number) => {
+    let updated: number[];
+    if (selectedMonths.includes(month)) {
+      if (selectedMonths.length === 1) return; // Keep at least 1 month
+      updated = selectedMonths.filter((m) => m !== month);
+    } else {
+      updated = [...selectedMonths, month];
+    }
+    handleSetSelectedMonths(updated);
+  };
+
+  const selectSingleMonth = (month: number) => {
+    handleSetSelectedMonths([month]);
+  };
+
+  const selectAllYear = () => {
+    handleSetSelectedMonths([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  };
+
+  const selectYtd = () => {
+    const currentMonth = 8; // August
+    const ytd = Array.from({ length: currentMonth }, (_, i) => i + 1);
+    handleSetSelectedMonths(ytd);
+  };
+
+  const selectQuarter = (q: 1 | 2 | 3 | 4) => {
+    const start = (q - 1) * 3 + 1;
+    handleSetSelectedMonths([start, start + 1, start + 2]);
   };
 
   const getFormattedPeriodLabel = (): string => {
-    let label = '';
-    switch (periodType) {
-      case 'ALL':
-        label = `Todo o Histórico (All-Time)`;
-        break;
-      case 'YTD':
-        label = `FY ${fiscalYear} • YTD (Acumulado no Ano)`;
-        break;
-      case 'TTM':
-        label = `Últimos 12 Meses (TTM / LTM)`;
-        break;
-      case 'Q1':
-        label = `FY ${fiscalYear} • 1º Trimestre (Q1: Jan-Mar)`;
-        break;
-      case 'Q2':
-        label = `FY ${fiscalYear} • 2º Trimestre (Q2: Abr-Jun)`;
-        break;
-      case 'Q3':
-        label = `FY ${fiscalYear} • 3º Trimestre (Q3: Jul-Set)`;
-        break;
-      case 'Q4':
-        label = `FY ${fiscalYear} • 4º Trimestre (Q4: Out-Dez)`;
-        break;
-      case 'MONTH':
-        label = `${MONTH_NAMES[selectedMonth - 1]} / ${fiscalYear}`;
-        break;
-      case 'CUSTOM':
-        label = `${customStartDate} até ${customEndDate}`;
-        break;
+    if (selectedMonths.length === 0) return `FY ${fiscalYear}`;
+    if (selectedMonths.length === 12) {
+      return `FY ${fiscalYear} • Ano Todo (12 meses)`;
+    }
+    if (selectedMonths.length === 1) {
+      return `${MONTH_NAMES_FULL[selectedMonths[0] - 1]} / ${fiscalYear}`;
     }
 
-    if (comparisonMode === 'PRIOR_YEAR_YOY') {
-      label += ` (vs. ${fiscalYear - 1} YoY)`;
-    } else if (comparisonMode === 'PRIOR_PERIOD') {
-      label += ` (vs. Período Anterior MoM/QoQ)`;
+    // Check if contiguous range
+    const isContiguous = selectedMonths.every(
+      (m, idx) => idx === 0 || m === selectedMonths[idx - 1] + 1
+    );
+
+    if (isContiguous) {
+      const first = MONTH_NAMES_SHORT[selectedMonths[0] - 1];
+      const last = MONTH_NAMES_SHORT[selectedMonths[selectedMonths.length - 1] - 1];
+      return `FY ${fiscalYear} • ${first} a ${last} (${selectedMonths.length} meses)`;
     }
 
-    return label;
+    const shortList = selectedMonths.map((m) => MONTH_NAMES_SHORT[m - 1]).join(', ');
+    return `FY ${fiscalYear} • ${shortList}`;
   };
 
   return (
     <FiscalPeriodContext.Provider
       value={{
         fiscalYear,
-        periodType,
-        selectedMonth,
-        customStartDate,
-        customEndDate,
+        selectedMonths,
         comparisonMode,
-        setFiscalYear,
-        setPeriodType,
-        setSelectedMonth,
-        setCustomRange,
+        setFiscalYear: handleSetFiscalYear,
+        setSelectedMonths: handleSetSelectedMonths,
+        toggleMonth,
+        selectSingleMonth,
+        selectAllYear,
+        selectYtd,
+        selectQuarter,
         setComparisonMode,
         getFormattedPeriodLabel,
       }}
@@ -109,17 +150,17 @@ export function useFiscalPeriod(): FiscalPeriodState {
   if (!context) {
     return {
       fiscalYear: 2026,
-      periodType: 'YTD',
-      selectedMonth: 8,
-      customStartDate: '2026-01-01',
-      customEndDate: '2026-08-31',
+      selectedMonths: [1, 2, 3, 4, 5, 6, 7, 8],
       comparisonMode: 'PRIOR_YEAR_YOY',
       setFiscalYear: () => {},
-      setPeriodType: () => {},
-      setSelectedMonth: () => {},
-      setCustomRange: () => {},
+      setSelectedMonths: () => {},
+      toggleMonth: () => {},
+      selectSingleMonth: () => {},
+      selectAllYear: () => {},
+      selectYtd: () => {},
+      selectQuarter: () => {},
       setComparisonMode: () => {},
-      getFormattedPeriodLabel: () => 'FY 2026 • YTD (Acumulado no Ano) (vs. 2025 YoY)',
+      getFormattedPeriodLabel: () => 'FY 2026 • Jan a Ago (8 meses)',
     };
   }
   return context;

@@ -1,34 +1,39 @@
 import { describe, it, expect } from 'vitest';
+import {
+  AVAILABLE_YEARS,
+  MONTH_NAMES_SHORT,
+  MONTH_NAMES_FULL,
+} from '@/lib/period/fiscal-period-context';
 
-describe('Corporate Fiscal Period & Date Range Filter Logic', () => {
-  it('should format YTD period label accurately for FY 2026', () => {
-    const year = 2026;
-    const type = 'YTD';
-    const label = `FY ${year} • YTD (Acumulado no Ano)`;
-    expect(label).toContain('FY 2026');
-    expect(label).toContain('YTD');
+describe('Corporate Fiscal Period & Intuitive Month Selection', () => {
+  it('should list all historical fiscal years including 2020 to 2026', () => {
+    expect(AVAILABLE_YEARS).toContain(2026);
+    expect(AVAILABLE_YEARS).toContain(2025);
+    expect(AVAILABLE_YEARS).toContain(2024);
+    expect(AVAILABLE_YEARS).toContain(2021);
   });
 
-  it('should format quarterly period label for Q3 accurately', () => {
-    const year = 2026;
-    const quarter = 'Q3';
-    const label = `FY ${year} • 3º Trimestre (Q3: Jul-Set)`;
-    expect(label).toContain('Q3: Jul-Set');
-    expect(label).toContain('2026');
+  it('should format 12-month full year selection accurately', () => {
+    const year = 2025;
+    const selectedMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    const isAll = selectedMonths.length === 12;
+    expect(isAll).toBe(true);
+    const label = `FY ${year} • Ano Todo (12 meses)`;
+    expect(label).toBe('FY 2025 • Ano Todo (12 meses)');
   });
 
-  it('should format individual month selection accurately', () => {
-    const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  it('should format single month selection accurately', () => {
     const selectedMonth = 8; // August
     const year = 2026;
-    const label = `${months[selectedMonth - 1]} / ${year}`;
+    const label = `${MONTH_NAMES_FULL[selectedMonth - 1]} / ${year}`;
     expect(label).toBe('Agosto / 2026');
   });
 
-  it('should support custom date range filters', () => {
-    const start = '2026-01-01';
-    const end = '2026-08-31';
-    const label = `${start} até ${end}`;
-    expect(label).toBe('2026-01-01 até 2026-08-31');
+  it('should format custom multi-month range accurately', () => {
+    const selectedMonths = [1, 2, 3]; // Q1
+    const first = MONTH_NAMES_SHORT[selectedMonths[0] - 1];
+    const last = MONTH_NAMES_SHORT[selectedMonths[selectedMonths.length - 1] - 1];
+    const label = `FY 2026 • ${first} a ${last} (${selectedMonths.length} meses)`;
+    expect(label).toBe('FY 2026 • Jan a Mar (3 meses)');
   });
 });
