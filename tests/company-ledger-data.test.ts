@@ -21,6 +21,31 @@ describe('Multi-Company & Multi-Year Forensic Accounting Reports Engine', () => 
     expect(is2025.netIncome).toBeGreaterThan(50000);
   });
 
+  it('should verify Balance Sheet IS BALANCED (Assets = Liab + Equity) for 2022, 2023, 2024, and 2025 for Milla Maid', () => {
+    const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
+
+    // 2022 Balance Sheet
+    const bs2022 = FinancialStatementsEngine.generateBalanceSheet(accounts, '2022-12-31', 'ACCRUAL');
+    expect(bs2022.isBalanced).toBe(true);
+    expect(bs2022.totalAssets).toBe(bs2022.totalLiabilitiesAndEquity);
+    expect(bs2022.totalAssets).toBeGreaterThan(300000);
+
+    // 2023 Balance Sheet
+    const bs2023 = FinancialStatementsEngine.generateBalanceSheet(accounts, '2023-12-31', 'ACCRUAL');
+    expect(bs2023.isBalanced).toBe(true);
+    expect(bs2023.totalAssets).toBe(bs2023.totalLiabilitiesAndEquity);
+
+    // 2024 Balance Sheet
+    const bs2024 = FinancialStatementsEngine.generateBalanceSheet(accounts, '2024-12-31', 'ACCRUAL');
+    expect(bs2024.isBalanced).toBe(true);
+    expect(bs2024.totalAssets).toBe(bs2024.totalLiabilitiesAndEquity);
+
+    // 2025 Balance Sheet
+    const bs2025 = FinancialStatementsEngine.generateBalanceSheet(accounts, '2025-12-31', 'ACCRUAL');
+    expect(bs2025.isBalanced).toBe(true);
+    expect(bs2025.totalAssets).toBe(bs2025.totalLiabilitiesAndEquity);
+  });
+
   it('should return exact 2024 P&L for Milla Maid Services LLC ($412k revenue)', () => {
     const accounts = CompanyLedgerEngine.getAccountsForCompany('cmp-milla-maid-ga', 'Milla Maid Services LLC');
     const is2024 = FinancialStatementsEngine.generateIncomeStatement(

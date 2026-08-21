@@ -27,6 +27,7 @@ export class CompanyLedgerEngine {
             { debit: 5008.98, credit: 0, date: '2021-11-15', basis: 'BOTH' },
             // 2022
             { debit: 115000.00, credit: 0, date: '2022-01-01', basis: 'BOTH' },
+            { debit: 0, credit: 48500.00, date: '2022-01-10', basis: 'BOTH' },
             { debit: 342851.75, credit: 0, date: '2022-06-30', basis: 'BOTH' },
             { debit: 0, credit: 3000.00, date: '2022-12-15', basis: 'BOTH' },
             { debit: 0, credit: 40617.90, date: '2022-12-20', basis: 'BOTH' },
@@ -116,7 +117,7 @@ export class CompanyLedgerEngine {
           code: '3030',
           name: 'Partner Distributions / Draws',
           type: 'EQUITY',
-          subType: 'RETAINED_EARNINGS',
+          subType: 'OWNERS_DRAW',
           lines: [
             { debit: 40088.01, credit: 0, date: '2022-12-31', basis: 'BOTH' },
             { debit: 62092.05, credit: 0, date: '2023-12-31', basis: 'BOTH' },

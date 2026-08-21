@@ -146,8 +146,8 @@ export class FinancialStatementsEngine {
 
     for (const acc of accounts) {
       const filteredLines = this.filterLinesByBasis(acc.lines, basis).filter(line => {
-        const lineDate = new Date(line.date);
-        return lineDate <= asOf;
+        const lineDateStr = typeof line.date === 'string' ? line.date : line.date.toISOString().split('T')[0];
+        return lineDateStr <= asOfDate;
       });
 
       if (filteredLines.length === 0) continue;
@@ -178,7 +178,13 @@ export class FinancialStatementsEngine {
         totalLiabilities = totalLiabilities.plus(netLiab);
       } else if (acc.type === 'EQUITY') {
         let netEq: Decimal;
-        if (acc.subType === 'OWNERS_DRAW') {
+        const isDrawAccount =
+          acc.subType === 'OWNERS_DRAW' ||
+          acc.name.toLowerCase().includes('draw') ||
+          acc.name.toLowerCase().includes('distribution') ||
+          acc.name.toLowerCase().includes('retirada');
+
+        if (isDrawAccount) {
           netEq = netDebit.minus(netCredit).negated(); // Draws reduce equity
         } else {
           netEq = netCredit.minus(netDebit);
@@ -188,9 +194,36 @@ export class FinancialStatementsEngine {
       }
     }
 
+    // Calculate cumulative net income from inception up to asOfDate across all revenue and expense accounts
+    let cumulativeNetIncome = new Decimal(0);
+    for (const acc of accounts) {
+      const filteredLines = this.filterLinesByBasis(acc.lines, basis).filter(line => {
+        const lineDateStr = typeof line.date === 'string' ? line.date : line.date.toISOString().split('T')[0];
+        return lineDateStr <= asOfDate;
+      });
+
+      if (filteredLines.length === 0) continue;
+
+      let netCredit = new Decimal(0);
+      let netDebit = new Decimal(0);
+      for (const line of filteredLines) {
+        netDebit = netDebit.plus(new Decimal(line.debit.toString()));
+        netCredit = netCredit.plus(new Decimal(line.credit.toString()));
+      }
+
+      if (acc.type === 'REVENUE') {
+        cumulativeNetIncome = cumulativeNetIncome.plus(netCredit.minus(netDebit));
+      } else if (
+        acc.type === 'COST_OF_SERVICE' ||
+        acc.type === 'EXPENSE' ||
+        acc.subType?.startsWith('COST_OF_SERVICE')
+      ) {
+        cumulativeNetIncome = cumulativeNetIncome.minus(netDebit.minus(netCredit));
+      }
+    }
+
     // Add cumulative net income to retained earnings in equity section
-    const retainedEarningsDec = new Decimal(retainedEarningsNetIncome);
-    totalEquity = totalEquity.plus(retainedEarningsDec);
+    totalEquity = totalEquity.plus(cumulativeNetIncome);
 
     const totalLiabilitiesAndEquity = totalLiabilities.plus(totalEquity);
     const isBalanced = totalAssets.equals(totalLiabilitiesAndEquity);
@@ -205,7 +238,7 @@ export class FinancialStatementsEngine {
       nonCurrentLiabilities: nonCurrentLiabilities.sort((a, b) => a.code.localeCompare(b.code)),
       totalLiabilities: totalLiabilities.toNumber(),
       equityItems: equityItems.sort((a, b) => a.code.localeCompare(b.code)),
-      retainedEarnings: retainedEarningsDec.toNumber(),
+      retainedEarnings: cumulativeNetIncome.toNumber(),
       totalEquity: totalEquity.toNumber(),
       totalLiabilitiesAndEquity: totalLiabilitiesAndEquity.toNumber(),
       isBalanced,
