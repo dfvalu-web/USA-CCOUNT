@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import {
@@ -35,12 +35,19 @@ import {
   Filter,
 } from 'lucide-react';
 
+import { useCompany } from '@/lib/company/company-context';
+import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+import { CompanyBankFeedEngine, ConnectedBankItem } from '@/lib/accounting/company-bank-feed';
+
 interface SmartReconciliationHubProps {
   onPostJournalEntry?: (entry: any) => void;
 }
 
 export function SmartReconciliationHub({ onPostJournalEntry }: SmartReconciliationHubProps) {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+  const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
+
   const [activeTab, setActiveTab] = useState<'smart-reconciliation' | 'live-sync' | 'statement-import' | 'ocr-scanner'>('smart-reconciliation');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'RECONCILED'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,77 +55,35 @@ export function SmartReconciliationHub({ onPostJournalEntry }: SmartReconciliati
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const receiptInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Bank Feed Items State
-  const [transactions, setTransactions] = useState<BankFeedTransaction[]>([
-    {
-      id: 'bnk-tx-001',
-      institutionName: 'JPMorgan Chase (Operating)',
-      accountNumberMasked: '••••4819',
-      date: '2026-08-20',
-      amount: -284.50,
-      rawDescription: 'ECOLAB DIRECT 800-555-0199 ST PAUL MN',
-      payeeOrMerchant: 'Ecolab Commercial Supply',
-      categorySuggested: 'Cleaning Supplies (COGS)',
-      suggestedAccountCode: '5020',
-      fitId: 'FIT-CHASE-9921',
-      status: 'RULE_MATCH_FOUND',
-      matchConfidence: 98,
-      matchExplanation: 'Regra de Fornecedor: Ecolab ➔ Conta 5020 Insumos',
-    },
-    {
-      id: 'bnk-tx-002',
-      institutionName: 'Mercury Treasury Checking',
-      accountNumberMasked: '••••1029',
-      date: '2026-08-20',
-      amount: 450.00,
-      rawDescription: 'STRIPE TRANSFER ST-091240 AUSTIN TECH HUB',
-      payeeOrMerchant: 'Austin Tech Hub Suites',
-      categorySuggested: 'Janitorial Services Revenue',
-      suggestedAccountCode: '4020',
-      fitId: 'FIT-STRIPE-4412',
-      status: 'EXACT_MATCH_FOUND',
-      matchConfidence: 100,
-      matchedJournalEntryId: 'JE-CLN-849102',
-      matchExplanation: 'Match Exato com Fatura #INV-CLN-849102 ($450.00)',
-    },
-    {
-      id: 'bnk-tx-003',
-      institutionName: 'JPMorgan Chase (Operating)',
-      accountNumberMasked: '••••4819',
-      date: '2026-08-19',
-      amount: -145.20,
-      rawDescription: 'THE HOME DEPOT #6512 AUSTIN TX',
-      payeeOrMerchant: 'The Home Depot Pro',
-      categorySuggested: 'Cleaning Equipment & Consumables',
-      suggestedAccountCode: '5020',
-      fitId: 'FIT-HD-3310',
-      status: 'RULE_MATCH_FOUND',
-      matchConfidence: 95,
-      matchExplanation: 'Regra de Fornecedor: Home Depot ➔ Conta 5020 Insumos',
-    },
-    {
-      id: 'bnk-tx-004',
-      institutionName: 'JPMorgan Chase (Operating)',
-      accountNumberMasked: '••••4819',
-      date: '2026-08-18',
-      amount: -55.00,
-      rawDescription: 'CHEVRON 009214 AUSTIN TX FUEL',
-      payeeOrMerchant: 'Chevron Fuel & Fleet',
-      categorySuggested: 'Vehicle Travel & Fuel',
-      suggestedAccountCode: '6200',
-      fitId: 'FIT-CHEV-8812',
-      status: 'RULE_MATCH_FOUND',
-      matchConfidence: 92,
-      matchExplanation: 'Regra de Fornecedor: Chevron ➔ Conta 6200 Despesas de Veículo',
-    },
-  ]);
+  // Bank Feed Items State dinamicamente sincronizado com a empresa ativa e período fiscal
+  const [transactions, setTransactions] = useState<BankFeedTransaction[]>(() =>
+    CompanyBankFeedEngine.getBankFeedTransactions(
+      activeCompany?.id || '',
+      activeCompany?.legalName,
+      fiscalYear,
+      selectedMonths
+    )
+  );
 
-  // Connected Banks List
-  const [connectedBanks, setConnectedBanks] = useState([
-    { id: 'chase', name: 'JPMorgan Chase', account: 'Operating Checking (••••4819)', balance: 142500, status: 'Online', lastSync: 'Há 2 min' },
-    { id: 'mercury', name: 'Mercury Bank', account: 'Treasury Yield (••••1029)', balance: 210000, status: 'Online', lastSync: 'Há 5 min' },
-    { id: 'ramp', name: 'Ramp Corporate Card', account: 'Cartões Corporativos Equipe', balance: -3420, status: 'Online', lastSync: 'Há 10 min' },
-  ]);
+  // Connected Banks List sincronizado com as contas da empresa
+  const [connectedBanks, setConnectedBanks] = useState<ConnectedBankItem[]>(() =>
+    CompanyBankFeedEngine.getConnectedBanks(activeCompany?.id || '', activeCompany?.legalName)
+  );
+
+  // Efeito reativo para carregar contas bancárias e extratos ao trocar empresa ou ano/mês
+  useEffect(() => {
+    if (activeCompany) {
+      const companyTx = CompanyBankFeedEngine.getBankFeedTransactions(
+        activeCompany.id,
+        activeCompany.legalName,
+        fiscalYear,
+        selectedMonths
+      );
+      const banks = CompanyBankFeedEngine.getConnectedBanks(activeCompany.id, activeCompany.legalName);
+      setTransactions(companyTx);
+      setConnectedBanks(banks);
+    }
+  }, [activeCompany, fiscalYear, selectedMonths]);
 
   // Modals State
   const [isPlaidModalOpen, setIsPlaidModalOpen] = useState(false);
@@ -130,8 +95,8 @@ export function SmartReconciliationHub({ onPostJournalEntry }: SmartReconciliati
     payee: '',
     amount: '',
     isDebit: true,
-    institution: 'JPMorgan Chase (Operating)',
-    accountCode: '5020',
+    institution: connectedBanks[0]?.name || 'Truist Bank (Commercial)',
+    accountCode: '5010',
     date: new Date().toISOString().split('T')[0],
     description: '',
   });
@@ -333,10 +298,12 @@ DATA:OFXSGML
 
   // Connect Bank via Plaid Simulator
   const handleConnectPlaidBank = () => {
-    const newBank = {
+    const mask = `••••${Math.floor(1000 + Math.random() * 9000)}`;
+    const newBank: ConnectedBankItem = {
       id: selectedPlaidBank.toLowerCase().replace(/\s+/g, '-'),
       name: selectedPlaidBank,
-      account: `Commercial Account (••••${Math.floor(1000 + Math.random() * 9000)})`,
+      account: `Commercial Account (${mask})`,
+      accountNumberMasked: mask,
       balance: Math.floor(50000 + Math.random() * 150000),
       status: 'Online',
       lastSync: 'Agora',
@@ -469,7 +436,7 @@ DATA:OFXSGML
               tax: 9.15,
               accountCode: '5020',
               description: 'Insumos de Limpeza e Consumíveis Operacionais',
-              fileName: e.target.files[0].name,
+          fileName: e.target.files[0].name,
             });
             setNotificationMsg(`Arquivo "${e.target.files[0].name}" processado pelo OCR com sucesso!`);
           }
@@ -478,43 +445,41 @@ DATA:OFXSGML
         className="hidden"
       />
 
-      {/* Top Banner with Bank Balances */}
+      {/* Top Banner with Dynamic Bank Balances */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Chase Operating Checking</span>
-            <Badge variant="success" className="text-[9px]">Live Plaid</Badge>
-          </div>
-          <span className="text-xl font-mono font-bold text-white mt-1 block">$142,500.00</span>
-          <span className="text-[10px] text-slate-500">Conta ••••4819 • Conciliado</span>
-        </Card>
-
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Mercury Treasury</span>
-            <Badge variant="success" className="text-[9px]">Live Plaid</Badge>
-          </div>
-          <span className="text-xl font-mono font-bold text-emerald-400 mt-1 block">$210,000.00</span>
-          <span className="text-[10px] text-slate-500">Conta ••••1029 • Renda Fixa 4.8%</span>
-        </Card>
-
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Transações a Conciliar</span>
-            <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
-              {pendingCount} Pendentes
+        {connectedBanks.map((bank) => (
+          <Card key={bank.id} className="p-4 bg-slate-900 border-slate-800">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">{bank.name}</span>
+              <Badge variant="success" className="text-[9px]">{bank.status}</Badge>
+            </div>
+            <span className="text-xl font-mono font-bold text-white mt-1 block">
+              {formatCurrency(bank.balance, 'USD', locale)}
             </span>
+            <span className="text-[10px] text-slate-500">{bank.account}</span>
+          </Card>
+        ))}
+
+        <Card className="p-4 bg-slate-900 border-slate-800">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Transações do Período</span>
+            <Badge variant={pendingCount === 0 ? "success" : "warning"} className="text-[9px]">
+              {pendingCount === 0 ? "100% Conciliado" : `${pendingCount} Pendentes`}
+            </Badge>
           </div>
-          <span className="text-[10px] text-slate-500">{reconciledCount} já conciliadas no Razão</span>
+          <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
+            {pendingCount} Pendentes
+          </span>
+          <span className="text-[10px] text-slate-500">{reconciledCount} já conciliadas no período</span>
         </Card>
 
         <Card className="p-4 bg-slate-900 border-slate-800">
           <div className="flex justify-between items-center">
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Acurácia da IA Contábil</span>
-            <Badge variant="info" className="text-[9px]">98.5% Precisão</Badge>
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Período Fiscal Selecionado</span>
+            <Badge variant="info" className="text-[9px]">{getFormattedPeriodLabel()}</Badge>
           </div>
           <span className="text-xl font-mono font-bold text-sky-400 mt-1 block">3-Way Matching</span>
-          <span className="text-[10px] text-slate-500">Extrato vs Razão vs Comprovante</span>
+          <span className="text-[10px] text-slate-500">Banco vs Razão Contábil vs OCR</span>
         </Card>
       </div>
 
@@ -527,113 +492,121 @@ DATA:OFXSGML
                 <Landmark className="w-5 h-5" />
               </div>
               <div>
-                <CardTitle>Central de Conciliação Inteligente & Conexão Bancária</CardTitle>
+                <CardTitle>Central de Conciliação Bancária ({activeCompany?.legalName || 'Empresa Ativa'})</CardTitle>
                 <CardDescription>
-                  Plaid Open Banking • Parser OFX/QBO/CSV • Auto-Matching 3-Way • Escaner OCR de Despesas
+                  Plaid Open Banking • Parser OFX/QBO/CSV • Auto-Matching 3-Way • {getFormattedPeriodLabel()}
                 </CardDescription>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Button size="sm" variant="outline" onClick={() => setIsManualTxModalOpen(true)}>
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Lançamento Manual
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLoadDemoOfx}
+                className="text-xs"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                Carregar OFX Demo
               </Button>
-              <Button size="sm" variant="primary" onClick={handleAutoReconcileAll} disabled={pendingCount === 0}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleAutoReconcileAll}
+                className="text-xs"
+                disabled={pendingCount === 0}
+              >
                 <Sparkles className="w-3.5 h-3.5 mr-1" />
-                Auto-Conciliar Tudo ({pendingCount})
+                Conciliar Tudo ({pendingCount})
               </Button>
             </div>
           </div>
-        </CardHeader>
 
-        {/* Tab Navigation */}
-        <div className="px-6 py-2 border-y border-slate-800 bg-slate-900/80 flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex space-x-4">
+          {/* Navigation Tabs inside Hub */}
+          <div className="flex border-b border-slate-800 pt-4 space-x-6 text-xs">
             <button
               onClick={() => setActiveTab('smart-reconciliation')}
-              className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+              className={`pb-2 font-medium flex items-center gap-1.5 transition-colors border-b-2 ${
                 activeTab === 'smart-reconciliation'
-                  ? 'border-emerald-400 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-emerald-500 text-emerald-400 font-bold'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
-              <ShieldCheck className="w-4 h-4" />
-              Conciliação 3-Way ({pendingCount})
+              <Zap className="w-4 h-4" />
+              Fila de Conciliação Inteligente ({filteredTransactions.length})
             </button>
-
             <button
               onClick={() => setActiveTab('live-sync')}
-              className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+              className={`pb-2 font-medium flex items-center gap-1.5 transition-colors border-b-2 ${
                 activeTab === 'live-sync'
-                  ? 'border-sky-400 text-sky-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-emerald-500 text-emerald-400 font-bold'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               <Landmark className="w-4 h-4" />
-              Conexão Direta Plaid ({connectedBanks.length})
+              Bancos Conectados ({connectedBanks.length})
             </button>
-
             <button
               onClick={() => setActiveTab('statement-import')}
-              className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+              className={`pb-2 font-medium flex items-center gap-1.5 transition-colors border-b-2 ${
                 activeTab === 'statement-import'
-                  ? 'border-purple-400 text-purple-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-emerald-500 text-emerald-400 font-bold'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               <UploadCloud className="w-4 h-4" />
-              Importador de Extratos (OFX/QBO/CSV)
+              Importar Extrato OFX / QBO / CSV
             </button>
-
             <button
               onClick={() => setActiveTab('ocr-scanner')}
-              className={`pb-2 text-xs font-bold transition-all flex items-center gap-1.5 border-b-2 ${
+              className={`pb-2 font-medium flex items-center gap-1.5 transition-colors border-b-2 ${
                 activeTab === 'ocr-scanner'
-                  ? 'border-amber-400 text-amber-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-emerald-500 text-emerald-400 font-bold'
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               <Camera className="w-4 h-4" />
-              Escaner de Despesas (OCR ➔ Razão)
+              Escaner OCR de Recibos
             </button>
           </div>
+        </CardHeader>
 
-          {activeTab === 'smart-reconciliation' && (
-            <div className="flex items-center space-x-2">
-              <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
-                <button
-                  onClick={() => setStatusFilter('ALL')}
-                  className={`px-2 py-0.5 rounded ${statusFilter === 'ALL' ? 'bg-slate-800 text-white font-bold' : 'text-slate-400'}`}
-                >
-                  Todas ({transactions.length})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('PENDING')}
-                  className={`px-2 py-0.5 rounded ${statusFilter === 'PENDING' ? 'bg-amber-950 text-amber-300 font-bold' : 'text-slate-400'}`}
-                >
-                  Pendentes ({pendingCount})
-                </button>
-                <button
-                  onClick={() => setStatusFilter('RECONCILED')}
-                  className={`px-2 py-0.5 rounded ${statusFilter === 'RECONCILED' ? 'bg-emerald-950 text-emerald-300 font-bold' : 'text-slate-400'}`}
-                >
-                  Conciliadas ({reconciledCount})
-                </button>
-              </div>
-
-              <div className="relative w-44">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
-                <input
-                  type="text"
-                  placeholder="Buscar lançamento..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-7 rounded-lg bg-slate-950 border border-slate-800 pl-7 pr-2 text-xs text-white focus:outline-none focus:border-emerald-500"
-                />
-              </div>
+        {/* Action and Filter Ribbon */}
+        <div className="px-6 py-3 border-b border-slate-800 bg-slate-900/50 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-3">
+            <span className="text-slate-400 font-medium">Filtro de Status:</span>
+            <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStatusFilter('ALL')}
+                className={`px-2 py-0.5 rounded ${statusFilter === 'ALL' ? 'bg-slate-800 text-white font-bold' : 'text-slate-400'}`}
+              >
+                Todas ({transactions.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('PENDING')}
+                className={`px-2 py-0.5 rounded ${statusFilter === 'PENDING' ? 'bg-amber-950 text-amber-300 font-bold' : 'text-slate-400'}`}
+              >
+                Pendentes ({pendingCount})
+              </button>
+              <button
+                onClick={() => setStatusFilter('RECONCILED')}
+                className={`px-2 py-0.5 rounded ${statusFilter === 'RECONCILED' ? 'bg-emerald-950 text-emerald-300 font-bold' : 'text-slate-400'}`}
+              >
+                Conciliadas ({reconciledCount})
+              </button>
             </div>
-          )}
+          </div>
+
+          <div className="relative w-56">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+            <input
+              type="text"
+              placeholder="Buscar lançamento..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-7 rounded-lg bg-slate-950 border border-slate-800 pl-7 pr-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+            />
+          </div>
         </div>
 
         {/* Success Alert Banner */}
@@ -651,109 +624,125 @@ DATA:OFXSGML
 
         {/* Tab 1: Conciliação Inteligente 3-Way */}
         {activeTab === 'smart-reconciliation' && (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-28">Data / FITID</TableHead>
-                <TableHead>Extrato Bancário (Descrição & Banco)</TableHead>
-                <TableHead>Conta no Razão Contábil (US GAAP)</TableHead>
-                <TableHead className="text-right w-28">Valor Bancário</TableHead>
-                <TableHead className="w-44 text-center">Confiança / Regra</TableHead>
-                <TableHead className="w-36 text-center">Ação</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTransactions.map((tx) => (
-                <TableRow key={tx.id}>
-                  <TableCell>
-                    <div className="font-mono text-xs text-white">{formatDate(tx.date, locale)}</div>
-                    <div className="text-[9px] text-slate-500 font-mono mt-0.5">{tx.fitId}</div>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="font-bold text-white">{tx.payeeOrMerchant}</div>
-                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                      {tx.rawDescription} • <span className="text-sky-400">{tx.institutionName}</span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <select
-                        value={tx.suggestedAccountCode}
-                        onChange={(e) => {
-                          const newCode = e.target.value;
-                          setTransactions(
-                            transactions.map((t) => (t.id === tx.id ? { ...t, suggestedAccountCode: newCode } : t))
-                          );
-                        }}
-                        disabled={tx.status === 'RECONCILED'}
-                        className="h-7 text-xs rounded bg-slate-900 border border-slate-800 text-emerald-400 font-semibold px-2 focus:outline-none focus:border-emerald-500"
-                      >
-                        <option value="5020">Conta 5020 - Insumos de Limpeza (COGS)</option>
-                        <option value="5010">Conta 5010 - Salários & Diárias da Equipe</option>
-                        <option value="4010">Conta 4010 - Receita Limpeza Residencial</option>
-                        <option value="4020">Conta 4020 - Receita Janitorial Comercial</option>
-                        <option value="6100">Conta 6100 - Escritório, Software & Tech</option>
-                        <option value="6200">Conta 6200 - Veículos & Combustível</option>
-                        <option value="6300">Conta 6300 - Seguros de Responsabilidade</option>
-                      </select>
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">{tx.matchExplanation}</div>
-                  </TableCell>
-
-                  <TableCell className="text-right font-mono tabular-nums font-bold text-sm">
-                    <span className={tx.amount < 0 ? 'text-rose-400' : 'text-emerald-400'}>
-                      {tx.amount < 0 ? '-' : '+'}
-                      {formatCurrency(Math.abs(tx.amount), 'USD', locale)}
-                    </span>
-                  </TableCell>
-
-                  <TableCell className="text-center">
-                    <Badge
-                      variant={
-                        tx.status === 'EXACT_MATCH_FOUND'
-                          ? 'success'
-                          : tx.status === 'RULE_MATCH_FOUND'
-                          ? 'info'
-                          : tx.status === 'RECONCILED'
-                          ? 'success'
-                          : 'warning'
-                      }
-                      className="text-[10px]"
-                    >
-                      {tx.status === 'EXACT_MATCH_FOUND'
-                        ? '✓ 100% Match Exato'
-                        : tx.status === 'RULE_MATCH_FOUND'
-                        ? '⚡ 95% Regra Fornecedor'
-                        : tx.status === 'RECONCILED'
-                        ? '✓ Conciliado'
-                        : 'Pendente'}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell className="text-center">
-                    {tx.status !== 'RECONCILED' ? (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        className="h-7 text-xs px-2 w-full"
-                        onClick={() => handleReconcileSingle(tx)}
-                      >
-                        <Zap className="w-3 h-3 mr-1" />
-                        Conciliar
-                      </Button>
-                    ) : (
-                      <span className="text-emerald-400 text-xs font-semibold flex items-center justify-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        Contabilizado
-                      </span>
-                    )}
-                  </TableCell>
+          filteredTransactions.length === 0 ? (
+            <div className="p-12 text-center text-xs space-y-2 bg-slate-900/30">
+              <div className="w-10 h-10 rounded-full bg-slate-900 border border-dashed border-slate-700 flex items-center justify-center mx-auto text-slate-500">
+                <Landmark className="w-5 h-5" />
+              </div>
+              <p className="font-semibold text-slate-300">
+                Nenhuma Movimentação Bancária para {getFormattedPeriodLabel()}
+              </p>
+              <p className="text-slate-500 text-[11px] max-w-md mx-auto">
+                Não constam lançamentos de extrato bancário ou transações pendentes de conciliação para o período selecionado de {activeCompany?.legalName || 'empresa ativa'}.
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-28">Data / FITID</TableHead>
+                  <TableHead>Extrato Bancário (Descrição & Banco)</TableHead>
+                  <TableHead>Conta no Razão Contábil (US GAAP)</TableHead>
+                  <TableHead className="text-right w-28">Valor Bancário</TableHead>
+                  <TableHead className="w-44 text-center">Confiança / Regra</TableHead>
+                  <TableHead className="w-36 text-center">Ação</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredTransactions.map((tx) => (
+                  <TableRow key={tx.id}>
+                    <TableCell>
+                      <div className="font-mono text-xs text-white">{formatDate(tx.date, locale)}</div>
+                      <div className="text-[9px] text-slate-500 font-mono mt-0.5">{tx.fitId}</div>
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="font-bold text-white">{tx.payeeOrMerchant}</div>
+                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        {tx.rawDescription} • <span className="text-sky-400">{tx.institutionName}</span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <select
+                          value={tx.suggestedAccountCode}
+                          onChange={(e) => {
+                            const newCode = e.target.value;
+                            setTransactions(
+                              transactions.map((t) => (t.id === tx.id ? { ...t, suggestedAccountCode: newCode } : t))
+                            );
+                          }}
+                          disabled={tx.status === 'RECONCILED'}
+                          className="h-7 text-xs rounded bg-slate-900 border border-slate-800 text-emerald-400 font-semibold px-2 focus:outline-none focus:border-emerald-500"
+                        >
+                          <option value="4010">Conta 4010 - Receita de Serviços de Limpeza</option>
+                          <option value="5010">Conta 5010 - Subcontratados 1099</option>
+                          <option value="5020">Conta 5020 - Salários Diretos W-2</option>
+                          <option value="6010">Conta 6010 - Honorários Legais e CPA</option>
+                          <option value="6040">Conta 6040 - Veículos, Combustível & Frota</option>
+                          <option value="6050">Conta 6050 - Insumos Químicos de Limpeza</option>
+                          <option value="1510">Conta 1510 - Frota & Vans Imobilizado</option>
+                          <option value="3010">Conta 3010 - Aporte de Capital dos Sócios</option>
+                          <option value="3030">Conta 3030 - Distribuição de Lucros (Draws)</option>
+                        </select>
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">{tx.matchExplanation}</div>
+                    </TableCell>
+
+                    <TableCell className="text-right font-mono tabular-nums font-bold text-sm">
+                      <span className={tx.amount < 0 ? 'text-rose-400' : 'text-emerald-400'}>
+                        {tx.amount < 0 ? '-' : '+'}
+                        {formatCurrency(Math.abs(tx.amount), 'USD', locale)}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      <Badge
+                        variant={
+                          tx.status === 'EXACT_MATCH_FOUND'
+                            ? 'success'
+                            : tx.status === 'RULE_MATCH_FOUND'
+                            ? 'info'
+                            : tx.status === 'RECONCILED'
+                            ? 'success'
+                            : 'warning'
+                        }
+                        className="text-[10px]"
+                      >
+                        {tx.status === 'EXACT_MATCH_FOUND'
+                          ? '✓ 100% Match Exato'
+                          : tx.status === 'RULE_MATCH_FOUND'
+                          ? '⚡ 98% Regra Automática'
+                          : tx.status === 'RECONCILED'
+                          ? '✓ Conciliado'
+                          : 'Pendente'}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      {tx.status !== 'RECONCILED' ? (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          className="h-7 text-xs px-2 w-full"
+                          onClick={() => handleReconcileSingle(tx)}
+                        >
+                          <Zap className="w-3 h-3 mr-1" />
+                          Conciliar
+                        </Button>
+                      ) : (
+                        <span className="text-emerald-400 text-xs font-semibold flex items-center justify-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Conciliado
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )
         )}
 
         {/* Tab 2: Conexão Direta (Plaid Open Banking) */}
