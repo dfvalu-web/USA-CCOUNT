@@ -170,8 +170,8 @@ export function InteractiveLedgerTeaser() {
 
               <div className="pt-2">
                 <Link
-                  href="/demonstrativos"
-                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition-colors flex items-center justify-center space-x-2"
+                  href="/login"
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition-colors flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                   <span>{t('nav.incomeStatement')} ➔</span>
@@ -193,8 +193,8 @@ export function InteractiveLedgerTeaser() {
               </p>
               <div className="pt-1">
                 <Link
-                  href="/balanco"
-                  className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                  href="/login"
+                  className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
                 >
                   <span>{t('common.print')} (PDF)</span>
                   <ChevronRight className="w-4 h-4" />

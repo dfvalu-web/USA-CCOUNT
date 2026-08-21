@@ -59,32 +59,32 @@ export function LandingFooter() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/balanco" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.balanceSheet')}
                 </Link>
               </li>
               <li>
-                <Link href="/razao" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.generalLedger')}
                 </Link>
               </li>
               <li>
-                <Link href="/demonstrativos" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.incomeStatement')}
                 </Link>
               </li>
               <li>
-                <Link href="/diario" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.journalEntries')}
                 </Link>
               </li>
               <li>
-                <Link href="/balancete" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.trialBalance')}
                 </Link>
               </li>
               <li>
-                <Link href="/chart-of-accounts" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.chartOfAccounts')}
                 </Link>
               </li>
@@ -98,27 +98,27 @@ export function LandingFooter() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/tax-compliance" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('taxCompliance.cpaBinderTitle')}
                 </Link>
               </li>
               <li>
-                <Link href="/partners" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.partners')}
                 </Link>
               </li>
               <li>
-                <Link href="/year-end-tax" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.yearEndTax')}
                 </Link>
               </li>
               <li>
-                <Link href="/state-taxes" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.stateTaxes')}
                 </Link>
               </li>
               <li>
-                <Link href="/audit-trail" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.auditTrail')}
                 </Link>
               </li>
@@ -142,17 +142,17 @@ export function LandingFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/client-portal" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.clientPortal')}
                 </Link>
               </li>
               <li>
-                <Link href="/bank-reconciliation" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.bankReconciliation')}
                 </Link>
               </li>
               <li>
-                <Link href="/invoicing" className="hover:text-emerald-400 transition-colors">
+                <Link href="/login" className="hover:text-emerald-400 transition-colors">
                   {t('nav.invoicing')}
                 </Link>
               </li>

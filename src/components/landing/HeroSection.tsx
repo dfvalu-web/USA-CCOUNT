@@ -135,7 +135,7 @@ export function HeroSection() {
           {/* CTAs Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
-              href="/dashboard"
+              href="/login"
               className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-base shadow-2xl shadow-emerald-500/30 transition-all flex items-center justify-center space-x-2 group hover:scale-[1.02] cursor-pointer"
             >
               <span>{t('landing.ctaAccess')}</span>
@@ -243,22 +243,22 @@ export function HeroSection() {
             <div className="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center space-x-2 text-slate-400">
                 <span className="font-semibold">{t('common.actions')}:</span>
-                <Link href="/balanco" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
+                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer">
                   {t('nav.balanceSheet')} ➔
                 </Link>
-                <Link href="/razao" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
+                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer">
                   {t('nav.generalLedger')} ➔
                 </Link>
-                <Link href="/demonstrativos" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium">
+                <Link href="/login" className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 hover:text-emerald-300 font-medium cursor-pointer">
                   {t('nav.incomeStatement')} ➔
                 </Link>
               </div>
 
               <Link
-                href="/dashboard"
-                className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
+                href="/login"
+                className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 cursor-pointer"
               >
-                <span>{t('nav.dashboard')}</span>
+                <span>{t('landing.ctaAccess')}</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>

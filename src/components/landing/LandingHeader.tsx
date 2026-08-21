@@ -102,7 +102,7 @@ export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
 
           {/* CTA Access Platform */}
           <Link
-            href="/dashboard"
+            href="/login"
             className="h-10 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center space-x-1.5 cursor-pointer hover:scale-[1.02]"
           >
             <span>{t('landing.ctaAccess')}</span>
@@ -170,7 +170,7 @@ export function LandingHeader({ onOpenLoginModal }: LandingHeaderProps) {
               {t('auth.loginTitle')}
             </Link>
             <Link
-              href="/dashboard"
+              href="/login"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center py-2.5 rounded-xl bg-emerald-600 text-xs font-bold text-white shadow-lg"
             >

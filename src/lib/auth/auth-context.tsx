@@ -77,7 +77,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'mistercontabil_auth_user';
+const AUTH_STORAGE_KEY = 'mistercontabil_auth_user_v2';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Zero-Trust: Starts as null (unauthenticated) by default
