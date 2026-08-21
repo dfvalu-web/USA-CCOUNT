@@ -14,6 +14,7 @@ import {
   Moon,
 } from 'lucide-react';
 import { CorporateFiscalPeriodSelector } from '@/components/common/CorporateFiscalPeriodSelector';
+import { GlobalCompanySelector } from '@/components/common/GlobalCompanySelector';
 
 interface HeaderProps {
   onOpenCommandMenu: () => void;
@@ -24,23 +25,10 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
   const { locale, setLocale, basis, setBasis, t } = useI18n();
 
   return (
-    <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-40">
-      {/* Left: Organization Selector & Accounting Basis Switch */}
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2 text-xs font-medium text-slate-200">
-          <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <Building2 className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="font-semibold text-white tracking-tight flex items-center gap-1.5">
-              Apex Cloud Services LLC
-              <Badge variant="success" className="text-[10px] py-0 px-1.5">
-                US GAAP
-              </Badge>
-            </div>
-            <div className="text-[10px] text-slate-400">EIN: XX-XXX4912 • Delaware, USA</div>
-          </div>
-        </div>
+    <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40">
+      {/* Left: Global Company Selector & Accounting Basis Switch */}
+      <div className="flex items-center space-x-3 sm:space-x-4">
+        <GlobalCompanySelector />
 
         {/* Accrual / Cash Toggle */}
         <div className="hidden lg:flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">

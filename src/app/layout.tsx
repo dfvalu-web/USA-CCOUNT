@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { I18nProvider } from '@/lib/i18n/context';
 import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
+import { CompanyProvider } from '@/lib/company/company-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,7 +31,9 @@ export default function RootLayout({
     <html lang="en" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
         <I18nProvider>
-          <FiscalPeriodProvider>{children}</FiscalPeriodProvider>
+          <CompanyProvider>
+            <FiscalPeriodProvider>{children}</FiscalPeriodProvider>
+          </CompanyProvider>
         </I18nProvider>
       </body>
     </html>

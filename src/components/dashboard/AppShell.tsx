@@ -54,6 +54,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 
 import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
+import { CompanyProvider } from '@/lib/company/company-context';
 
 interface AppShellProps {
   initialTab?: string;
@@ -196,13 +197,14 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   };
 
   return (
-    <FiscalPeriodProvider>
-      <div className="min-h-screen flex flex-col bg-slate-950">
-        {/* Top Header */}
-        <Header
-          onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
-          onOpenNewEntry={() => setIsNewEntryOpen(true)}
-        />
+    <CompanyProvider>
+      <FiscalPeriodProvider>
+        <div className="min-h-screen flex flex-col bg-slate-950">
+          {/* Top Header */}
+          <Header
+            onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
+            onOpenNewEntry={() => setIsNewEntryOpen(true)}
+          />
 
         {/* Main Content Area */}
         <div className="flex-1 flex">
@@ -363,5 +365,6 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
       />
     </div>
     </FiscalPeriodProvider>
+    </CompanyProvider>
   );
 }
