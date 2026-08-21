@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { CheckCircle2, AlertCircle, Download, Search, Filter, Layers, FileSpreadsheet } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useCompany } from '@/lib/company/company-context';
 
 interface TrialBalanceTableProps {
   data: TrialBalanceReport;
@@ -16,6 +17,7 @@ interface TrialBalanceTableProps {
 
 export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
   const { locale, t, basis } = useI18n();
+  const { activeCompany } = useCompany();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('ALL');
   const [exportNotice, setExportNotice] = useState<string | null>(null);
@@ -57,14 +59,14 @@ export function TrialBalanceTable({ data }: TrialBalanceTableProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2">
-              <CardTitle>{t('nav.trialBalance')}</CardTitle>
+              <CardTitle>{t('nav.trialBalance')} — {activeCompany?.legalName}</CardTitle>
               <Badge variant={data.isBalanced ? 'success' : 'danger'}>
                 {data.isBalanced ? `✓ ${t('common.balanced')}` : t('common.unbalanced')}
               </Badge>
               <Badge variant="outline">{basis} Basis</Badge>
             </div>
             <CardDescription>
-              {t('accounting.ruleDebitCredit')} • Posição em {formatDate(data.asOfDate, locale)}
+              {activeCompany?.legalName} (EIN: {activeCompany?.ein}) • Posição em {formatDate(data.asOfDate, locale)} • Balancete de Verificação US GAAP
             </CardDescription>
           </div>
 

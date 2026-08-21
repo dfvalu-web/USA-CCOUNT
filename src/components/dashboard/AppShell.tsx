@@ -54,7 +54,8 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 
 import { FiscalPeriodProvider } from '@/lib/period/fiscal-period-context';
-import { CompanyProvider } from '@/lib/company/company-context';
+import { CompanyProvider, useCompany } from '@/lib/company/company-context';
+import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
 
 interface AppShellProps {
   initialTab?: string;
@@ -62,9 +63,41 @@ interface AppShellProps {
 
 export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   const { locale, t, basis } = useI18n();
+  const { activeCompany } = useCompany();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+
+  // Dynamic ledger state initialized and synchronized per active company
+  const [accountsState, setAccountsState] = useState<AccountWithLines[]>(() =>
+    CompanyLedgerEngine.getAccountsForCompany(activeCompany?.id || '', activeCompany?.legalName)
+  );
+  const [journalEntriesList, setJournalEntriesList] = useState<Array<{
+    id: string;
+    date: string;
+    memo: string;
+    amount: number;
+    basis: string;
+    status: string;
+  }>>(() =>
+    CompanyLedgerEngine.getJournalEntriesForCompany(activeCompany?.id || '', activeCompany?.legalName)
+  );
+
+  // Sincroniza imediatamente o livro-razão e as demonstrações contábeis ao alternar a empresa
+  useEffect(() => {
+    if (activeCompany) {
+      const companyAccounts = CompanyLedgerEngine.getAccountsForCompany(
+        activeCompany.id,
+        activeCompany.legalName
+      );
+      const companyEntries = CompanyLedgerEngine.getJournalEntriesForCompany(
+        activeCompany.id,
+        activeCompany.legalName
+      );
+      setAccountsState(companyAccounts);
+      setJournalEntriesList(companyEntries);
+    }
+  }, [activeCompany]);
 
   // Sync if initialTab prop changes
   useEffect(() => {
@@ -112,23 +145,6 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
       window.history.pushState(null, '', `/${newTab}`);
     }
   };
-
-  // Dynamic ledger state
-  const [accountsState, setAccountsState] = useState<AccountWithLines[]>(SAMPLE_LEDGER_ACCOUNTS);
-  const [journalEntriesList, setJournalEntriesList] = useState<Array<{
-    id: string;
-    date: string;
-    memo: string;
-    amount: number;
-    basis: string;
-    status: string;
-  }>>([
-    { id: 'JE-2026-0001', date: '2026-01-01', memo: 'Initial Capital Contribution', amount: 325000, basis: 'BOTH', status: 'POSTED' },
-    { id: 'JE-2026-0002', date: '2026-01-05', memo: 'Purchase of Engineering Workstations', amount: 24000, basis: 'BOTH', status: 'POSTED' },
-    { id: 'JE-2026-0003', date: '2026-02-01', memo: 'Client Invoiced Revenue - Q1 Retainers', amount: 210000, basis: 'ACCRUAL', status: 'POSTED' },
-    { id: 'JE-2026-0004', date: '2026-03-15', memo: 'Collection of Invoiced Client Accounts', amount: 150000, basis: 'BOTH', status: 'POSTED' },
-    { id: 'JE-2026-0005', date: '2026-03-31', memo: 'Direct Contractor Engineering Fees (1099)', amount: 45000, basis: 'BOTH', status: 'POSTED' },
-  ]);
 
   // Recalculate financial reports dynamically based on current basis and ledger lines
   const reports = useMemo(() => {
@@ -197,14 +213,12 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   };
 
   return (
-    <CompanyProvider>
-      <FiscalPeriodProvider>
-        <div className="min-h-screen flex flex-col bg-slate-950">
-          {/* Top Header */}
-          <Header
-            onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
-            onOpenNewEntry={() => setIsNewEntryOpen(true)}
-          />
+    <div className="min-h-screen flex flex-col bg-slate-950">
+      {/* Top Header */}
+      <Header
+        onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
+        onOpenNewEntry={() => setIsNewEntryOpen(true)}
+      />
 
         {/* Main Content Area */}
         <div className="flex-1 flex">
@@ -364,7 +378,5 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
         onSuccess={handleEntrySuccess}
       />
     </div>
-    </FiscalPeriodProvider>
-    </CompanyProvider>
   );
 }
