@@ -6,6 +6,7 @@ import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import { InvoiceDTO } from '@/lib/accounting/invoicing-service';
 import { NewInvoiceModal } from './NewInvoiceModal';
 import { StripeCheckoutModal } from '@/components/billing/StripeCheckoutModal';
+import { DiamondInvoiceViewerModal } from '@/components/invoicing/DiamondInvoiceViewerModal';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
@@ -22,6 +23,9 @@ import {
   Download,
   CreditCard,
   Receipt,
+  Sparkles,
+  Printer,
+  FileCheck2,
 } from 'lucide-react';
 
 interface InvoicingViewProps {
@@ -123,6 +127,8 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
   const [isNewInvoiceOpen, setIsNewInvoiceOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [checkoutInvoice, setCheckoutInvoice] = useState<InvoiceDTO | null>(null);
+  const [selectedDiamondInvoice, setSelectedDiamondInvoice] = useState<InvoiceDTO | null>(null);
+  const [isDiamondModalOpen, setIsDiamondModalOpen] = useState(false);
 
   const filteredInvoices = invoices.filter((inv) => {
     if (statusFilter !== 'ALL' && inv.status !== statusFilter) return false;
@@ -359,6 +365,18 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
                     <Button
                       size="sm"
                       variant="outline"
+                      className="text-[11px] h-7 px-2.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-emerald-500/30 text-emerald-300 hover:text-white hover:bg-emerald-600/30 font-bold flex items-center space-x-1 cursor-pointer"
+                      onClick={() => {
+                        setSelectedDiamondInvoice(inv);
+                        setIsDiamondModalOpen(true);
+                      }}
+                    >
+                      <Sparkles className="w-3 h-3 text-emerald-400" />
+                      <span>Fatura Diamante</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="text-[11px] h-7 px-2"
                       onClick={() => handleCopyLink(inv.paymentLinkUrl, inv.id)}
                     >
@@ -400,6 +418,26 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
         isOpen={isNewInvoiceOpen}
         onClose={() => setIsNewInvoiceOpen(false)}
         onInvoiceCreated={handleInvoiceCreated}
+      />
+
+      <DiamondInvoiceViewerModal
+        isOpen={isDiamondModalOpen}
+        onClose={() => {
+          setIsDiamondModalOpen(false);
+          setSelectedDiamondInvoice(null);
+        }}
+        invoice={selectedDiamondInvoice}
+        onMarkAsPaid={(invId) => {
+          handleRecordPayment(invId);
+          if (selectedDiamondInvoice && selectedDiamondInvoice.id === invId) {
+            setSelectedDiamondInvoice({
+              ...selectedDiamondInvoice,
+              amountPaid: selectedDiamondInvoice.totalAmount,
+              balanceDue: 0,
+              status: 'PAID',
+            });
+          }
+        }}
       />
 
       {checkoutInvoice && (
