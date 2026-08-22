@@ -185,6 +185,11 @@
     "logout": "Cerrar Sesión / Salir"
   },
   "landing": {
+    "navDemonstrativos": "Estados Financieros",
+    "navRecursos": "Funcionalidades & BI",
+    "navCompliance": "Cumplimiento Fiscal",
+    "navPrecos": "Planes",
+    "navSeguranca": "Seguridad SOC 2",
     "heroBadge": "Plataforma Oficial de Contabilidad y Cumplimiento Fiscal US GAAP",
     "heroTitle1": "La Inteligencia Contable y Fiscal Definitiva en los",
     "heroTitle2": "Estados Unidos",

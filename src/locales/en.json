@@ -185,11 +185,16 @@
     "logout": "Sign Out / Logout"
   },
   "landing": {
+    "navDemonstrativos": "Financials",
+    "navRecursos": "Features & BI",
+    "navCompliance": "Tax & Compliance",
+    "navPrecos": "Pricing",
+    "navSeguranca": "SOC 2 Security",
     "heroBadge": "Official US GAAP Accounting & Tax Compliance Platform",
     "heroTitle1": "The Ultimate Financial & Tax Intelligence for the",
     "heroTitle2": "United States",
     "heroSubtitle": "Full double-entry bookkeeping with $0.00 variance, Balance Sheet, General Ledger, P&L, Cash Flows, and IRS tax filings (Form 1065, K-1, 1099, and W-2) in Diamond Standard.",
-    "ctaAccess": "Access Platform Now",
+    "ctaAccess": "Access Platform",
     "ctaDemo": "1-Click Demo Login",
     "videoBadge": "Official Video Presentation",
     "videoTitle": "Experience Mister Contábil in Action",
