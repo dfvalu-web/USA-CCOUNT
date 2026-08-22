@@ -30,6 +30,7 @@ import {
   FileCheck,
   Target,
   LogOut,
+  Radio,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -101,6 +102,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     {
       title: 'System & Security',
       items: [
+        { id: 'system-monitoring', label: 'Monitoramento em Tempo Real (SOC-2 SIEM)', icon: Radio },
         { id: 'system-audit', label: t('nav.systemAudit'), icon: ShieldCheck },
         { id: 'sandbox', label: t('nav.sandbox'), icon: FlaskConical },
         { id: 'settings', label: t('nav.settings'), icon: Settings },

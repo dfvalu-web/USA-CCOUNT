@@ -44,6 +44,7 @@ import { CfaAiCopilotChat } from '@/components/bi/CfaAiCopilotChat';
 import { ExecutiveReportsExportView } from '@/components/reports/ExecutiveReportsExportView';
 import { SoftwareMigrationView } from '@/components/migration/SoftwareMigrationView';
 import { SystemAuditView } from '@/components/audit/SystemAuditView';
+import { RealTimeMonitoringView } from '@/components/monitoring/RealTimeMonitoringView';
 import { CompanySandboxView } from '@/components/sandbox/CompanySandboxView';
 import { YearEndTaxFormsView } from '@/components/tax/YearEndTaxFormsView';
 import { ClientPortalView } from '@/components/portal/ClientPortalView';
@@ -197,6 +198,12 @@ export function normalizeTabId(rawTab: string): string {
     case 'orcamento':
     case 'budget':
       return 'budget-variance';
+    case 'system-monitoring':
+    case 'monitoramento':
+    case 'monitoring':
+    case 'siem':
+    case 'observabilidade':
+      return 'system-monitoring';
     case 'system-audit':
     case 'auditoria-sistema':
     case 'auditoria-geral':
@@ -421,6 +428,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
       <Header
         onOpenCommandMenu={() => setIsCommandMenuOpen(true)}
         onOpenNewEntry={() => setIsNewEntryOpen(true)}
+        onNavigateTab={handleTabChange}
       />
 
       {/* Main Content Area */}
@@ -516,6 +524,11 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
                 journalEntries={journalEntriesList}
                 onOpenNewEntryModal={() => setIsNewEntryOpen(true)}
               />
+            </div>
+          )}
+          {activeTab === 'system-monitoring' && (
+            <div className="space-y-6">
+              <RealTimeMonitoringView />
             </div>
           )}
           {activeTab === 'system-audit' && (

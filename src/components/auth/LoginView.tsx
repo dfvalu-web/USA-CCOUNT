@@ -33,6 +33,8 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
   const router = useRouter();
   const {
     login,
+    user,
+    isAuthenticated,
     isLoading,
     pendingDeviceVerification,
     verifyNewDevice,
@@ -87,6 +89,13 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
 
   const currentPassForStrength = password || (passwordInputRef.current?.value ?? '');
   const passwordStrength = getPasswordStrength(currentPassForStrength);
+
+  // Redirecionar para o dashboard caso já esteja autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   // Handle Lockout Countdown
   useEffect(() => {
@@ -551,7 +560,7 @@ export function LoginView({ isEmbedded = false }: LoginViewProps) {
                   <Button
                     type="button"
                     onClick={(e) => {
-                      e.preventDefault();
+                      if (e) e.preventDefault();
                       handleFormSubmit(e);
                     }}
                     disabled={isSubmitting || lockoutCountdown > 0}
