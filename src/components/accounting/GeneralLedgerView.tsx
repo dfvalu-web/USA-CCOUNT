@@ -27,7 +27,7 @@ import { PrintReportHeader, PrintReportFooter } from './PrintReportHeader';
 export function GeneralLedgerView() {
   const { locale, t, basis, formatCurrency, formatDate } = useI18n();
   const { activeCompany } = useCompany();
-  const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
+  const { fiscalYear, selectedMonths, getDateRange, getFormattedPeriodLabel } = useFiscalPeriod();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAccountFilter, setSelectedAccountFilter] = useState<string>('ALL');
@@ -43,8 +43,7 @@ export function GeneralLedgerView() {
 
   // Compute General Ledger Details for each account with Starting Balance, Activity & Ending Balance
   const ledgerData = useMemo(() => {
-    const startDateStr = `${fiscalYear}-01-01`;
-    const endDateStr = `${fiscalYear}-12-31`;
+    const { startDate: startDateStr, endDate: endDateStr } = getDateRange();
 
     let totalPeriodDebits = 0;
     let totalPeriodCredits = 0;
@@ -67,13 +66,10 @@ export function GeneralLedgerView() {
         }
       });
 
-      // 2. Filter lines within the selected fiscal period (Year & Months)
+      // 2. Filter lines within the selected fiscal period (Year, Months & Days)
       const periodLines = acc.lines.filter((line) => {
         const lineDate = typeof line.date === 'string' ? line.date : line.date.toISOString().split('T')[0];
-        const lineYear = parseInt(lineDate.split('-')[0], 10);
-        const lineMonth = parseInt(lineDate.split('-')[1], 10);
-
-        return lineYear === fiscalYear && selectedMonths.includes(lineMonth);
+        return lineDate >= startDateStr && lineDate <= endDateStr;
       });
 
       // 3. Calculate running balances

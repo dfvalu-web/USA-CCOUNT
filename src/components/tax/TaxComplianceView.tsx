@@ -26,9 +26,14 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
+
 export function TaxComplianceView() {
   const { locale, t } = useI18n();
   const { activeCompany } = useCompany();
+  const { fiscalYear } = useFiscalPeriod();
+
   const [selectedEntity, setSelectedEntity] = useState<TaxEntityType>(
     (activeCompany?.entityType as TaxEntityType) || 'LLC_PARTNERSHIP_1065'
   );
@@ -42,26 +47,38 @@ export function TaxComplianceView() {
 
   // Interactive Sales Feed
   const [salesFeed, setSalesFeed] = useState([
-    { state: 'NY', amount: 320000, transactionCount: 45 },
-    { state: 'CA', amount: 280000, transactionCount: 38 },
-    { state: 'TX', amount: 145000, transactionCount: 22 },
-    { state: 'FL', amount: 85000, transactionCount: 15 },
-    { state: 'DE', amount: 95000, transactionCount: 12 },
-    { state: 'IL', amount: 110000, transactionCount: 210 },
+    { state: 'GA', amount: 426461.65, transactionCount: 185 },
+    { state: 'TX', amount: 335000.00, transactionCount: 92 },
+    { state: 'DE', amount: 400000.00, transactionCount: 45 },
+    { state: 'FL', amount: 85000.00, transactionCount: 15 },
+    { state: 'NY', amount: 65000.00, transactionCount: 12 },
   ]);
 
   // Interactive Estimated Tax State
   const [projectedAnnualProfit, setProjectedAnnualProfit] = useState(185000);
-  const [projectedState, setProjectedState] = useState<'DE' | 'CA' | 'TX' | 'NY' | 'FL'>('TX');
+  const formationState = (activeCompany?.formationState as 'DE' | 'CA' | 'TX' | 'NY' | 'FL') || 'TX';
+  const [projectedState, setProjectedState] = useState<'DE' | 'CA' | 'TX' | 'NY' | 'FL'>(formationState);
+
+  useEffect(() => {
+    if (activeCompany?.formationState) {
+      setProjectedState((activeCompany.formationState as any) || 'TX');
+    }
+  }, [activeCompany]);
+
+  // Load real company ledger accounts
+  const companyAccounts = CompanyLedgerEngine.getAccountsForCompany(
+    activeCompany?.id || '',
+    activeCompany?.legalName
+  );
 
   // Engines
   const nexusList: StateNexusStatus[] = SalesTaxNexusEngine.evaluateNexus(salesFeed);
-  const irsReport: IRSTaxReportSummary = IRSMappingEngine.mapToIRSForm(SAMPLE_LEDGER_ACCOUNTS, selectedEntity, 2026);
+  const irsReport: IRSTaxReportSummary = IRSMappingEngine.mapToIRSForm(companyAccounts, selectedEntity, fiscalYear);
   const quarterlyEstimates = EstimatedTaxCalculator.calculateQuarterlyEstimatedTaxes(
     projectedAnnualProfit,
     projectedState,
     'PASS_THROUGH',
-    2026
+    fiscalYear
   );
 
   const handleUpdateSalesAmount = (stateCode: string, newAmount: number) => {

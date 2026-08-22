@@ -27,15 +27,24 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
+import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+
 export function ExecutiveReportsExportView() {
   const { activeCompany } = useCompany();
   const { t } = useI18n();
+  const { fiscalYear, setFiscalYear } = useFiscalPeriod();
 
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(fiscalYear || 2025);
   const [activeReportTab, setActiveReportTab] = useState<
     'balance-sheet' | 'income-statement' | 'cash-flow' | 'sba-loan' | 'cpa-binder'
   >('sba-loan');
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (fiscalYear) {
+      setSelectedYear(fiscalYear);
+    }
+  }, [fiscalYear]);
 
   const reportPackage: CertifiedReportPackage = ExecutiveReportsEngine.generateCertifiedPackage(
     activeCompany?.id || 'comp-001',
@@ -202,11 +211,14 @@ export function ExecutiveReportsExportView() {
           {/* Year Buttons */}
           <div className="flex items-center space-x-2 shrink-0">
             <span className="text-xs text-slate-400 font-medium">Exercício:</span>
-            {[2022, 2023, 2024, 2025].map((yr) => (
+            {[2022, 2023, 2024, 2025, 2026].map((yr) => (
               <button
                 key={yr}
                 type="button"
-                onClick={() => setSelectedYear(yr)}
+                onClick={() => {
+                  setSelectedYear(yr);
+                  setFiscalYear(yr);
+                }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                   selectedYear === yr
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'

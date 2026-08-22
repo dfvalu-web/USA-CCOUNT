@@ -4,12 +4,19 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 export type ComparisonMode = 'NONE' | 'PRIOR_YEAR_YOY' | 'PRIOR_PERIOD';
 
+export interface CustomDateRange {
+  startDate: string;
+  endDate: string;
+}
+
 export interface FiscalPeriodState {
   fiscalYear: number;
   selectedMonths: number[]; // 1 to 12
+  customDateRange: CustomDateRange | null;
   comparisonMode: ComparisonMode;
   setFiscalYear: (year: number) => void;
   setSelectedMonths: (months: number[]) => void;
+  setCustomDateRange: (range: CustomDateRange | null) => void;
   toggleMonth: (month: number) => void;
   selectSingleMonth: (month: number) => void;
   selectAllYear: () => void;
@@ -32,13 +39,22 @@ export const MONTH_NAMES_SHORT = [
   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
 ];
 
-// All historical years from 2002 to 2026
+// Primary quick-access years & all historical years from 2002 to 2026
+export const PRIMARY_YEARS = [2026, 2025, 2024, 2023, 2022, 2021];
 export const AVAILABLE_YEARS = Array.from({ length: 25 }, (_, i) => 2026 - i);
 
 export function getFiscalDateRange(
   fiscalYear: number,
-  selectedMonths: number[]
+  selectedMonths: number[],
+  customDateRange?: CustomDateRange | null
 ): { startDate: string; endDate: string } {
+  if (customDateRange?.startDate && customDateRange?.endDate) {
+    return {
+      startDate: customDateRange.startDate,
+      endDate: customDateRange.endDate,
+    };
+  }
+
   if (!selectedMonths || selectedMonths.length === 0) {
     return {
       startDate: `${fiscalYear}-01-01`,
@@ -63,6 +79,7 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   const [fiscalYear, setFiscalYear] = useState<number>(2025);
   // Default: Full Year (1 to 12) for historical forensic fidelity
   const [selectedMonths, setSelectedMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  const [customDateRange, setCustomDateRangeState] = useState<CustomDateRange | null>(null);
   const [comparisonMode, setComparisonMode] = useState<ComparisonMode>('PRIOR_YEAR_YOY');
 
   // Sync with localStorage if available
@@ -82,6 +99,7 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
 
   const handleSetFiscalYear = (year: number) => {
     setFiscalYear(year);
+    setCustomDateRangeState(null); // Reset custom date range when year changes
     if (typeof window !== 'undefined') {
       localStorage.setItem('uas_fiscal_year', year.toString());
     }
@@ -90,8 +108,19 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   const handleSetSelectedMonths = (months: number[]) => {
     const sorted = [...months].sort((a, b) => a - b);
     setSelectedMonths(sorted);
+    setCustomDateRangeState(null); // Reset custom date range when months change
     if (typeof window !== 'undefined') {
       localStorage.setItem('uas_fiscal_months', JSON.stringify(sorted));
+    }
+  };
+
+  const handleSetCustomDateRange = (range: CustomDateRange | null) => {
+    setCustomDateRangeState(range);
+    if (range?.startDate) {
+      const startYear = parseInt(range.startDate.split('-')[0], 10);
+      if (!isNaN(startYear)) {
+        setFiscalYear(startYear);
+      }
     }
   };
 
@@ -126,10 +155,13 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
   };
 
   const getDateRange = () => {
-    return getFiscalDateRange(fiscalYear, selectedMonths);
+    return getFiscalDateRange(fiscalYear, selectedMonths, customDateRange);
   };
 
   const getFormattedPeriodLabel = (): string => {
+    if (customDateRange?.startDate && customDateRange?.endDate) {
+      return `${customDateRange.startDate} a ${customDateRange.endDate}`;
+    }
     if (selectedMonths.length === 0) return `${fiscalYear}`;
     if (selectedMonths.length === 12) {
       return `${fiscalYear} • Ano Todo`;
@@ -158,9 +190,11 @@ export function FiscalPeriodProvider({ children }: { children: ReactNode }) {
       value={{
         fiscalYear,
         selectedMonths,
+        customDateRange,
         comparisonMode,
         setFiscalYear: handleSetFiscalYear,
         setSelectedMonths: handleSetSelectedMonths,
+        setCustomDateRange: handleSetCustomDateRange,
         toggleMonth,
         selectSingleMonth,
         selectAllYear,
@@ -182,9 +216,11 @@ export function useFiscalPeriod(): FiscalPeriodState {
     return {
       fiscalYear: 2025,
       selectedMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      customDateRange: null,
       comparisonMode: 'PRIOR_YEAR_YOY',
       setFiscalYear: () => {},
       setSelectedMonths: () => {},
+      setCustomDateRange: () => {},
       toggleMonth: () => {},
       selectSingleMonth: () => {},
       selectAllYear: () => {},

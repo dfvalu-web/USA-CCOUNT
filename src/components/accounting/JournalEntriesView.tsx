@@ -51,21 +51,19 @@ export function JournalEntriesView({
 }: JournalEntriesViewProps) {
   const { locale, t, basis, formatCurrency, formatDate } = useI18n();
   const { activeCompany } = useCompany();
-  const { fiscalYear, selectedMonths, getFormattedPeriodLabel } = useFiscalPeriod();
+  const { fiscalYear, selectedMonths, getDateRange, getFormattedPeriodLabel } = useFiscalPeriod();
   const [searchQuery, setSearchQuery] = useState('');
   const [basisFilter, setBasisFilter] = useState<string>('ALL');
   const [expandedJeId, setExpandedJeId] = useState<string | null>(null);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
 
+  const { startDate: startDateStr, endDate: endDateStr } = getDateRange();
+
   const filteredEntries = journalEntries.filter((entry) => {
-    // Filtragem rigorosa por ano fiscal e meses selecionados
+    // Filtragem rigorosa por período fiscal (Ano, Meses e Dias)
     if (entry.date) {
       const lineDateStr = typeof entry.date === 'string' ? entry.date : (entry.date as any).toISOString().split('T')[0];
-      const entryYear = parseInt(lineDateStr.substring(0, 4), 10);
-      const entryMonth = parseInt(lineDateStr.substring(5, 7), 10);
-
-      if (entryYear !== fiscalYear) return false;
-      if (selectedMonths && selectedMonths.length > 0 && !selectedMonths.includes(entryMonth)) return false;
+      if (lineDateStr < startDateStr || lineDateStr > endDateStr) return false;
     }
 
     if (basisFilter !== 'ALL' && entry.basis !== basisFilter && entry.basis !== 'BOTH') return false;

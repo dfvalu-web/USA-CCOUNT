@@ -288,11 +288,11 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
     }
   }, []);
 
-  const { fiscalYear, selectedMonths } = useFiscalPeriod();
+  const { fiscalYear, selectedMonths, customDateRange, getDateRange } = useFiscalPeriod();
 
-  // Recalculate financial reports dynamically based on active company, basis, and selected fiscal period (Year & Months)
+  // Recalculate financial reports dynamically based on active company, basis, and selected fiscal period (Year, Months & Custom Dates)
   const reports = useMemo(() => {
-    const { startDate, endDate } = getFiscalDateRange(fiscalYear, selectedMonths);
+    const { startDate, endDate } = getDateRange();
 
     const trialBalance = DoubleEntryLedgerEngine.generateTrialBalance(
       accountsState.map((acc) => ({
@@ -326,7 +326,7 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
     );
 
     return { trialBalance, incomeStatement, balanceSheet };
-  }, [accountsState, basis, fiscalYear, selectedMonths]);
+  }, [accountsState, basis, fiscalYear, selectedMonths, customDateRange]);
 
   // Handler for adding new journal entry
   const handleEntrySuccess = (entry: any) => {

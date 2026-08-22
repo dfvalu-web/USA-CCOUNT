@@ -28,8 +28,13 @@ import {
   Building2,
 } from 'lucide-react';
 
+import { useFiscalPeriod } from '@/lib/period/fiscal-period-context';
+import { useCompany } from '@/lib/company/company-context';
+
 export function YearEndTaxFormsView() {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+  const { fiscalYear } = useFiscalPeriod();
 
   const [activeTab, setActiveTab] = useState<'1099-NEC' | 'W-2' | 'W-3'>('1099-NEC');
   const [records1099, setRecords1099] = useState<Form1099NecRecord[]>(YearEndTaxEngine.INITIAL_1099_NEC);
@@ -39,7 +44,7 @@ export function YearEndTaxFormsView() {
   const [selectedW2, setSelectedW2] = useState<FormW2Record | null>(null);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
-  const w3Summary: FormW3TransmittalSummary = YearEndTaxEngine.generateW3Transmittal(recordsW2, 2026);
+  const w3Summary: FormW3TransmittalSummary = YearEndTaxEngine.generateW3Transmittal(recordsW2, fiscalYear);
 
   const handleDownloadIrsFire = () => {
     const fileContent = YearEndTaxEngine.generateIrsFireElectronicFile(records1099);
@@ -47,12 +52,12 @@ export function YearEndTaxFormsView() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `IRS_FIRE_1099NEC_TRANSMISSION_2026.txt`;
+    link.download = `IRS_FIRE_1099NEC_TRANSMISSION_${fiscalYear}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    setNotificationMsg('Arquivo eletrônico oficial do IRS FIRE gerado e baixado com sucesso!');
+    setNotificationMsg(`Arquivo eletrônico oficial do IRS FIRE para o Exercício ${fiscalYear} gerado e baixado com sucesso!`);
   };
 
   const total1099Compensation = records1099.reduce((acc, r) => acc + r.box1NonemployeeCompensation, 0);
@@ -67,13 +72,13 @@ export function YearEndTaxFormsView() {
           </div>
           <div>
             <h3 className="text-base font-bold text-white flex items-center gap-2">
-              Fechamento Fiscal de Fim de Ano (IRS Year-End Compliance)
+              Fechamento Fiscal de Fim de Ano — {activeCompany?.legalName}
               <Badge variant="warning" className="text-[10px]">
-                Ano Fiscal 2026
+                Ano Fiscal {fiscalYear}
               </Badge>
             </h3>
             <p className="text-xs text-slate-400">
-              Geração em lote de Forms 1099-NEC, W-2, W-3 e arquivos eletrônicos de transmissão para o IRS FIRE & SSA
+              Geração em lote de Forms 1099-NEC, W-2, W-3 e arquivos eletrônicos de transmissão para o IRS FIRE & SSA • EIN: {activeCompany?.ein}
             </p>
           </div>
         </div>
