@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCompany } from '@/lib/company/company-context';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency } from '@/lib/i18n/formatters';
 import {
@@ -41,59 +42,120 @@ interface PayrollViewProps {
 
 export function PayrollView({ onPostPayrollAccounting }: PayrollViewProps) {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
 
   // Internal Sub-tabs
   const [activePayrollTab, setActivePayrollTab] = useState<'payroll' | 'onboarding' | 'tax-reports'>('payroll');
 
-  const [workers, setWorkers] = useState<WorkerProfile[]>([
-    {
-      id: 'w-1',
-      name: 'Sarah Jenkins',
-      email: 'sarah.j@apexcloud.io',
-      type: 'W2_EMPLOYEE',
-      ssnEin: 'XXX-XX-8491',
-      state: 'CA',
-      filingStatus: 'SINGLE',
-      salaryAnnual: 140000,
-      preTaxDeductions: 500, // 401k
-      is1099: false,
-    },
-    {
-      id: 'w-2',
-      name: 'Michael Chang',
-      email: 'michael.c@apexcloud.io',
-      type: 'W2_EMPLOYEE',
-      ssnEin: 'XXX-XX-2210',
-      state: 'NY',
-      filingStatus: 'MARRIED_FILING_JOINTLY',
-      salaryAnnual: 160000,
-      preTaxDeductions: 750,
-      is1099: false,
-    },
-    {
-      id: 'w-3',
-      name: 'Maria Santos',
-      email: 'maria.s@cleanops.io',
-      type: 'W2_EMPLOYEE',
-      ssnEin: 'XXX-XX-9934',
-      state: 'TX', // 0% SIT State
-      filingStatus: 'SINGLE',
-      salaryAnnual: 52000,
-      preTaxDeductions: 200,
-      is1099: false,
-    },
-    {
-      id: 'w-4',
-      name: 'Carlos Gomez',
-      email: 'carlos.g@cleanops.io',
-      type: '1099_CONTRACTOR',
-      ssnEin: 'XX-XXX5812',
-      state: 'FL',
-      filingStatus: 'SINGLE',
-      hourlyRate: 35,
-      is1099: true,
-    },
-  ]);
+  const getWorkersForPayroll = (cId: string, cName?: string): WorkerProfile[] => {
+    const isMilla = cId.includes('milla') || (cName && cName.toLowerCase().includes('milla'));
+    const isApexDelaware = cId.includes('003') || cId.includes('cloud') || (cName && cName.toLowerCase().includes('cloud'));
+
+    if (isMilla) {
+      return [
+        {
+          id: 'w-mil-1',
+          name: 'Maria Santos',
+          email: 'maria.s@millamaidservices.com',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-4819',
+          state: 'GA',
+          filingStatus: 'SINGLE',
+          salaryAnnual: 54000,
+          preTaxDeductions: 200,
+          is1099: false,
+        },
+        {
+          id: 'w-mil-2',
+          name: 'Carlos Gomez',
+          email: 'carlos.g@millamaidservices.com',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-6231',
+          state: 'GA',
+          filingStatus: 'MARRIED_FILING_JOINTLY',
+          salaryAnnual: 48000,
+          preTaxDeductions: 150,
+          is1099: false,
+        },
+        {
+          id: 'w-mil-3',
+          name: 'Ana Silva',
+          email: 'ana.silva@contractor.io',
+          type: '1099_CONTRACTOR',
+          ssnEin: 'XX-XXX9081',
+          state: 'GA',
+          filingStatus: 'SINGLE',
+          hourlyRate: 35,
+          is1099: true,
+        },
+      ];
+    } else if (isApexDelaware) {
+      return [
+        {
+          id: 'w-cld-1',
+          name: 'Lucas Vance',
+          email: 'lucas.v@apexcloud.io',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-7819',
+          state: 'DE',
+          filingStatus: 'SINGLE',
+          salaryAnnual: 165000,
+          preTaxDeductions: 750,
+          is1099: false,
+        },
+        {
+          id: 'w-cld-2',
+          name: 'Sofia Chen',
+          email: 'sofia.c@apexcloud.io',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-3310',
+          state: 'NY',
+          filingStatus: 'MARRIED_FILING_JOINTLY',
+          salaryAnnual: 145000,
+          preTaxDeductions: 600,
+          is1099: false,
+        },
+      ];
+    } else {
+      return [
+        {
+          id: 'w-apx-1',
+          name: 'Mateo Rodriguez',
+          email: 'mateo.r@apexcleanops.com',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-4819',
+          state: 'TX',
+          filingStatus: 'SINGLE',
+          salaryAnnual: 56000,
+          preTaxDeductions: 250,
+          is1099: false,
+        },
+        {
+          id: 'w-apx-2',
+          name: 'Elena Vasquez',
+          email: 'elena.v@apexcleanops.com',
+          type: 'W2_EMPLOYEE',
+          ssnEin: 'XXX-XX-6231',
+          state: 'TX',
+          filingStatus: 'SINGLE',
+          salaryAnnual: 50000,
+          preTaxDeductions: 180,
+          is1099: false,
+        },
+      ];
+    }
+  };
+
+  const [workers, setWorkers] = useState<WorkerProfile[]>(() =>
+    getWorkersForPayroll(companyId, companyName)
+  );
+
+  useEffect(() => {
+    setWorkers(getWorkersForPayroll(companyId, companyName));
+  }, [companyId, companyName]);
 
   // Semi-monthly period calculations
   const [payPeriod] = useState({

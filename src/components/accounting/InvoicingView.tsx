@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCompany } from '@/lib/company/company-context';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
-import { InvoiceDTO } from '@/lib/accounting/invoicing-service';
+import { InvoicingService, InvoiceDTO } from '@/lib/accounting/invoicing-service';
+import { EntityDirectoryEngine } from '@/lib/directory/entity-directory-engine';
 import { NewInvoiceModal } from './NewInvoiceModal';
 import { StripeCheckoutModal } from '@/components/billing/StripeCheckoutModal';
 import { DiamondInvoiceViewerModal } from '@/components/invoicing/DiamondInvoiceViewerModal';
@@ -34,88 +36,19 @@ interface InvoicingViewProps {
 
 export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
 
-  const [invoices, setInvoices] = useState<InvoiceDTO[]>([
-    {
-      id: 'inv-101',
-      organizationId: '11111111-1111-1111-1111-111111111111',
-      contactId: 'c-1',
-      contactName: 'Austin Tech Hub Suites',
-      invoiceNumber: 'INV-2026-0089',
-      issueDate: '2026-08-01',
-      dueDate: '2026-08-31',
-      paymentTerm: 'NET_30',
-      items: [
-        {
-          description: 'Manutenção Mensal & Janitorial Corporativo (40 hrs @ $150/hr)',
-          quantity: 40,
-          unitPrice: 150,
-          pricingModel: 'HOURLY',
-          revenueAccountCode: '4010',
-        },
-      ],
-      subtotal: 6000,
-      taxAmount: 495,
-      totalAmount: 6495,
-      amountPaid: 0,
-      balanceDue: 6495,
-      status: 'ISSUED',
-      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0089',
-    },
-    {
-      id: 'inv-102',
-      organizationId: '11111111-1111-1111-1111-111111111111',
-      contactId: 'c-2',
-      contactName: 'NovaTech BioLabs Inc',
-      invoiceNumber: 'INV-2026-0088',
-      issueDate: '2026-07-15',
-      dueDate: '2026-08-14',
-      paymentTerm: 'NET_30',
-      items: [
-        {
-          description: 'Custom React & Node.js Platform Engineering',
-          quantity: 1,
-          unitPrice: 18500,
-          pricingModel: 'FIXED_FEE',
-          revenueAccountCode: '4020',
-        },
-      ],
-      subtotal: 18500,
-      taxAmount: 0,
-      totalAmount: 18500,
-      amountPaid: 18500,
-      balanceDue: 0,
-      status: 'PAID',
-      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0088',
-    },
-    {
-      id: 'inv-103',
-      organizationId: '11111111-1111-1111-1111-111111111111',
-      contactId: 'c-3',
-      contactName: 'SoHo Design Agency',
-      invoiceNumber: 'INV-2026-0082',
-      issueDate: '2026-06-15',
-      dueDate: '2026-07-15',
-      paymentTerm: 'NET_30',
-      items: [
-        {
-          description: 'Monthly Engineering & Security Retainer - June',
-          quantity: 1,
-          unitPrice: 12000,
-          pricingModel: 'RETAINER',
-          revenueAccountCode: '4030',
-        },
-      ],
-      subtotal: 12000,
-      taxAmount: 1065,
-      totalAmount: 13065,
-      amountPaid: 0,
-      balanceDue: 13065,
-      status: 'OVERDUE',
-      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0082',
-      lateFeeApplied: 216, // 1.5% late fee
-    },
-  ]);
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
+
+  const [invoices, setInvoices] = useState<InvoiceDTO[]>(() =>
+    InvoicingService.getInvoicesForCompany(companyId, companyName)
+  );
+
+  // Sync dynamically whenever user switches company
+  useEffect(() => {
+    setInvoices(InvoicingService.getInvoicesForCompany(companyId, companyName));
+  }, [companyId, companyName]);
 
   // Filters & State
   const [searchQuery, setSearchQuery] = useState('');
@@ -418,6 +351,7 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
         isOpen={isNewInvoiceOpen}
         onClose={() => setIsNewInvoiceOpen(false)}
         onInvoiceCreated={handleInvoiceCreated}
+        clients={EntityDirectoryEngine.getClientsForCompany(companyId, companyName)}
       />
 
       <DiamondInvoiceViewerModal

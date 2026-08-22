@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCompany } from '@/lib/company/company-context';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import {
@@ -32,6 +33,10 @@ import {
 
 export function BankingDisbursementsView() {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
 
   // Dual Control Simulated User
   const [currentUser, setCurrentUser] = useState<{
@@ -44,53 +49,103 @@ export function BankingDisbursementsView() {
     role: 'CHECKER',
   });
 
-  const [disbursements, setDisbursements] = useState<DisbursementRequest[]>([
-    {
-      id: 'DISB-881',
-      payeeName: 'Elena Rostova Tech Services',
-      payeeRoutingNumber: '021000021',
-      payeeAccountNumber: '984102941',
-      amount: 4800,
-      paymentType: 'ACH_CCD',
-      memo: '1099 Contractor Engineering Retainer',
-      createdByMakerId: 'user-accountant-01',
-      createdByMakerName: 'David Silva (Staff Accountant)',
-      createdAt: '2026-08-20',
-      status: 'PENDING_APPROVAL',
-    },
-    {
-      id: 'DISB-882',
-      payeeName: 'Ecolab Commercial Supply',
-      payeeRoutingNumber: '121000358',
-      payeeAccountNumber: '449102991',
-      amount: 1420.50,
-      paymentType: 'ACH_CCD',
-      memo: 'Compra de Químicos e Desinfetantes de Limpeza',
-      createdByMakerId: 'user-accountant-01',
-      createdByMakerName: 'David Silva (Staff Accountant)',
-      createdAt: '2026-08-19',
-      approvedByCheckerId: 'user-cfo-02',
-      approvedByCheckerName: 'Victoria Sterling (CFO)',
-      approvedAt: '2026-08-20T14:10:00Z',
-      status: 'APPROVED',
-    },
-    {
-      id: 'DISB-883',
-      payeeName: 'Grainger Industrial Janitorial Hardware',
-      payeeRoutingNumber: '071000013',
-      payeeAccountNumber: '558192044',
-      amount: 3100.00,
-      paymentType: 'ACH_CCD',
-      memo: 'Maquinário de Lavagem e Enceramento Industrial',
-      createdByMakerId: 'user-accountant-01',
-      createdByMakerName: 'David Silva (Staff Accountant)',
-      createdAt: '2026-08-18',
-      approvedByCheckerId: 'user-cfo-02',
-      approvedByCheckerName: 'Victoria Sterling (CFO)',
-      approvedAt: '2026-08-19T10:30:00Z',
-      status: 'APPROVED',
-    },
-  ]);
+  const getDisbursementsForCompany = (cId: string, cName?: string): DisbursementRequest[] => {
+    const isMilla = cId.includes('milla') || (cName && cName.toLowerCase().includes('milla'));
+    const isApexDelaware = cId.includes('003') || cId.includes('cloud') || (cName && cName.toLowerCase().includes('cloud'));
+
+    if (isMilla) {
+      return [
+        {
+          id: 'DISB-MIL-01',
+          payeeName: 'Atlanta Janitorial & Chemical Supply Co.',
+          payeeRoutingNumber: '061000104',
+          payeeAccountNumber: '984102941',
+          amount: 1850.00,
+          paymentType: 'ACH_CCD',
+          memo: 'Compra de Químicos e Desinfetantes Sanitários',
+          createdByMakerId: 'user-accountant-01',
+          createdByMakerName: 'David Silva (Staff Accountant)',
+          createdAt: '2026-08-20',
+          approvedByCheckerId: 'user-cfo-02',
+          approvedByCheckerName: 'Victoria Sterling (CFO)',
+          approvedAt: '2026-08-20T14:10:00Z',
+          status: 'APPROVED',
+        },
+        {
+          id: 'DISB-MIL-02',
+          payeeName: 'Truist Commercial Fleet Insurance',
+          payeeRoutingNumber: '061000104',
+          payeeAccountNumber: '449102991',
+          amount: 1200.00,
+          paymentType: 'ACH_CCD',
+          memo: 'Seguro de Responsabilidade Civil e Frota Comercial',
+          createdByMakerId: 'user-accountant-01',
+          createdByMakerName: 'David Silva (Staff Accountant)',
+          createdAt: '2026-08-21',
+          status: 'PENDING_APPROVAL',
+        },
+      ];
+    } else if (isApexDelaware) {
+      return [
+        {
+          id: 'DISB-CLD-01',
+          payeeName: 'Amazon Web Services Inc. (AWS)',
+          payeeRoutingNumber: '121000358',
+          payeeAccountNumber: '984102941',
+          amount: 4800.00,
+          paymentType: 'ACH_CCD',
+          memo: 'Infraestrutura Cloud & IA GPU Clusters',
+          createdByMakerId: 'user-accountant-01',
+          createdByMakerName: 'David Silva (Staff Accountant)',
+          createdAt: '2026-08-19',
+          approvedByCheckerId: 'user-cfo-02',
+          approvedByCheckerName: 'Victoria Sterling (CFO)',
+          approvedAt: '2026-08-20T11:00:00Z',
+          status: 'APPROVED',
+        },
+        {
+          id: 'DISB-CLD-02',
+          payeeName: 'GitHub Enterprise & Copilot AI',
+          payeeRoutingNumber: '021000021',
+          payeeAccountNumber: '558192044',
+          amount: 1250.00,
+          paymentType: 'ACH_CCD',
+          memo: 'Licenciamento Enterprise de Código & CI/CD',
+          createdByMakerId: 'user-accountant-01',
+          createdByMakerName: 'David Silva (Staff Accountant)',
+          createdAt: '2026-08-21',
+          status: 'PENDING_APPROVAL',
+        },
+      ];
+    } else {
+      return [
+        {
+          id: 'DISB-APX-01',
+          payeeName: 'Grainger Industrial Safety & Janitorial Supply',
+          payeeRoutingNumber: '071000013',
+          payeeAccountNumber: '558192044',
+          amount: 3100.00,
+          paymentType: 'ACH_CCD',
+          memo: 'Maquinário de Lavagem e Enceramento Industrial',
+          createdByMakerId: 'user-accountant-01',
+          createdByMakerName: 'David Silva (Staff Accountant)',
+          createdAt: '2026-08-18',
+          approvedByCheckerId: 'user-cfo-02',
+          approvedByCheckerName: 'Victoria Sterling (CFO)',
+          approvedAt: '2026-08-19T10:30:00Z',
+          status: 'APPROVED',
+        },
+      ];
+    }
+  };
+
+  const [disbursements, setDisbursements] = useState<DisbursementRequest[]>(() =>
+    getDisbursementsForCompany(companyId, companyName)
+  );
+
+  useEffect(() => {
+    setDisbursements(getDisbursementsForCompany(companyId, companyName));
+  }, [companyId, companyName]);
 
   const [virtualCards, setVirtualCards] = useState<VirtualCard[]>([
     {

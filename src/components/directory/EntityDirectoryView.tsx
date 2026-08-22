@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCompany } from '@/lib/company/company-context';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import {
@@ -36,13 +37,31 @@ import {
 
 export function EntityDirectoryView() {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
+
   const [activeTab, setActiveTab] = useState<'clients' | 'workers' | 'vendors'>('clients');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Entity Lists State
-  const [clients, setClients] = useState<ClientEntity[]>(EntityDirectoryEngine.INITIAL_CLIENTS);
-  const [workers, setWorkers] = useState<WorkerEntity[]>(EntityDirectoryEngine.INITIAL_WORKERS);
-  const [vendors, setVendors] = useState<VendorEntity[]>(EntityDirectoryEngine.INITIAL_VENDORS);
+  const [clients, setClients] = useState<ClientEntity[]>(() =>
+    EntityDirectoryEngine.getClientsForCompany(companyId, companyName)
+  );
+  const [workers, setWorkers] = useState<WorkerEntity[]>(() =>
+    EntityDirectoryEngine.getWorkersForCompany(companyId, companyName)
+  );
+  const [vendors, setVendors] = useState<VendorEntity[]>(() =>
+    EntityDirectoryEngine.getVendorsForCompany(companyId, companyName)
+  );
+
+  // Sync with active company switch
+  useEffect(() => {
+    setClients(EntityDirectoryEngine.getClientsForCompany(companyId, companyName));
+    setWorkers(EntityDirectoryEngine.getWorkersForCompany(companyId, companyName));
+    setVendors(EntityDirectoryEngine.getVendorsForCompany(companyId, companyName));
+  }, [companyId, companyName]);
 
   // Modal Open States
   const [isNewClientOpen, setIsNewClientOpen] = useState(false);

@@ -36,6 +36,271 @@ export interface InvoiceDTO extends CreateInvoiceDTO {
 }
 
 export class InvoicingService {
+  public static MILLA_MAID_INVOICES: InvoiceDTO[] = [
+    {
+      id: 'inv-mil-101',
+      organizationId: 'cmp-milla-maid-ga',
+      contactId: 'cnt-mill-01',
+      contactName: 'Buckhead Luxury Condominiums',
+      invoiceNumber: 'INV-2026-0101',
+      issueDate: '2026-08-01',
+      dueDate: '2026-08-31',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Commercial Janitorial & Common Area Sanitization (50 hrs @ $150/hr)',
+          quantity: 50,
+          unitPrice: 150,
+          pricingModel: 'HOURLY',
+          revenueAccountCode: '4010',
+        },
+        {
+          description: 'High-Luster Marble Floor Buffing & Sealant',
+          quantity: 1,
+          unitPrice: 950,
+          pricingModel: 'FIXED_FEE',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 8450,
+      taxAmount: 0,
+      totalAmount: 8450,
+      amountPaid: 0,
+      balanceDue: 8450,
+      status: 'ISSUED',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0101',
+    },
+    {
+      id: 'inv-mil-102',
+      organizationId: 'cmp-milla-maid-ga',
+      contactId: 'cnt-mill-02',
+      contactName: 'Midtown Medical & Dental Plaza',
+      invoiceNumber: 'INV-2026-0102',
+      issueDate: '2026-07-15',
+      dueDate: '2026-08-14',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Specialized Medical Grade Facility Cleaning - Monthly Retainer',
+          quantity: 1,
+          unitPrice: 12800,
+          pricingModel: 'RETAINER',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 12800,
+      taxAmount: 0,
+      totalAmount: 12800,
+      amountPaid: 12800,
+      balanceDue: 0,
+      status: 'PAID',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0102',
+    },
+    {
+      id: 'inv-mil-103',
+      organizationId: 'cmp-milla-maid-ga',
+      contactId: 'cnt-mill-03',
+      contactName: 'Doraville Commercial Center',
+      invoiceNumber: 'INV-2026-0103',
+      issueDate: '2026-06-20',
+      dueDate: '2026-07-05',
+      paymentTerm: 'NET_15',
+      items: [
+        {
+          description: 'Post-Construction Deep Clean & Waste Disposal',
+          quantity: 1,
+          unitPrice: 6400,
+          pricingModel: 'FIXED_FEE',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 6400,
+      taxAmount: 0,
+      totalAmount: 6400,
+      amountPaid: 0,
+      balanceDue: 6400,
+      status: 'OVERDUE',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0103',
+      lateFeeApplied: 96,
+    },
+  ];
+
+  public static APEX_CLEANOPS_INVOICES: InvoiceDTO[] = [
+    {
+      id: 'inv-apx-101',
+      organizationId: 'cmp-apex-cleanops-tx',
+      contactId: 'cnt-apex-01',
+      contactName: 'Austin Tech Hub Suites',
+      invoiceNumber: 'INV-2026-0089',
+      issueDate: '2026-08-01',
+      dueDate: '2026-08-31',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Manutenção Mensal & Janitorial Corporativo (40 hrs @ $150/hr)',
+          quantity: 40,
+          unitPrice: 150,
+          pricingModel: 'HOURLY',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 6000,
+      taxAmount: 495,
+      totalAmount: 6495,
+      amountPaid: 0,
+      balanceDue: 6495,
+      status: 'ISSUED',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0089',
+    },
+    {
+      id: 'inv-apx-102',
+      organizationId: 'cmp-apex-cleanops-tx',
+      contactId: 'cnt-apex-02',
+      contactName: 'Dallas Corporate Plaza Towers',
+      invoiceNumber: 'INV-2026-0091',
+      issueDate: '2026-07-10',
+      dueDate: '2026-08-10',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Commercial Facility Floor Polishing & Sanitization Retainer',
+          quantity: 1,
+          unitPrice: 15200,
+          pricingModel: 'RETAINER',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 15200,
+      taxAmount: 0,
+      totalAmount: 15200,
+      amountPaid: 15200,
+      balanceDue: 0,
+      status: 'PAID',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0091',
+    },
+    {
+      id: 'inv-apx-103',
+      organizationId: 'cmp-apex-cleanops-tx',
+      contactId: 'cnt-apex-03',
+      contactName: 'Houston Energy Tower Facility',
+      invoiceNumber: 'INV-2026-0092',
+      issueDate: '2026-08-15',
+      dueDate: '2026-09-15',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Industrial HVAC Sanitization & Bio-Disinfection',
+          quantity: 1,
+          unitPrice: 22500,
+          pricingModel: 'FIXED_FEE',
+          revenueAccountCode: '4010',
+        },
+      ],
+      subtotal: 22500,
+      taxAmount: 0,
+      totalAmount: 22500,
+      amountPaid: 0,
+      balanceDue: 22500,
+      status: 'ISSUED',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0092',
+    },
+  ];
+
+  public static APEX_CLOUD_INVOICES: InvoiceDTO[] = [
+    {
+      id: 'inv-cld-101',
+      organizationId: 'cmp-apex-cloud-de',
+      contactId: 'cnt-cloud-01',
+      contactName: 'NovaTech BioLabs Inc',
+      invoiceNumber: 'INV-2026-0088',
+      issueDate: '2026-07-15',
+      dueDate: '2026-08-14',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Custom React & Node.js Platform Engineering',
+          quantity: 1,
+          unitPrice: 18500,
+          pricingModel: 'FIXED_FEE',
+          revenueAccountCode: '4020',
+        },
+      ],
+      subtotal: 18500,
+      taxAmount: 0,
+      totalAmount: 18500,
+      amountPaid: 18500,
+      balanceDue: 0,
+      status: 'PAID',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0088',
+    },
+    {
+      id: 'inv-cld-102',
+      organizationId: 'cmp-apex-cloud-de',
+      contactId: 'cnt-cloud-02',
+      contactName: 'SoHo Design & Creative Agency',
+      invoiceNumber: 'INV-2026-0082',
+      issueDate: '2026-06-15',
+      dueDate: '2026-07-15',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Monthly Engineering & Security Retainer - June',
+          quantity: 1,
+          unitPrice: 12000,
+          pricingModel: 'RETAINER',
+          revenueAccountCode: '4030',
+        },
+      ],
+      subtotal: 12000,
+      taxAmount: 1065,
+      totalAmount: 13065,
+      amountPaid: 0,
+      balanceDue: 13065,
+      status: 'OVERDUE',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0082',
+      lateFeeApplied: 216,
+    },
+    {
+      id: 'inv-cld-103',
+      organizationId: 'cmp-apex-cloud-de',
+      contactId: 'cnt-cloud-03',
+      contactName: 'Fintech Alpha Labs Corp',
+      invoiceNumber: 'INV-2026-0083',
+      issueDate: '2026-08-01',
+      dueDate: '2026-08-31',
+      paymentTerm: 'NET_30',
+      items: [
+        {
+          description: 'Next.js AI Copilot Architecture & Multi-Tenant Migration',
+          quantity: 1,
+          unitPrice: 28000,
+          pricingModel: 'FIXED_FEE',
+          revenueAccountCode: '4020',
+        },
+      ],
+      subtotal: 28000,
+      taxAmount: 0,
+      totalAmount: 28000,
+      amountPaid: 0,
+      balanceDue: 28000,
+      status: 'ISSUED',
+      paymentLinkUrl: 'https://pay.mistercontabil.com/inv/INV-2026-0083',
+    },
+  ];
+
+  public static getInvoicesForCompany(companyId: string, legalName?: string): InvoiceDTO[] {
+    const isMilla = companyId.includes('milla') || (legalName && legalName.toLowerCase().includes('milla'));
+    const isApexDelaware = companyId.includes('003') || companyId.includes('cloud') || (legalName && legalName.toLowerCase().includes('cloud'));
+
+    if (isMilla) {
+      return InvoicingService.MILLA_MAID_INVOICES;
+    } else if (isApexDelaware) {
+      return InvoicingService.APEX_CLOUD_INVOICES;
+    } else {
+      return InvoicingService.APEX_CLEANOPS_INVOICES;
+    }
+  }
+
   /**
    * Calculates due date based on payment terms
    */
@@ -87,9 +352,6 @@ export class InvoicingService {
 
   /**
    * Generates a balanced US GAAP Journal Entry when an invoice is issued (Accrual basis)
-   * Debit: 1200 Accounts Receivable ($Total)
-   * Credit: 4010/4020 Service Revenue ($Subtotal)
-   * Credit (if applicable): 2300 Sales Tax Payable ($Tax)
    */
   public static generateIssueJournalEntry(invoice: InvoiceDTO): CreateJournalEntryInput {
     const lines = [
@@ -136,8 +398,6 @@ export class InvoicingService {
 
   /**
    * Generates a balanced US GAAP Journal Entry when an invoice is paid (Settlement)
-   * Debit: 1010 Operating Checking Account ($Paid)
-   * Credit: 1200 Accounts Receivable ($Paid)
    */
   public static generatePaymentJournalEntry(
     invoice: InvoiceDTO,
@@ -171,7 +431,7 @@ export class InvoicingService {
   }
 
   /**
-   * Calculates late fee penalty for overdue invoices (e.g. 1.5% per 30-day overdue period)
+   * Calculates late fee penalty for overdue invoices
    */
   public static calculateLateFee(invoice: InvoiceDTO, asOfDate: string, monthlyRatePercent: number = 1.5): number {
     if (invoice.balanceDue <= 0) return 0;

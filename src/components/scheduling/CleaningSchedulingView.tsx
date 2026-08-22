@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCompany } from '@/lib/company/company-context';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency, formatDate } from '@/lib/i18n/formatters';
 import {
@@ -44,10 +45,26 @@ interface CleaningSchedulingViewProps {
 
 export function CleaningSchedulingView({
   onPostJobAccounting,
-  clients = EntityDirectoryEngine.INITIAL_CLIENTS,
-  workers = EntityDirectoryEngine.INITIAL_WORKERS,
+  clients: initialClients,
+  workers: initialWorkers,
 }: CleaningSchedulingViewProps) {
   const { locale, t } = useI18n();
+  const { activeCompany } = useCompany();
+
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
+
+  const [activeClients, setActiveClients] = useState<ClientEntity[]>(() =>
+    initialClients || EntityDirectoryEngine.getClientsForCompany(companyId, companyName)
+  );
+  const [activeWorkers, setActiveWorkers] = useState<WorkerEntity[]>(() =>
+    initialWorkers || EntityDirectoryEngine.getWorkersForCompany(companyId, companyName)
+  );
+
+  useEffect(() => {
+    setActiveClients(EntityDirectoryEngine.getClientsForCompany(companyId, companyName));
+    setActiveWorkers(EntityDirectoryEngine.getWorkersForCompany(companyId, companyName));
+  }, [companyId, companyName]);
 
   // Internal Sub-tabs for the Unified Operations Module
   const [activeOperationsTab, setActiveOperationsTab] = useState<'dispatch' | 'timesheets' | 'calendar' | 'retainers'>('dispatch');
@@ -479,8 +496,8 @@ export function CleaningSchedulingView({
         onClose={() => setIsNewBookingOpen(false)}
         onBookingCreated={handleBookingCreated}
         packages={packages}
-        clients={clients}
-        workers={workers}
+        clients={activeClients}
+        workers={activeWorkers}
       />
 
       <ServiceCatalogModal

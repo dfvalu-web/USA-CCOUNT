@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n/context';
 import { formatCurrency } from '@/lib/i18n/formatters';
 import { InvoiceDTO, InvoiceItemDTO, PaymentTerm } from '@/lib/accounting/invoicing-service';
@@ -26,7 +26,22 @@ export function NewInvoiceModal({
   const { locale, t } = useI18n();
 
   const [selectedClientId, setSelectedClientId] = useState(clients[0]?.id || 'cnt-acme');
-  const selectedClient = clients.find((c) => c.id === selectedClientId) || clients[0];
+
+  // Reset selected client if not in current company's client list
+  useEffect(() => {
+    if (clients && clients.length > 0) {
+      if (!clients.some((c) => c.id === selectedClientId)) {
+        setSelectedClientId(clients[0].id);
+      }
+    }
+  }, [clients, selectedClientId]);
+
+  const selectedClient = clients.find((c) => c.id === selectedClientId) || clients[0] || {
+    id: 'cnt-general',
+    name: 'Cliente Corporativo Geral',
+    stateCode: 'GA',
+    isTaxExempt: false,
+  };
 
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState(
