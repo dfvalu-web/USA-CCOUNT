@@ -37,7 +37,13 @@ export function ServiceCatalogView({
   onUpdatePackages,
 }: ServiceCatalogViewProps) {
   const { locale, t } = useI18n();
-  const [activeTab, setActiveTab] = useState<'packages' | 'referrals'>('packages');
+  const [activeTab, setActiveTab] = useState<'packages' | 'referrals' | 'sqft-calculator'>('packages');
+
+  // Sqft Calculator State
+  const [sqftInput, setSqftInput] = useState<number>(2500);
+  const [propertyType, setPropertyType] = useState<'RESIDENTIAL' | 'COMMERCIAL_OFFICE' | 'POST_CONSTRUCTION'>('COMMERCIAL_OFFICE');
+  const [deepCarpetExtra, setDeepCarpetExtra] = useState<boolean>(true);
+  const [windowCount, setWindowCount] = useState<number>(12);
 
   const [packages, setPackages] = useState<ServicePackageTemplate[]>(initialPackages);
 
@@ -254,10 +260,9 @@ export function ServiceCatalogView({
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Package className="w-4 h-4" />
-            Pacotes & Serviços ({packages.length})
+            <Package className="w-3.5 h-3.5" />
+            Tabela de Pacotes & Combos ({packages.length})
           </button>
-
           <button
             onClick={() => setActiveTab('referrals')}
             className={`pb-2 text-xs font-bold transition-all flex items-center gap-2 border-b-2 ${
@@ -266,8 +271,19 @@ export function ServiceCatalogView({
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Gift className="w-4 h-4" />
-            Descontos & Carteira de Indicações ({referralWallets.length} com saldo)
+            <Gift className="w-3.5 h-3.5" />
+            Programa de Indicação (Member-Get-Member)
+          </button>
+          <button
+            onClick={() => setActiveTab('sqft-calculator')}
+            className={`pb-2 text-xs font-bold transition-all flex items-center gap-2 border-b-2 ${
+              activeTab === 'sqft-calculator'
+                ? 'border-sky-400 text-sky-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            🧮 Simulador de Orçamento por Metragem (Sqft)
           </button>
         </div>
 
@@ -494,6 +510,197 @@ export function ServiceCatalogView({
                   Conceder Crédito
                 </Button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Sqft Calculator */}
+        {activeTab === 'sqft-calculator' && (
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Inputs Column */}
+              <div className="lg:col-span-7 space-y-4 bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-sky-400" />
+                  Parâmetros do Imóvel & Serviços Adicionais
+                </h4>
+
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-slate-300 font-medium">Área Total do Imóvel (Square Feet):</span>
+                    <span className="font-mono font-bold text-sky-400">{sqftInput.toLocaleString()} sqft ({Math.round(sqftInput / 10.764)} m²)</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={500}
+                    max={15000}
+                    step={100}
+                    value={sqftInput}
+                    onChange={(e) => setSqftInput(parseInt(e.target.value) || 1000)}
+                    className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+                    <span>500 sqft (Studio)</span>
+                    <span>3,500 sqft (Casa / Escritório)</span>
+                    <span>15,000 sqft (Galpão / Prédio)</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('RESIDENTIAL')}
+                    className={`p-3 rounded-lg border text-left transition-all ${
+                      propertyType === 'RESIDENTIAL'
+                        ? 'border-sky-500 bg-sky-950/40 text-white'
+                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <span className="text-xs font-bold block">Residencial</span>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">$0.14 / sqft base</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('COMMERCIAL_OFFICE')}
+                    className={`p-3 rounded-lg border text-left transition-all ${
+                      propertyType === 'COMMERCIAL_OFFICE'
+                        ? 'border-sky-500 bg-sky-950/40 text-white'
+                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <span className="text-xs font-bold block">Comercial / Escritório</span>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">$0.18 / sqft base</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPropertyType('POST_CONSTRUCTION')}
+                    className={`p-3 rounded-lg border text-left transition-all ${
+                      propertyType === 'POST_CONSTRUCTION'
+                        ? 'border-sky-500 bg-sky-950/40 text-white'
+                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <span className="text-xs font-bold block">Pós-Obra Pesada</span>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">$0.28 / sqft base</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
+                  <label className="flex items-center space-x-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={deepCarpetExtra}
+                      onChange={(e) => setDeepCarpetExtra(e.target.checked)}
+                      className="rounded border-slate-700 text-sky-500 focus:ring-sky-500"
+                    />
+                    <div>
+                      <span className="text-xs font-semibold text-slate-200 block">Lavagem Profunda de Carpetes</span>
+                      <span className="text-[10px] text-slate-400 block">+$0.05 / sqft adicional</span>
+                    </div>
+                  </label>
+
+                  <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs font-semibold text-slate-200">Janelas / Vidros Externos</span>
+                      <span className="text-xs font-mono font-bold text-sky-400">{windowCount} un</span>
+                    </div>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={windowCount}
+                      onChange={(e) => setWindowCount(parseInt(e.target.value) || 0)}
+                      className="w-full h-7 rounded bg-slate-900 border border-slate-700 px-2 text-xs font-mono text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Quotation Summary Column */}
+              {(() => {
+                const baseRate = propertyType === 'RESIDENTIAL' ? 0.14 : propertyType === 'COMMERCIAL_OFFICE' ? 0.18 : 0.28;
+                const carpetRate = deepCarpetExtra ? 0.05 : 0;
+                const windowCost = windowCount * 8.00;
+
+                const rawServicePrice = (sqftInput * (baseRate + carpetRate)) + windowCost;
+                const calculatedPrice = Math.max(120.00, Math.round(rawServicePrice * 100) / 100);
+
+                const estimatedHours = Math.max(1.5, Math.round((sqftInput / 650) * 10) / 10);
+                const laborCost = Math.round(estimatedHours * 22.00 * 100) / 100;
+                const suppliesCost = Math.round((15.00 + (sqftInput / 1000) * 4.00) * 100) / 100;
+                const grossProfit = calculatedPrice - laborCost - suppliesCost;
+                const grossMarginPercent = (grossProfit / calculatedPrice) * 100;
+
+                return (
+                  <div className="lg:col-span-5 space-y-4 bg-gradient-to-br from-slate-900 to-slate-950 p-5 rounded-xl border border-sky-500/40 shadow-xl">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4" />
+                        Orçamento Instantâneo
+                      </span>
+                      <Badge variant="success" className="text-[10px]">
+                        Margem {grossMarginPercent.toFixed(1)}%
+                      </Badge>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-semibold block">Preço de Venda Sugerido (A/R)</span>
+                      <span className="text-3xl font-mono font-black text-emerald-400 mt-1 block">
+                        {formatCurrency(calculatedPrice, 'USD', locale)}
+                      </span>
+                      <span className="text-[11px] text-slate-400">Net 30 • Faturamento ASC 606</span>
+                    </div>
+
+                    <div className="space-y-2 py-3 border-y border-slate-800 text-xs">
+                      <div className="flex justify-between text-slate-300">
+                        <span>Tempo de Equipe Estimado:</span>
+                        <span className="font-mono font-bold text-white">{estimatedHours} horas</span>
+                      </div>
+                      <div className="flex justify-between text-slate-300">
+                        <span>Repasse Folha (Labor at $22/h):</span>
+                        <span className="font-mono font-bold text-amber-400">-{formatCurrency(laborCost, 'USD', locale)}</span>
+                      </div>
+                      <div className="flex justify-between text-slate-300">
+                        <span>Custo Estimado de Insumos:</span>
+                        <span className="font-mono font-bold text-slate-400">-{formatCurrency(suppliesCost, 'USD', locale)}</span>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t border-slate-800/80 font-bold text-emerald-300">
+                        <span>Lucro Bruto Previsto:</span>
+                        <span className="font-mono">{formatCurrency(grossProfit, 'USD', locale)}</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      onClick={() => {
+                        const newPkg: ServicePackageTemplate = {
+                          id: `pkg-sqft-${Date.now().toString().slice(-4)}`,
+                          name: `Serviço Sob Medida (${sqftInput.toLocaleString()} sqft ${propertyType === 'RESIDENTIAL' ? 'Residencial' : 'Comercial'})`,
+                          category: propertyType === 'POST_CONSTRUCTION' ? 'Pós-Obra & Entrega' : propertyType === 'COMMERCIAL_OFFICE' ? 'Comercial' : 'Residencial Padrão',
+                          description: `Orçamento calculado para ${sqftInput.toLocaleString()} sqft com ${estimatedHours}h estimadas.`,
+                          billingPrice: calculatedPrice,
+                          laborPayout: laborCost,
+                          suppliesCost: suppliesCost,
+                          durationHours: estimatedHours,
+                          isCommercial: propertyType !== 'RESIDENTIAL',
+                          defaultTasks: ['trash', 'vacuum', 'restrooms', 'mopping', ...(deepCarpetExtra ? ['carpet'] : [])],
+                        };
+                        setPackages([newPkg, ...packages]);
+                        if (onUpdatePackages) onUpdatePackages([newPkg, ...packages]);
+                        setActiveTab('packages');
+                        setActionSuccessMsg(`Orçamento de ${formatCurrency(calculatedPrice, 'USD', locale)} adicionado ao catálogo como pacote oficial!`);
+                      }}
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10 text-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5 mr-1" />
+                      Salvar como Novo Pacote Oficial
+                    </Button>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}

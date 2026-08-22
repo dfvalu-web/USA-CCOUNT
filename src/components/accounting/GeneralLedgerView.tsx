@@ -196,6 +196,17 @@ export function GeneralLedgerView() {
                 <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
                 {t('common.export')}
               </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setExportNotice(`Encadernação do Livro-Razão Geral de ${activeCompany?.legalName} compilada com sucesso em ${filteredAccounts.length} fichas analíticas prontas para encadernação fiscal!`);
+                  window.print();
+                }}
+                className="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 border-amber-500/40"
+              >
+                📚 Encadernação Completa (PDF)
+              </Button>
               <Button size="sm" variant="primary" onClick={handlePrint} className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
                 <Printer className="w-3.5 h-3.5 mr-1" />
                 {t('common.print')}

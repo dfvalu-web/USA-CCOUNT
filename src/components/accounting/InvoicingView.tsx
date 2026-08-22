@@ -30,6 +30,8 @@ import {
   FileCheck2,
 } from 'lucide-react';
 
+import { DunningAgingView } from '@/components/ar/DunningAgingView';
+
 interface InvoicingViewProps {
   onPostPaymentAccounting?: (entry: any) => void;
 }
@@ -37,6 +39,8 @@ interface InvoicingViewProps {
 export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
   const { locale, t } = useI18n();
   const { activeCompany } = useCompany();
+
+  const [mainTab, setMainTab] = useState<'invoices' | 'dunning'>('invoices');
 
   const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
   const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
@@ -143,35 +147,66 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Metrics Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total a Receber (A/R em Aberto)</span>
-          <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
-            {formatCurrency(totalOutstanding, 'USD', locale)}
-          </span>
-          <span className="text-[10px] text-slate-500">Contas a Receber (Conta 1200 US GAAP)</span>
-        </Card>
+      {/* Sub-tabs Navigation */}
+      <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+        <button
+          type="button"
+          onClick={() => setMainTab('invoices')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            mainTab === 'invoices'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          📄 Faturas Emitidas & Faturamento
+        </button>
 
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total Liquidado (Arrecadado)</span>
-          <span className="text-xl font-mono font-bold text-emerald-400 mt-1 block">
-            {formatCurrency(totalCollected, 'USD', locale)}
-          </span>
-          <span className="text-[10px] text-slate-500">Conciliado no Caixa & Cartões</span>
-        </Card>
-
-        <Card className="p-4 bg-slate-900 border-slate-800">
-          <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total de Faturas Emitidas</span>
-          <span className="text-xl font-mono font-bold text-white mt-1 block">
-            {invoices.length} Faturas
-          </span>
-          <span className="text-[10px] text-slate-500">ASC 606 Revenue Recognition</span>
-        </Card>
+        <button
+          type="button"
+          onClick={() => setMainTab('dunning')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            mainTab === 'dunning'
+              ? 'bg-rose-600 text-white shadow-sm'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          ⚠️ Gestão de Inadimplência & Cobrança (A/R Aging)
+        </button>
       </div>
 
-      {/* Main Table Card */}
-      <Card className="border-slate-800 bg-slate-950">
+      {mainTab === 'dunning' ? (
+        <DunningAgingView />
+      ) : (
+        <>
+          {/* Metrics Banner */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-4 bg-slate-900 border-slate-800">
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total a Receber (A/R em Aberto)</span>
+              <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
+                {formatCurrency(totalOutstanding, 'USD', locale)}
+              </span>
+              <span className="text-[10px] text-slate-500">Contas a Receber (Conta 1200 US GAAP)</span>
+            </Card>
+
+            <Card className="p-4 bg-slate-900 border-slate-800">
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total Liquidado (Arrecadado)</span>
+              <span className="text-xl font-mono font-bold text-emerald-400 mt-1 block">
+                {formatCurrency(totalCollected, 'USD', locale)}
+              </span>
+              <span className="text-[10px] text-slate-500">Conciliado no Caixa & Cartões</span>
+            </Card>
+
+            <Card className="p-4 bg-slate-900 border-slate-800">
+              <span className="text-[10px] text-slate-400 uppercase font-semibold block">Total de Faturas Emitidas</span>
+              <span className="text-xl font-mono font-bold text-white mt-1 block">
+                {invoices.length} Faturas
+              </span>
+              <span className="text-[10px] text-slate-500">ASC 606 Revenue Recognition</span>
+            </Card>
+          </div>
+
+          {/* Main Table Card */}
+          <Card className="border-slate-800 bg-slate-950">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-3">
@@ -345,6 +380,8 @@ export function InvoicingView({ onPostPaymentAccounting }: InvoicingViewProps) {
           </TableBody>
         </Table>
       </Card>
+      </>
+      )}
 
       {/* Modals */}
       <NewInvoiceModal

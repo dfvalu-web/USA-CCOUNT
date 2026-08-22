@@ -35,6 +35,7 @@ export function ExecutiveReportsExportView() {
   const { fiscalYear, setFiscalYear } = useFiscalPeriod();
 
   const [selectedYear, setSelectedYear] = useState<number>(fiscalYear || 2025);
+  const [watermark, setWatermark] = useState<'NONE' | 'CONFIDENTIAL' | 'SBA_LOAN_AUDIT' | 'WORK_IN_PROGRESS'>('SBA_LOAN_AUDIT');
   const [activeReportTab, setActiveReportTab] = useState<
     'balance-sheet' | 'income-statement' | 'cash-flow' | 'sba-loan' | 'cpa-binder'
   >('sba-loan');
@@ -149,6 +150,20 @@ export function ExecutiveReportsExportView() {
               <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
               <span>Exportar CSV</span>
             </Button>
+
+            <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs">
+              <span className="text-slate-400 text-[11px] font-semibold">Marca D'água:</span>
+              <select
+                value={watermark}
+                onChange={(e) => setWatermark(e.target.value as any)}
+                className="bg-slate-950 border border-slate-700 rounded text-emerald-400 font-bold text-xs px-2 py-0.5 focus:outline-none"
+              >
+                <option value="SBA_LOAN_AUDIT">SBA LOAN AUDIT PACK</option>
+                <option value="CONFIDENTIAL">CONFIDENCIAL</option>
+                <option value="WORK_IN_PROGRESS">CÓPIA DE TRABALHO</option>
+                <option value="NONE">Sem Marca D'água</option>
+              </select>
+            </div>
 
             <Button
               variant="outline"

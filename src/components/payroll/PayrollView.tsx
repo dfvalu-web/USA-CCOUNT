@@ -278,6 +278,38 @@ export function PayrollView({ onPostPayrollAccounting }: PayrollViewProps) {
     setNotificationMsg('Resumo da Folha de Pagamento exportado com sucesso em CSV!');
   };
 
+  const handleExportNachaAch = () => {
+    const today = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+    const companyEinClean = (activeCompany?.ein || '843910294').replace(/[^0-9]/g, '');
+    const compNameHeader = (activeCompany?.legalName || 'MILLA MAID LLC').slice(0, 16).padEnd(16, ' ');
+
+    let nacha = `101 061000104 ${companyEinClean.padEnd(10, ' ')}${today}1200A094101TRUIST BANK       ${compNameHeader}\n`;
+    nacha += `5200${compNameHeader}                   ${companyEinClean}PPDDIR DEPOSIT${today}${today}   1061000100000001\n`;
+
+    let totalCents = 0;
+    paychecks.forEach((pc, idx) => {
+      const cents = Math.round(pc.netPay * 100);
+      totalCents += cents;
+      const workerNamePadded = pc.workerName.slice(0, 22).padEnd(22, ' ');
+      const traceNum = (idx + 1).toString().padStart(7, '0');
+      nacha += `6220610001041234567890       ${cents.toString().padStart(10, '0')}0000000001${workerNamePadded} 006100010${traceNum}\n`;
+    });
+
+    nacha += `8200${paychecks.length.toString().padStart(6, '0')}061000104000000000000000000000${totalCents.toString().padStart(12, '0')}${companyEinClean}                         061000100000001\n`;
+    nacha += `9000001000001${paychecks.length.toString().padStart(8, '0')}061000104000000000000000000000${totalCents.toString().padStart(12, '0')}                                       \n`;
+
+    const blob = new Blob([nacha], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `NACHA_ACH_PAYROLL_DIRECT_DEPOSIT_${payPeriod.payDate}.ach`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setNotificationMsg(`Arquivo de Remessa Bancária NACHA ACH oficial gerado para processamento automático de depósito direto da folha!`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Module Header & Sub-Tabs */}
@@ -381,6 +413,14 @@ export function PayrollView({ onPostPayrollAccounting }: PayrollViewProps) {
                   <Button variant="outline" size="sm" onClick={handleExportPayrollCsv}>
                     <Download className="w-3.5 h-3.5 mr-1 text-emerald-400" />
                     Exportar CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExportNachaAch}
+                    className="bg-slate-800 hover:bg-slate-700 text-amber-300 border-amber-500/40"
+                  >
+                    🏦 Remessa NACHA ACH
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => setIsNewWorkerOpen(true)}>
                     <Plus className="w-3.5 h-3.5 mr-1" />

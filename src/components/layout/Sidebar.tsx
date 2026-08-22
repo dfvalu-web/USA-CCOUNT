@@ -27,6 +27,7 @@ import {
   ArrowRightLeft,
   FlaskConical,
   FileText,
+  FileCheck,
   Target,
   LogOut,
 } from 'lucide-react';
@@ -56,6 +57,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         { id: 'income-statement', label: t('nav.incomeStatement'), icon: TrendingUp },
         { id: 'balance-sheet', label: t('nav.balanceSheet'), icon: FileSpreadsheet },
         { id: 'journal-entries', label: t('nav.journalEntries'), icon: BookOpen },
+        { id: 'month-end-close', label: t('nav.monthEndClose') || 'Fechamento Mensal & Period Lock', icon: FileCheck },
         { id: 'bank-reconciliation', label: t('nav.bankReconciliation'), icon: Landmark },
         { id: 'software-migration', label: t('nav.softwareMigration'), icon: ArrowRightLeft },
         { id: 'multi-currency', label: t('nav.multiCurrency'), icon: Globe },
@@ -90,8 +92,9 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     {
       title: 'CFA Intelligence & BI',
       items: [
+        { id: 'cfa-copilot', label: t('nav.cfaCopilot') || 'CFA Copilot AI Chat', icon: Sparkles },
         { id: 'executive-reports', label: 'Relatórios Oficiais (PDF)', icon: FileText },
-        { id: 'reports', label: t('nav.reports'), icon: Sparkles },
+        { id: 'reports', label: t('nav.reports'), icon: TrendingUp },
         { id: 'budget-variance', label: t('nav.budgetVariance'), icon: Target },
       ],
     },

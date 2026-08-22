@@ -221,15 +221,29 @@ export function WorkerPortalView() {
                   {formatCurrency(ps.netPay, 'USD', locale)}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-7 text-[11px] px-2.5 text-sky-400 hover:text-sky-300"
-                    onClick={() => setSelectedPaystub(ps)}
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1" />
-                    Ver Holerite
-                  </Button>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-[11px] px-2 text-sky-400 hover:text-sky-300"
+                      onClick={() => setSelectedPaystub(ps)}
+                    >
+                      <Eye className="w-3.5 h-3.5 mr-1" />
+                      Ver Holerite
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-[11px] px-2 text-emerald-400 hover:text-emerald-300 border-emerald-500/30"
+                      onClick={() => {
+                        const msg = `Olá ${profile.name}, seu holerite do período ${ps.payPeriod} no valor líquido de ${formatCurrency(ps.netPay, 'USD', locale)} já está disponível no portal do colaborador!`;
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+                      }}
+                      title="Enviar notificação por WhatsApp"
+                    >
+                      📲 Notificar
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

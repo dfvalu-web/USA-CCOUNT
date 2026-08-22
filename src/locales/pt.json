@@ -53,18 +53,20 @@
     "payroll": "Departamento Pessoal & W-2 / 1099",
     "workerPortal": "Portal do Colaborador & e-Sign",
     "bankingDisbursements": "Dispersão Bancária & Dupla Aprovação",
-    "companyProfile": "Cadastro de Empresas (Tax)",
+    "companyProfile": "Perfil Societário, Fiscal & Sócios (Tax Profile)",
     "partners": "Sócios & Quadro Societário (K-1)",
+    "monthEndClose": "Fechamento Mensal & Period Lock",
     "yearEndTax": "IRS Year-End Forms (1099/W-2)",
     "taxCompliance": "Compliance Fiscal & Sales Tax",
-    "stateTaxes": "State Franchise Taxes (DE/CA/TX)",
+    "stateTaxes": "Franquia Fiscal Estadual & Good Standing (GA/DE/TX/CA)",
     "multiEntity": "Consolidação Multi-Empresas",
     "auditTrail": "Trilha de Auditoria (SOC 2 Merkle)",
+    "cfaCopilot": "CFA Copilot AI Chat (Inteligência Contábil)",
     "reports": "Inteligência & Relatórios Financeiros",
     "budgetVariance": "Orçamento vs. Realizado",
     "systemAudit": "Auditoria do Sistema & Anomalias",
     "sandbox": "Ambiente Sandbox & Testes",
-    "settings": "Configurações da Empresa"
+    "settings": "Configurações Globais do Sistema & Preferências"
   },
   "accounting": {
     "debit": "Débito",

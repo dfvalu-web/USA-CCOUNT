@@ -49,6 +49,9 @@ import { YearEndTaxFormsView } from '@/components/tax/YearEndTaxFormsView';
 import { ClientPortalView } from '@/components/portal/ClientPortalView';
 import { BudgetVarianceView } from '@/components/budget/BudgetVarianceView';
 import { MultiEntityConsolidationView } from '@/components/company/MultiEntityConsolidationView';
+import { MonthEndCloseView } from '@/components/closing/MonthEndCloseView';
+import { DunningAgingView } from '@/components/ar/DunningAgingView';
+import { SystemSettingsView } from '@/components/settings/SystemSettingsView';
 import { NewJournalEntryModal } from '@/components/accounting/NewJournalEntryModal';
 import { DoubleEntryLedgerEngine } from '@/lib/accounting/ledger-engine';
 import { FinancialStatementsEngine, AccountWithLines } from '@/lib/accounting/financial-statements';
@@ -177,6 +180,12 @@ export function normalizeTabId(rawTab: string): string {
     case 'pdf-reports':
     case 'sba-loan':
       return 'executive-reports';
+    case 'cfa-copilot':
+    case 'copilot':
+    case 'cfa-chat':
+    case 'chat-ia':
+    case 'ia':
+      return 'cfa-copilot';
     case 'reports':
     case 'modulo-bi':
     case 'monte-carlo':
@@ -198,6 +207,14 @@ export function normalizeTabId(rawTab: string): string {
     case 'staging':
     case 'isolamento':
       return 'sandbox';
+    case 'month-end-close':
+    case 'fechamento-mensal':
+    case 'period-lock':
+      return 'month-end-close';
+    case 'dunning':
+    case 'inadimplencia':
+    case 'ar-aging':
+      return 'dunning';
     case 'settings':
     case 'configuracoes':
       return 'settings';
@@ -453,6 +470,11 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
               <ExecutiveReportsExportView />
             </div>
           )}
+          {activeTab === 'cfa-copilot' && (
+            <div className="space-y-6 max-w-4xl mx-auto">
+              <CfaAiCopilotChat />
+            </div>
+          )}
           {activeTab === 'reports' && (
             <div className="space-y-6">
               <ExecutiveReportsExportView />
@@ -507,9 +529,19 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
               <MultiEntityConsolidationView />
             </div>
           )}
+          {activeTab === 'month-end-close' && (
+            <div className="space-y-6">
+              <MonthEndCloseView />
+            </div>
+          )}
+          {activeTab === 'dunning' && (
+            <div className="space-y-6">
+              <DunningAgingView />
+            </div>
+          )}
           {activeTab === 'settings' && (
             <div className="space-y-6">
-              <CompanyProfileView initialTab="config" />
+              <SystemSettingsView />
             </div>
           )}
 
@@ -544,6 +576,8 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
             'client-portal',
             'budget-variance',
             'multi-entity',
+            'month-end-close',
+            'dunning',
             'settings',
           ].includes(activeTab) && (
             <div className="space-y-6">

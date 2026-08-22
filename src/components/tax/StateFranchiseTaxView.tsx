@@ -28,12 +28,13 @@ export function StateFranchiseTaxView() {
   const { locale, t } = useI18n();
   const { activeCompany } = useCompany();
 
-  const [activeStateTab, setActiveStateTab] = useState<'DE' | 'CA' | 'TX' | 'HISTORY'>(
-    activeCompany?.formationState === 'TX' ? 'TX' : activeCompany?.formationState === 'CA' ? 'CA' : 'DE'
+  const [activeStateTab, setActiveStateTab] = useState<'GA' | 'DE' | 'CA' | 'TX' | 'HISTORY'>(
+    activeCompany?.formationState === 'GA' ? 'GA' : activeCompany?.formationState === 'TX' ? 'TX' : activeCompany?.formationState === 'CA' ? 'CA' : 'DE'
   );
 
   useEffect(() => {
-    if (activeCompany?.formationState === 'TX') setActiveStateTab('TX');
+    if (activeCompany?.formationState === 'GA') setActiveStateTab('GA');
+    else if (activeCompany?.formationState === 'TX') setActiveStateTab('TX');
     else if (activeCompany?.formationState === 'CA') setActiveStateTab('CA');
     else if (activeCompany?.formationState === 'DE') setActiveStateTab('DE');
   }, [activeCompany]);
@@ -134,6 +135,14 @@ export function StateFranchiseTaxView() {
         {/* State Tabs */}
         <div className="flex items-center space-x-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
           <button
+            onClick={() => setActiveStateTab('GA')}
+            className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+              activeStateTab === 'GA' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Georgia (GA - Milla Maid)
+          </button>
+          <button
             onClick={() => setActiveStateTab('DE')}
             className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
               activeStateTab === 'DE' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:text-white'
@@ -152,7 +161,7 @@ export function StateFranchiseTaxView() {
           <button
             onClick={() => setActiveStateTab('TX')}
             className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-              activeStateTab === 'TX' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+              activeStateTab === 'TX' ? 'bg-sky-600 text-white font-bold' : 'text-slate-400 hover:text-white'
             }`}
           >
             Texas (TX)
@@ -177,6 +186,84 @@ export function StateFranchiseTaxView() {
           <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={() => setNotificationMsg(null)}>
             Fechar
           </Button>
+        </div>
+      )}
+
+      {/* Tab 0: Georgia Annual Registration (Milla Maid) */}
+      {activeStateTab === 'GA' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-1 border-emerald-500/30 bg-slate-950">
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-emerald-400" />
+                Georgia Secretary of State & DOR
+              </CardTitle>
+              <CardDescription>Obrigações anuais da Milla Maid Services LLC na Geórgia</CardDescription>
+            </CardHeader>
+            <div className="p-4 space-y-4 text-xs">
+              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Entidade:</span>
+                  <span className="font-bold text-white">Milla Maid Services LLC</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Estado de Registro:</span>
+                  <span className="font-bold text-emerald-400">Georgia (GA)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Taxa Anual GA SOS:</span>
+                  <span className="font-bold font-mono text-white">$50.00 / ano</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Prazo de Envio:</span>
+                  <span className="font-bold text-amber-400">1º de Abril Anual</span>
+                </div>
+              </div>
+
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => {
+                  setNotificationMsg('Comprovante de Good Standing e Declaração Anual da Geórgia (GA Annual Registration) gerado com sucesso!');
+                }}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-9 text-xs"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                Emitir Certificado de Good Standing GA
+              </Button>
+            </div>
+          </Card>
+
+          <Card className="lg:col-span-2 border-emerald-500/30 bg-slate-950">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">Status de Conformidade Tributária da Geórgia</CardTitle>
+                <Badge variant="success">✓ Active & Good Standing (GA SOS)</Badge>
+              </div>
+              <CardDescription>
+                Georgia Department of Revenue (DOR) & Secretary of State Corporations Division
+              </CardDescription>
+            </CardHeader>
+            <div className="p-4 space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                  <span className="text-slate-400 font-semibold block">Georgia Net Worth Tax (Form 600S)</span>
+                  <span className="text-2xl font-mono font-bold text-emerald-400 mt-1 block">$0.00</span>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Patrimônio líquido contábil abaixo do teto de isenção de $100,000 do estado da Geórgia.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                  <span className="text-slate-400 font-semibold block">Sales & Use Tax Exemption (Limpeza)</span>
+                  <span className="text-2xl font-mono font-bold text-sky-400 mt-1 block">0.0% Isento</span>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Serviços de limpeza residencial e mão de obra pura são isentos de Sales Tax na Geórgia (O.C.G.A. § 48-8-3).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
 

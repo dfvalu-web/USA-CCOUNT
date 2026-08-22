@@ -6,25 +6,52 @@ import { CfaCopilotEngine, CopilotMessage } from '@/lib/ai/cfa-copilot-engine';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Sparkles, Send, Bot, User, ShieldCheck, Lightbulb } from 'lucide-react';
+import { Sparkles, Send, Bot, User, ShieldCheck, Lightbulb, Trash2 } from 'lucide-react';
 
 export function CfaAiCopilotChat() {
   const { locale, t } = useI18n();
 
-  const [messages, setMessages] = useState<CopilotMessage[]>([
-    {
-      id: 'msg-init',
-      sender: 'assistant',
-      timestamp: '21:00',
-      text:
-        locale === 'pt'
-          ? 'Olá! Sou o seu **Copiloto Financeiro & Contábil CFA**. Posso responder a dúvidas sobre Runway, amortização de Retainers (ASC 606), deduções do IRS ou otimização de fluxo de caixa. Como posso ajudar?'
-          : locale === 'es'
-          ? '¡Hola! Soy su **Copiloto Financiero CFA**. Puedo responder preguntas sobre Runway, amortización de Retainers (ASC 606), impuestos del IRS o flujo de caja.'
-          : 'Hello! I am your **CFA AI Financial & Accounting Copilot**. I can analyze your Runway, ASC 606 Retainer amortization, IRS tax deductions, or simulate cash flow scenarios. What would you like to explore?',
-      metricsReference: 'Connected to Live US GAAP Ledger • 100% Synced',
-    },
-  ]);
+  const initialGreeting: CopilotMessage = {
+    id: 'msg-init',
+    sender: 'assistant',
+    timestamp: '21:00',
+    text:
+      locale === 'pt'
+        ? 'Olá! Sou o seu **Copiloto Financeiro & Contábil CFA**. Posso responder a dúvidas sobre Runway, amortização de Retainers (ASC 606), deduções do IRS ou otimização de fluxo de caixa. Como posso ajudar?'
+        : locale === 'es'
+        ? '¡Hola! Soy su **Copiloto Financiero CFA**. Puedo responder preguntas sobre Runway, amortización de Retainers (ASC 606), impuestos del IRS o flujo de caja.'
+        : 'Hello! I am your **CFA AI Financial & Accounting Copilot**. I can analyze your Runway, ASC 606 Retainer amortization, IRS tax deductions, or simulate cash flow scenarios. What would you like to explore?',
+    metricsReference: 'Connected to Live US GAAP Ledger • 100% Synced',
+  };
+
+  const [messages, setMessages] = useState<CopilotMessage[]>([initialGreeting]);
+
+  // Load from localStorage
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('mistercontabil_cfa_chat_history');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMessages(parsed);
+          }
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  // Save to localStorage
+  const updateMessages = (newMsgs: CopilotMessage[]) => {
+    setMessages(newMsgs);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mistercontabil_cfa_chat_history', JSON.stringify(newMsgs));
+    }
+  };
+
+  const handleClearHistory = () => {
+    updateMessages([initialGreeting]);
+  };
 
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -32,7 +59,7 @@ export function CfaAiCopilotChat() {
   const quickPrompts = [
     { en: 'How is our Net Runway & Liquidity?', pt: 'Qual é o nosso Runway e liquidez?', es: '¿Cómo está nuestro Runway y liquidez?' },
     { en: 'How does ASC 606 Retainer Amortization work?', pt: 'Como funciona a amortização ASC 606 dos Retainers?', es: '¿Cómo funciona la amortización ASC 606?' },
-    { en: 'Are all our 1099 contractor fees tax deductible?', pt: 'Nossos gastos com 1099 são dedutíveis no IRS?', es: '¿Los gastos con 1099 son deducibles en el IRS?' },
+    { en: 'Are all our 1099 contractor fees tax deductible?', pt: 'Nossos gastos com 1099 são dedutíveis no IRS?', es: '¿Los gastos com 1099 son deducibles en el IRS?' },
   ];
 
   const handleSendMessage = (textToSend?: string) => {
@@ -46,13 +73,14 @@ export function CfaAiCopilotChat() {
       text: query,
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const nextMsgs = [...messages, userMsg];
+    updateMessages(nextMsgs);
     setInputValue('');
     setIsTyping(true);
 
     setTimeout(() => {
       const botMsg = CfaCopilotEngine.generateResponse(query, locale);
-      setMessages((prev) => [...prev, botMsg]);
+      updateMessages([...nextMsgs, botMsg]);
       setIsTyping(false);
     }, 500);
   };
@@ -72,9 +100,18 @@ export function CfaAiCopilotChat() {
               </CardDescription>
             </div>
           </div>
-          <Badge variant="success" className="text-[10px]">
-            ● AI Copilot Online
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleClearHistory}
+              title="Limpar histórico da conversa"
+              className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-slate-900 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+            <Badge variant="success" className="text-[10px]">
+              ● AI Copilot Online
+            </Badge>
+          </div>
         </div>
       </CardHeader>
 

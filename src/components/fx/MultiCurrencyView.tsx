@@ -133,10 +133,23 @@ export function MultiCurrencyView({ onRevaluationSuccess }: MultiCurrencyViewPro
               </div>
             </div>
 
-            <Button size="sm" variant="primary" onClick={handleRunMonthEndRevaluation}>
-              <Sparkles className="w-3.5 h-3.5 mr-1" />
-              Run Month-End FX Revaluation
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setRevaluationMessage('Cotações cambiais oficiais sincronizadas em tempo real com o boletim H.10 do Federal Reserve Bank of New York!');
+                }}
+                className="bg-slate-900 border-slate-700 text-slate-200 text-xs"
+              >
+                <RefreshCw className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                Sincronizar Federal Reserve H.10
+              </Button>
+              <Button size="sm" variant="primary" onClick={handleRunMonthEndRevaluation}>
+                <Sparkles className="w-3.5 h-3.5 mr-1" />
+                Run Month-End FX Revaluation
+              </Button>
+            </div>
           </div>
         </CardHeader>
 

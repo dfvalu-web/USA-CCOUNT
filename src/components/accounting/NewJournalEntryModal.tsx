@@ -28,6 +28,7 @@ export function NewJournalEntryModal({ isOpen, onClose, onSuccess }: NewJournalE
 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [memo, setMemo] = useState('');
+  const [attachmentName, setAttachmentName] = useState<string>('');
   const [lines, setLines] = useState<LineItem[]>([
     { id: '1', accountId: '1010', debit: '15000', credit: '0', description: 'Retainer deposit received from client' },
     { id: '2', accountId: '2100', debit: '0', credit: '15000', description: 'Unearned retainer liability recorded' },
@@ -155,10 +156,33 @@ export function NewJournalEntryModal({ isOpen, onClose, onSuccess }: NewJournalE
                 type="text"
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
-                placeholder="Ex: Monthly client consulting retainer deposit received"
-                className="w-full h-9 rounded-md bg-slate-800 border border-slate-700 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+                placeholder="Ex: Retainer inicial contrato Milla Maid"
                 required
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center justify-between">
+                <span>📎 Comprovante / Recibo Anexo</span>
+                <span className="text-[10px] text-amber-400 font-semibold">Audit Ready</span>
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={attachmentName}
+                  onChange={(e) => setAttachmentName(e.target.value)}
+                  placeholder="Ex: fatura_bancaria_agosto.pdf"
+                  className="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setAttachmentName(`recibo_comprovante_${Date.now().toString().slice(-4)}.pdf`)}
+                  className="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-[11px] text-slate-300 transition-colors"
+                >
+                  Upload
+                </button>
+              </div>
             </div>
           </div>
 

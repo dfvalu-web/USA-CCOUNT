@@ -33,6 +33,7 @@ export function BudgetVarianceView() {
   );
 
   const [isNewBudgetModalOpen, setIsNewBudgetModalOpen] = useState(false);
+  const [hardLockOverbudget, setHardLockOverbudget] = useState(true);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
   const totalAnnualBudget = budgets.reduce((acc, b) => acc + b.annualBudget, 0);
@@ -85,6 +86,27 @@ export function BudgetVarianceView() {
         </div>
 
         <div className="flex items-center space-x-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const newState = !hardLockOverbudget;
+              setHardLockOverbudget(newState);
+              setNotificationMsg(
+                newState
+                  ? '🔒 Trava Rígida de Orçamento ATIVADA: Lançamentos de despesa acima de 100% do teto serão bloqueados.'
+                  : '🔓 Trava Rígida de Orçamento DESATIVADA: Despesas excedentes permitidas com aviso.'
+              );
+            }}
+            className={`text-xs ${
+              hardLockOverbudget
+                ? 'bg-slate-900 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-900 border-slate-700 text-slate-400'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+            Trava {'>'} 100%: {hardLockOverbudget ? 'Ativa' : 'Inativa'}
+          </Button>
           <Button size="sm" variant="outline" className="text-xs" onClick={handleExportBudgetReport}>
             <Download className="w-3.5 h-3.5 mr-1" />
             Exportar (.CSV)

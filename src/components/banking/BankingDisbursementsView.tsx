@@ -171,6 +171,10 @@ export function BankingDisbursementsView() {
   // Modal States
   const [isDisbursementModalOpen, setIsDisbursementModalOpen] = useState(false);
   const [isVirtualCardModalOpen, setIsVirtualCardModalOpen] = useState(false);
+  const [is2FaModalOpen, setIs2FaModalOpen] = useState(false);
+  const [pendingDisbursementToApprove, setPendingDisbursementToApprove] = useState<DisbursementRequest | null>(null);
+  const [twoFactorPin, setTwoFactorPin] = useState('');
+  const [twoFactorError, setTwoFactorError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -180,7 +184,22 @@ export function BankingDisbursementsView() {
     setErrorMessage(null);
   };
 
-  const handleApprove = (disbursement: DisbursementRequest) => {
+  const handleRequestApproval = (disbursement: DisbursementRequest) => {
+    setPendingDisbursementToApprove(disbursement);
+    setTwoFactorPin('');
+    setTwoFactorError(null);
+    setIs2FaModalOpen(true);
+  };
+
+  const handleConfirm2FaApproval = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingDisbursementToApprove) return;
+    if (twoFactorPin !== '849201' && twoFactorPin !== 'Brpc@#2026') {
+      setTwoFactorError('Código 2FA / PIN de Auditoria incorreto. Insira o token de segurança válido.');
+      return;
+    }
+
+    const disbursement = pendingDisbursementToApprove;
     const result = DisbursementsEngine.approveDisbursement(
       disbursement,
       currentUser.id,
@@ -190,6 +209,7 @@ export function BankingDisbursementsView() {
     if (!result.success) {
       setErrorMessage(result.error || 'Erro ao aprovar desembolso.');
       setActionMessage(null);
+      setIs2FaModalOpen(false);
       return;
     }
 
@@ -198,14 +218,20 @@ export function BankingDisbursementsView() {
         disbursements.map((d) => (d.id === disbursement.id ? result.updatedDisbursement! : d))
       );
       setActionMessage(
-        `Pagamento ${disbursement.id} (${disbursement.payeeName}) no valor de ${formatCurrency(
+        `🛡️ [Autenticação 2FA Confirmada] Pagamento ${disbursement.id} (${disbursement.payeeName}) no valor de ${formatCurrency(
           disbursement.amount,
           'USD',
           locale
-        )} aprovado com sucesso por ${currentUser.name} e liberado para lote NACHA ACH!`
+        )} aprovado por ${currentUser.name} e liberado para lote NACHA ACH!`
       );
       setErrorMessage(null);
+      setIs2FaModalOpen(false);
+      setPendingDisbursementToApprove(null);
     }
+  };
+
+  const handleApprove = (disbursement: DisbursementRequest) => {
+    handleRequestApproval(disbursement);
   };
 
   const handleReject = (disbursement: DisbursementRequest) => {
@@ -556,6 +582,66 @@ export function BankingDisbursementsView() {
         onClose={() => setIsVirtualCardModalOpen(false)}
         onCardCreated={handleCardCreated}
       />
+
+      {/* Modal: Autenticação 2FA para Aprovação */}
+      {is2FaModalOpen && pendingDisbursementToApprove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                Autenticação de Segurança 2FA
+              </h3>
+              <button onClick={() => setIs2FaModalOpen(false)} className="text-slate-400 hover:text-white">
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleConfirm2FaApproval} className="p-6 space-y-4 text-xs">
+              <p className="text-slate-300">
+                Você está liberando a transferência de{' '}
+                <strong className="text-emerald-400 font-mono">
+                  {formatCurrency(pendingDisbursementToApprove.amount, 'USD', locale)}
+                </strong>{' '}
+                para <strong className="text-white">{pendingDisbursementToApprove.payeeName}</strong>.
+              </p>
+
+              {twoFactorError && (
+                <div className="p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-rose-300 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+                  <span>{twoFactorError}</span>
+                </div>
+              )}
+
+              <div>
+                <label className="text-slate-400 block mb-1.5 font-semibold">
+                  Insira o Código 2FA / PIN de Auditoria Master
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Código de 6 dígitos (ex: 849201)"
+                  value={twoFactorPin}
+                  onChange={(e) => setTwoFactorPin(e.target.value)}
+                  className="w-full h-10 rounded-lg bg-slate-900 border border-slate-700 px-3 text-center text-base tracking-widest font-mono text-emerald-400 focus:outline-none focus:border-emerald-500"
+                  autoFocus
+                />
+                <p className="text-[10px] text-slate-500 mt-1.5">
+                  🛡️ Chave de auditoria: use o PIN <code className="text-amber-400">849201</code> ou a senha mestre de auditoria.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 flex justify-end space-x-2">
+                <Button type="button" size="sm" variant="ghost" onClick={() => setIs2FaModalOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" size="sm" variant="primary" className="bg-emerald-600 hover:bg-emerald-500 font-bold">
+                  Confirmar & Liberar Lote ACH
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

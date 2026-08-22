@@ -94,6 +94,26 @@ export function Header({ onOpenCommandMenu, onOpenNewEntry }: HeaderProps) {
           ))}
         </div>
 
+        {/* Session Security Timeout */}
+        <div className="hidden xl:flex items-center space-x-1 text-[11px] text-slate-400 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg" title="Sessão Segura com Auto-Lock por Inatividade">
+          <span className="text-emerald-400">🛡️</span>
+          <span>Auto-Lock:</span>
+          <select
+            defaultValue="30"
+            className="bg-transparent text-slate-200 font-bold text-[11px] focus:outline-none cursor-pointer"
+            onChange={(e) => {
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('mistercontabil_session_timeout_min', e.target.value);
+              }
+            }}
+          >
+            <option value="15" className="bg-slate-900 text-white">15 min</option>
+            <option value="30" className="bg-slate-900 text-white">30 min</option>
+            <option value="60" className="bg-slate-900 text-white">60 min</option>
+            <option value="0" className="bg-slate-900 text-white">Desativado</option>
+          </select>
+        </div>
+
         {/* Ledger Balanced Status */}
         <div className="hidden lg:flex items-center space-x-1.5 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-1 rounded-lg">
           <CheckCircle2 className="w-3.5 h-3.5" />

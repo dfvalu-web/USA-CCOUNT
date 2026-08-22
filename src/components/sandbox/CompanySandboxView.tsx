@@ -100,6 +100,17 @@ export function CompanySandboxView() {
         <div className="flex items-center space-x-2">
           <Button
             size="sm"
+            variant="outline"
+            onClick={() => {
+              setScenarios(CompanySandboxEngine.INITIAL_SCENARIOS);
+              setNotificationMsg('🧹 Todos os dados e cenários de simulação da Sandbox foram resetados para os valores padrão de fábrica com sucesso!');
+            }}
+            className="bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700 text-xs"
+          >
+            🧹 Reset Total Sandbox
+          </Button>
+          <Button
+            size="sm"
             variant="primary"
             className="bg-purple-600 hover:bg-purple-500 font-bold text-xs"
             onClick={() => setIsCloneModalOpen(true)}

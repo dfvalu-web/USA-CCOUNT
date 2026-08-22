@@ -54,10 +54,17 @@ export function DiamondInvoiceViewerModal({
   };
 
   const handleCopyLink = () => {
-    if (invoice.paymentLinkUrl) {
-      navigator.clipboard.writeText(invoice.paymentLinkUrl);
-      setCopiedMsg(true);
-      setTimeout(() => setCopiedMsg(false), 3000);
+    const url = typeof window !== 'undefined'
+      ? `${window.location.origin}/invoice/${invoice.id || invoice.invoiceNumber}`
+      : invoice.paymentLinkUrl || `https://uas-accounting.vercel.app/invoice/${invoice.id}`;
+    navigator.clipboard.writeText(url);
+    setCopiedMsg(true);
+    setTimeout(() => setCopiedMsg(false), 3000);
+  };
+
+  const handleOpenClientPortal = () => {
+    if (typeof window !== 'undefined') {
+      window.open(`/invoice/${invoice.id || invoice.invoiceNumber}`, '_blank');
     }
   };
 
@@ -145,7 +152,17 @@ export function DiamondInvoiceViewerModal({
               className="bg-slate-900 border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
             >
               <Copy className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{copiedMsg ? 'Link Copiado!' : 'Copiar Link Stripe'}</span>
+              <span>{copiedMsg ? 'Link Copiado!' : 'Copiar Link do Cliente'}</span>
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleOpenClientPortal}
+              className="bg-slate-900 border-slate-700 hover:bg-slate-800 text-sky-400 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-sky-400" />
+              <span>Portal do Cliente ↗</span>
             </Button>
 
             {invoice.status !== 'PAID' && (
