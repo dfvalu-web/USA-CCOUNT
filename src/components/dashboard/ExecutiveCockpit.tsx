@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 
 import { useCompany } from '@/lib/company/company-context';
+import { CompanyLedgerEngine } from '@/lib/accounting/company-ledger-data';
 
 interface ExecutiveCockpitProps {
   onNavigateTab?: (tab: string) => void;
@@ -39,6 +40,9 @@ interface ExecutiveCockpitProps {
 export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   const { locale, t, basis } = useI18n();
   const { activeCompany } = useCompany();
+
+  const companyId = activeCompany?.id || 'cmp-milla-maid-ga';
+  const companyName = activeCompany?.legalName || 'Milla Maid Services LLC';
 
   // Period State
   const [selectedPeriod, setSelectedPeriod] = useState<'YTD' | 'Q1' | 'Q2' | 'LTM'>('YTD');
@@ -55,22 +59,56 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   let baseMonthlyRevenue = 68500;
   let baseMonthlyBurn = 28050;
   let companyDescription = `${activeCompany?.legalName} (${activeCompany?.formationState}) apresenta liquidez sólida. Margem de contribuição média de 68.4%. Retenção de clientes em 96.2%.`;
+  let quickRatioValue = '4.85x';
+  let grossMarginValue = '73.1%';
+  let revenueStreams = [
+    { name: 'Limpeza Comercial & Janitorial', percent: 45, amount: 191907.74 },
+    { name: 'Contratos Mensais Recorrentes', percent: 35, amount: 149261.58 },
+    { name: 'Serviços Especializados / Pós-Obra', percent: 15, amount: 63969.25 },
+    { name: 'Hotelaria & Suítes', percent: 5, amount: 21323.08 },
+  ];
 
-  if (activeCompany?.legalName.includes('Milla Maid')) {
+  const isMilla = companyId.includes('milla') || companyName.toLowerCase().includes('milla');
+  const isApexDelaware = companyId.includes('003') || companyId.includes('cloud') || companyName.toLowerCase().includes('cloud');
+
+  if (isMilla) {
     baseCashBalance = 176095.84;
     baseMonthlyRevenue = 35538.47;
     baseMonthlyBurn = 18961.98;
-    companyDescription = `Milla Maid Services LLC (${activeCompany?.formationState} • EIN ${activeCompany?.ein}) — Serviços de Limpeza e Hotelaria. Margem operacional de 73.1%. Reconciliação bancária ativa.`;
-  } else if (activeCompany?.legalName.includes('Horizon')) {
-    baseCashBalance = 290000;
-    baseMonthlyRevenue = 45000;
-    baseMonthlyBurn = 18000;
-    companyDescription = `Horizon Fintech Labs Inc (${activeCompany?.formationState}) — P&D e Integração de APIs Financeiras. Margem bruta de 75.0%.`;
-  } else if (activeCompany?.legalName.includes('Apex Cloud')) {
-    baseCashBalance = 540000;
-    baseMonthlyRevenue = 85000;
-    baseMonthlyBurn = 35000;
-    companyDescription = `Apex Cloud Technologies Inc. (${activeCompany?.formationState}) — SaaS Enterprise & Cloud Infrastructure.`;
+    quickRatioValue = '4.85x';
+    grossMarginValue = '73.1%';
+    companyDescription = `Milla Maid Services LLC (${activeCompany?.formationState || 'GA'} • EIN ${activeCompany?.ein || '84-3910294'}) — Serviços de Limpeza e Hotelaria. Margem operacional de 73.1%. Reconciliação bancária ativa.`;
+    revenueStreams = [
+      { name: 'Limpeza Comercial & Janitorial', percent: 45, amount: 191907.74 },
+      { name: 'Contratos Mensais Recorrentes', percent: 35, amount: 149261.58 },
+      { name: 'Serviços Pós-Obra & Higienização', percent: 15, amount: 63969.25 },
+      { name: 'Hotelaria & Suítes', percent: 5, amount: 21323.08 },
+    ];
+  } else if (isApexDelaware) {
+    baseCashBalance = 540000.00;
+    baseMonthlyRevenue = 85000.00;
+    baseMonthlyBurn = 35000.00;
+    quickRatioValue = '5.12x';
+    grossMarginValue = '78.5%';
+    companyDescription = `Apex Cloud Technologies Inc. (${activeCompany?.formationState || 'DE'} • EIN ${activeCompany?.ein || '88-9182736'}) — SaaS Enterprise & Cloud Infrastructure.`;
+    revenueStreams = [
+      { name: 'Engenharia de Plataforma & Cloud', percent: 60, amount: 240000.00 },
+      { name: 'Consultoria de IA & DevSecOps', percent: 30, amount: 120000.00 },
+      { name: 'Assinaturas de Infraestrutura SaaS', percent: 10, amount: 40000.00 },
+    ];
+  } else {
+    // Apex CleanOps Commercial Services LLC (TX)
+    baseCashBalance = 325000.00;
+    baseMonthlyRevenue = 52000.00;
+    baseMonthlyBurn = 22400.00;
+    quickRatioValue = '3.42x';
+    grossMarginValue = '68.4%';
+    companyDescription = `Apex CleanOps Commercial Services LLC (${activeCompany?.formationState || 'TX'} • EIN ${activeCompany?.ein || '84-9281742'}) — Gestão e Sanitização de Galpões e Torres Corporativas no Texas. Margem bruta de 68.4%.`;
+    revenueStreams = [
+      { name: 'Manutenção Industrial de Galpões', percent: 55, amount: 185000.00 },
+      { name: 'Facilities Corporativo de Torres', percent: 35, amount: 115000.00 },
+      { name: 'Sanitização Especializada HVAC', percent: 10, amount: 35000.00 },
+    ];
   }
 
   // Computed Dynamic Scenario Metrics
@@ -103,7 +141,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
     },
     {
       title: t('metrics.quickRatio'),
-      value: activeCompany?.legalName.includes('Milla Maid') ? '4.85x' : '3.42x',
+      value: quickRatioValue,
       subtext: `Caixa (${formatCurrency(baseCashBalance, 'USD', locale)}) / Passivo Circulante`,
       trend: '+0.18x',
       isPositive: true,
@@ -112,7 +150,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
     },
     {
       title: 'Margem Bruta Operacional',
-      value: activeCompany?.legalName.includes('Milla Maid') ? '73.1%' : '68.4%',
+      value: grossMarginValue,
       subtext: 'Receita Bruta menos Salários Diretos e Insumos (COGS)',
       trend: '+2.8%',
       isPositive: true,
@@ -124,6 +162,8 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
   const handleExportSummary = () => {
     setNotificationMsg(`Resumo Executivo C-Level de ${activeCompany?.legalName} gerado com sucesso!`);
   };
+
+  const recentEntries = CompanyLedgerEngine.getJournalEntriesForCompany(companyId, companyName).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -331,7 +371,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle>Lançamentos Recentes no Razão Contábil (General Ledger)</CardTitle>
-                <CardDescription>Partidas Dobradas US GAAP Auditadas em Tempo Real</CardDescription>
+                <CardDescription>Partidas Dobradas US GAAP Auditadas em Tempo Real ({activeCompany?.legalName})</CardDescription>
               </div>
               {onNavigateTab && (
                 <Button size="sm" variant="ghost" className="text-xs text-emerald-400" onClick={() => onNavigateTab('journal-entries')}>
@@ -341,12 +381,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
             </div>
           </CardHeader>
           <div className="space-y-2 p-4 pt-0">
-            {[
-              { id: 'JE-2026-0042', memo: 'Client Monthly Retainer - Acme Global Corp', amount: 15000, date: '2026-08-18', status: 'POSTED' },
-              { id: 'JE-2026-0041', memo: 'Direct Contractor Engineering Fees (1099)', amount: 4800, date: '2026-08-16', status: 'POSTED' },
-              { id: 'JE-2026-0040', memo: 'AWS Dedicated Client Infrastructure Hosting', amount: 1250, date: '2026-08-15', status: 'POSTED' },
-              { id: 'JE-2026-0039', memo: 'Software Engineering Advisory - FinTech Labs', amount: 22500, date: '2026-08-12', status: 'POSTED' },
-            ].map((je) => (
+            {recentEntries.map((je) => (
               <div key={je.id} className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition-colors">
                 <div className="flex items-center space-x-3">
                   <span className="text-xs font-mono text-emerald-400 font-semibold">{je.id}</span>
@@ -368,15 +403,10 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
         <Card className="border-slate-800 bg-slate-950">
           <CardHeader>
             <CardTitle>Linhas de Receita</CardTitle>
-            <CardDescription>Composição do Faturamento Operacional</CardDescription>
+            <CardDescription>Composição do Faturamento de {activeCompany?.legalName}</CardDescription>
           </CardHeader>
           <div className="space-y-4 p-4 pt-0">
-            {[
-              { name: 'Limpeza Comercial & Janitorial', percent: 45, amount: 67500 },
-              { name: 'Contratos Mensais Recorrentes', percent: 35, amount: 52500 },
-              { name: 'Serviços Especializados / Pós-Obra', percent: 15, amount: 22500 },
-              { name: 'Assinaturas de Tecnologia SaaS', percent: 5, amount: 7500 },
-            ].map((stream) => (
+            {revenueStreams.map((stream) => (
               <div key={stream.name} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-300 font-medium">{stream.name}</span>
@@ -396,7 +426,7 @@ export function ExecutiveCockpit({ onNavigateTab }: ExecutiveCockpitProps) {
               </span>
               <div className="text-[11px] text-slate-400 space-y-1">
                 <div>✓ Todos os impostos estaduais em conformidade (*Good Standing*).</div>
-                <div>✓ 3 Contas bancárias conectadas e conciliadas em tempo real.</div>
+                <div>✓ Contas bancárias e lançamentos sincronizados com {activeCompany?.legalName}.</div>
               </div>
             </div>
           </div>
