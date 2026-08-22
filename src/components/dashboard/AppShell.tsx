@@ -235,13 +235,18 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
   const [activeTab, setActiveTab] = useState<string>(() => normalizeTabId(initialTab));
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Auth Guard: Redirect to login if not authenticated
   useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
+    if (isMounted && !isAuthLoading && !isAuthenticated) {
       router.push('/login');
     }
-  }, [isAuthLoading, isAuthenticated, router]);
+  }, [isMounted, isAuthLoading, isAuthenticated, router]);
 
   // Dynamic ledger state initialized and synchronized per active company
   const [accountsState, setAccountsState] = useState<AccountWithLines[]>(() =>
@@ -382,14 +387,28 @@ export function AppShell({ initialTab = 'dashboard' }: AppShellProps) {
     ]);
   };
 
-  if (isAuthLoading || !isAuthenticated) {
+  if (!isMounted || isAuthLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-100 p-4 space-y-4">
         <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
           <Lock className="w-6 h-6 text-emerald-400 animate-pulse" />
         </div>
         <div className="text-center space-y-1">
-          <h3 className="text-sm font-bold text-white tracking-wide">Acesso Seguro • Autenticação Necessária</h3>
+          <h3 className="text-sm font-bold text-white tracking-wide">Sessão Segura • Mister Contábil</h3>
+          <p className="text-xs text-slate-400">Validando integridade contábil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-100 p-4 space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center">
+          <Lock className="w-6 h-6 text-rose-400 animate-pulse" />
+        </div>
+        <div className="text-center space-y-1">
+          <h3 className="text-sm font-bold text-white tracking-wide">Acesso Restrito • Autenticação Necessária</h3>
           <p className="text-xs text-slate-400">Redirecionando para o login corporativo...</p>
         </div>
       </div>

@@ -24,10 +24,30 @@ import {
   Download,
   FileCheck,
   ShieldAlert,
+  Smartphone,
+  Laptop,
+  Monitor,
+  Trash2,
+  KeyRound,
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth/auth-context';
 
 export function AuditTrailSecurityView() {
   const { locale, t } = useI18n();
+  const { user, getAuthorizedDevices, revokeDeviceAccess, revokeOtherDevicesAccess } = useAuth();
+  const [trustedDevicesList, setTrustedDevicesList] = useState(() => getAuthorizedDevices());
+
+  const handleRevokeSingle = (deviceId: string) => {
+    revokeDeviceAccess(deviceId);
+    setTrustedDevicesList(getAuthorizedDevices());
+    setNotificationMsg('Dispositivo revogado com sucesso. O aparelho precisará de novo PIN para entrar.');
+  };
+
+  const handleRevokeAllOthers = () => {
+    revokeOtherDevicesAccess();
+    setTrustedDevicesList(getAuthorizedDevices());
+    setNotificationMsg('🚨 Acesso de todos os outros dispositivos revogado com sucesso! Apenas esta máquina permanece autorizada.');
+  };
 
   const INITIAL_BLOCKS: AuditLogBlock[] = [
     CryptographicAuditTrailEngine.createAuditBlock(
@@ -344,6 +364,114 @@ export function AuditTrailSecurityView() {
               ))}
             </TableBody>
           </Table>
+        </div>
+      </Card>
+
+      {/* Dispositivos Confiáveis & Sessões Ativas (NIST SP 800-63B / Adaptive Shield) */}
+      <Card className="border-slate-800 bg-slate-950">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                <Laptop className="w-4 h-4" />
+              </div>
+              <div>
+                <CardTitle>Dispositivos Confiáveis & Sessões Ativas (NIST SP 800-63B)</CardTitle>
+                <CardDescription>
+                  Aparelhos homologados para acesso contábil sem necessidade de re-autenticação OTP por 30 dias
+                </CardDescription>
+              </div>
+            </div>
+
+            {trustedDevicesList.length > 1 && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs border-rose-800/80 text-rose-300 hover:bg-rose-950/60 font-bold"
+                onClick={handleRevokeAllOthers}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 mr-1.5 text-rose-400" />
+                🚨 Revogar Acesso de Todos os Outros Dispositivos
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+
+        <div className="p-6 pt-0 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {trustedDevicesList.map((dev) => (
+              <div
+                key={dev.id}
+                className={`p-4 rounded-2xl border transition-all ${
+                  dev.isCurrentDevice
+                    ? 'bg-slate-900/90 border-emerald-500/50 shadow-lg shadow-emerald-500/5'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300">
+                      {dev.deviceType === 'mobile' ? (
+                        <Smartphone className="w-4 h-4 text-emerald-400" />
+                      ) : (
+                        <Monitor className="w-4 h-4 text-sky-400" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <span>{dev.deviceName}</span>
+                        {dev.isCurrentDevice && (
+                          <Badge variant="outline" className="text-[9px] bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+                            Ativo Agora
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono">
+                        {dev.os} • {dev.browser}
+                      </div>
+                    </div>
+                  </div>
+
+                  {!dev.isCurrentDevice && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 w-7 p-0 text-slate-500 hover:text-rose-400 hover:bg-rose-950/40"
+                      onClick={() => handleRevokeSingle(dev.id)}
+                      title="Revogar este aparelho"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-400">
+                  <div>
+                    <span className="text-slate-500 block">Autorizado em:</span>
+                    <span>{new Date(dev.trustedAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US')}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Válido até:</span>
+                    <span className="text-emerald-400">{new Date(dev.expiresAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : 'en-US')}</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-slate-500 block">Localização / Hash:</span>
+                    <span className="text-slate-300 truncate block">{dev.lastIpApprox} • {dev.fingerprintHash.substring(0, 14)}...</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 text-xs flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>
+                Proteção de Zero-Trust ativada: qualquer novo aparelho que tentar acessar com sua senha será desafiado pelo <b>Step-Up 2FA</b>.
+              </span>
+            </div>
+            <span className="font-mono text-emerald-400 font-bold text-[11px]">NIST SP 800-63B OK</span>
+          </div>
         </div>
       </Card>
     </div>
